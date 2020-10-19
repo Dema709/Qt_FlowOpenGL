@@ -22,6 +22,7 @@ struct Vertex{
     VertexPair ELLIPSE;
     VertexPair ROUND;
     VertexPair LOWPOLY_ROUND;
+    VertexPair BEZIER;//Лапки у type0 еды - через кривые безье
 };
 
 class VertexLoader
@@ -34,6 +35,7 @@ public:
 private:
     Vertex V;
     std::vector<GLfloat> vertices;
+    int ANIMATION_FRAMES;//Количество кадров для анимации, должно выходить из требуемого FPS
 };
 
 #endif // VERTEX_INITIALIZATION

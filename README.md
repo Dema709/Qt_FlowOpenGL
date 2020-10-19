@@ -7,6 +7,8 @@ https://github.com/effolkronium/random
 # Standalone .exe
 Qt5Core.dll
 Qt5Gui.dll
+Qt5OpenGL.dll
+Qt5Widgets.dll
 libgcc_s_seh-1.dll
 libstdc++-6.dll
 libwinpthread-1.dll
