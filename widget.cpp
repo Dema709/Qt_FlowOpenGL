@@ -1,4 +1,6 @@
 #include "widget.h"
+
+
 #include <QDebug>
 
 #include <QtGui>
@@ -10,7 +12,7 @@
 
 
 Widget::Widget(QWidget *parent)
-    : QGLWidget(parent), particle(10)
+    : QGLWidget(parent), particle(20)
 {
     qDebug()<<"Widget constructor";
     VertexLoader vertexLoader;

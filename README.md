@@ -1,6 +1,9 @@
 #Flow OpenGl
 Разработка игры (похожей на Flow от Sony) с использованием Qt и OpenGL
 
+#Сторонние источники (библиотеки)
+https://github.com/effolkronium/random
+
 # Standalone .exe
 Qt5Core.dll
 Qt5Gui.dll

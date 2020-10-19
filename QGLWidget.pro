@@ -19,6 +19,7 @@ SOURCES += \
 HEADERS += \
     VertexLoader.h \
     particle.h \
+    random.hpp \
     widget.h
 
 # Default rules for deployment.
