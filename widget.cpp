@@ -18,6 +18,10 @@ Widget::Widget(QWidget *parent)
     VertexLoader vertexLoader;
     V = vertexLoader.getVertex();
     vertices = vertexLoader.getVerticles();
+
+    //Mouse move events will occur only when a mouse button is pressed down,
+    //unless mouse tracking has been enabled with QWidget::setMouseTracking().
+    setMouseTracking(true);//Отслеживание мыши вне зависимости от нажатия
 }
 
 Widget::~Widget()
@@ -137,9 +141,13 @@ void Widget::initializeGL(){
         //QMatrix4x4 mMatrix;
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());//Матрица по умолчанию
 
+        //Начальные положения мышки
+        mouse_pos_x = width()/2; mouse_pos_y=height()/2;
+        //qDebug()<<mouse_pos_x<<mouse_pos_y;
+
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdatePosition()));
-        timer->start(1/30.); // И запустим таймер
+        timer->start(invertFPS); // И запустим таймер
 
         qDebug()<<"initializeGL end";
 };
@@ -267,6 +275,28 @@ void Widget::resizeGL(int width, int height){
 void Widget::slotUpdatePosition()
 {
     //qDebug()<<QTime::currentTime().toString("hh:mm:ss");
-    particle.updatePosition(1/30.);
+    //qDebug()<<mouse_pos_x<<mouse_pos_y;
+    particle.updatePosition(invertFPS);
     updateGL();
+}
+
+void Widget::mouseMoveEvent(QMouseEvent* mouseEvent)
+{
+   //qDebug()<<mouseEvent->pos().x()<<mouseEvent->pos().y();
+   mouse_pos_x = mouseEvent->pos().x();
+   mouse_pos_y = mouseEvent->pos().y();
+
+   //updateGL();
+}
+
+void Widget::mousePressEvent(QMouseEvent*)
+{
+   qDebug()<<"press";
+   is_mouse_pressed = true;
+}
+
+void Widget::mouseReleaseEvent(QMouseEvent*)
+{
+   qDebug()<<"release";
+   is_mouse_pressed = false;
 }

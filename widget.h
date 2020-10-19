@@ -24,6 +24,9 @@ protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int width, int height);
+    void mouseMoveEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
 private slots:
     void slotUpdatePosition();//Обновление физики (местоположения) и последующая отрисовка
 private:
@@ -37,7 +40,11 @@ private:
     QMatrix4x4 mMatrix;
 
     Particle particle;
-    //QTimer *timer;
+
+    float invertFPS = 1./30;//Величина, обратная требуемому фпс
+
+    int mouse_pos_x, mouse_pos_y;
+    bool is_mouse_pressed = false;
 
 };
 #endif // WIDGET_H

@@ -14,7 +14,7 @@ Particle::Particle(int count_) : count(count_)//, randomGenerator(QRandomGenerat
                                  });
     }
 
-    if (!false)//Вывод сгенерированного массива для положения частиц и их времени жизни
+    if (false)//Вывод сгенерированного массива для положения частиц и их времени жизни
     for (int i=0; i<count; i++){
         qDebug()<<pos_n_lifetime[i][0]<<pos_n_lifetime[i][1]<<pos_n_lifetime[i][2];
     }
