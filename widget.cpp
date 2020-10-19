@@ -21,62 +21,13 @@ Widget::~Widget()
     qDebug()<<"Widget destructor";
 }
 
-    /*
-    //C хабра, без ошибок, но только один цвет
-    const GLchar* vertexShaderSource = "#version 330 core\n"
-        "layout (location = 0) in vec3 position;\n"
-        "void main()\n"
-        "{\n"
-        "gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
-        "}\0";
-
-
-    //Работает с 2 точками на плоскости
-    const GLchar* vertexShaderSource = "#version 330 core\n"
-        "layout (location = 0) in vec2 position;\n"
-        "void main()\n"
-        "{\n"
-        "gl_Position = vec4(position.x, position.y, 0.0, 1.0);\n"
-        "}\0";
-    */
-
-    //Тест
     const GLchar* vertexShaderSource = "#version 330 core\n"
         "layout (location = 0) in vec2 position;\n"
         "uniform highp mat4 u_Matrix;\n"
         "void main()\n"
         "{\n"
-        "gl_Position ="
-                                      " u_Matrix*"
-            "vec4(position.x, position.y, 0.0, 1.0);\n"
+        "gl_Position = u_Matrix*vec4(position.x, position.y, 0.0, 1.0);\n"
         "}\0";
-
-    /*
-    //C хабра, без ошибок, но только один цвет
-    const GLchar* fragmentShaderSource = "#version 330 core\n"
-        "out vec4 color;\n"
-        "void main()\n"
-        "{\n"
-        "color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-        "}\n\0";
-
-    //Компилится с ошибками, но работает как надо
-     const GLchar* fragmentShaderSource =
-             "varying lowp vec4 col;\n"
-             "void main() {\n"
-             "   gl_FragColor = col;\n"
-             "}\n";
-
-    //Работает без ошибок, но проблема с растягиванием
-    const GLchar* fragmentShaderSource =
-            "#version 330 core\n"
-            "uniform vec4 in_Color;\n"
-            "void main()\n"
-            "{\n"
-            "    gl_FragColor = in_Color;\n"
-            "}\n";
-*/
-    //Тест. Без ошибок
     const GLchar* fragmentShaderSource =
             "#version 330 core\n"
             "uniform vec4 u_Color;\n"
@@ -90,7 +41,7 @@ void Widget::initializeGL(){
     glClearColor(0,0x6D/255., 0xBB/255., 0);//Цвет фона
     glEnable(GL_BLEND);glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);//Прозрачность
 
-    vertices = {
+    /*vertices = {
         //Исходные данные для треугольника
         -0.5f, -0.5f,
          0.5f, -0.5f,
@@ -101,7 +52,7 @@ void Widget::initializeGL(){
         //Ось y
         0, -1,
         0, 1,
-    };
+    };*/
 
     //#if HABR
         //См. https://habr.com/ru/post/311808/
@@ -179,8 +130,12 @@ void Widget::initializeGL(){
 
         //И из android приложения на счёт матрицы
         uMatrixLocation = glGetUniformLocation(shaderProgram, "u_Matrix");
-        QMatrix4x4 mMatrix;
+        //QMatrix4x4 mMatrix;
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());//Матрица по умолчанию
+
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdatePosition()));
+        timer->start(1/30.); // И запустим таймер
 
         qDebug()<<"initializeGL end";
 };
@@ -219,7 +174,7 @@ void Widget::paintGL(){
     */
 
 
-    glClearColor(0.8,0.8,1, 0);//Цвет фона
+    glClearColor(0.9,0.9,1, 0);//Цвет фона
     glClear(GL_COLOR_BUFFER_BIT);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -232,82 +187,59 @@ void Widget::paintGL(){
     glRotatef(yRot, 0.0f, 1.0f, 0.0f);
     glRotatef(zRot, 0.0f, 0.0f, 1.0f);*/
 
+
+    //qDebug()<<vertices.size();
+
+#define DRAW(figure_name) glDrawArrays(V.figure_name.mode,V.figure_name.index,V.figure_name.count)
+
     glLineWidth(3.0f);
     glUniform4f(uColorLocation, 1, 0, 0, 1);//Красная ось x
-    glDrawArrays(GL_LINES, 3, 2);
+    glDrawArrays(V.ASIX.mode, V.ASIX.index, V.ASIX.count/2);
 
     glUniform4f(uColorLocation, 0, 1, 0, 1);//Зелёная ось y
-    glDrawArrays(GL_LINES, 5, 2);
+    glDrawArrays(V.ASIX.mode, V.ASIX.index + V.ASIX.count/2, V.ASIX.count/2);
 
-    glUniform4f(uColorLocation, 0, 0, 1, 0.5);//Треугольник
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glUniform4f(uColorLocation, 0, 0, 1, 0.1);//Квадрат
+    //glDrawArrays(V.SQUARE.mode, V.SQUARE.index, V.SQUARE.count);
+    DRAW(SQUARE);
 
+    //glDrawArrays(V.PARTICLE.mode, V.PARTICLE.index, V.PARTICLE.count);
+    //DRAW(PARTICLE);
+
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(1,0);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(SQUARE);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
 
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
-/*
-        QMatrix4x4 mMatrix;
-        mMatrix.setToIdentity();
-        mMatrix.ortho(-1, 1, -1, 1, -1, 40);*/
-/*
-        qreal top, bottom, right, left, aratio;
-        //left = -1; right = 1; bottom = -1; top = 1;
 
-        aratio = height / width;
-        if (width > height)
-            {
-                top = 3.0f;
-                bottom = -top;
-                right = top * aratio;
-                left = -right;
-            }
-            else
-        {
-            right = 3.0f;
-            left = -right;
-            top = right / aratio;
-            bottom = -top;
+    //QMatrix4x4 mMatrix;
+    //float* d = mMatrix.data();
+    /*qDebug()<<"mMatrix";
+    for (int i=0;i<4;i++){
+        QString s;
+        for (int j=0; j<4; j++){
+            QString tempS;
+            tempS.setNum(d[i]);
+            s+=tempS+"   ";
         }
-        qDebug()<<left<<right<<bottom<<top<<aratio;
-        mMatrix.ortho(left, right, bottom, top, -1, 40);*/
+        qDebug()<<s;
+    }qDebug()<<"mMatrix end";*/
 
-        /*
-        // Calculate aspect ratio
-        qreal aspect = qreal(width) / qreal(height ? height : 1);
-        // Set near plane to -1.0, far plane to 7.0, field of view 45 degrees
-        const qreal zNear = -1.0, zFar = 7.0, fov = 45.0;
-        // Reset projection
-        mMatrix.setToIdentity();
-        // Set perspective projection
-        mMatrix.perspective(fov, aspect, zNear, zFar);
-        */
+    mMatrix.setToIdentity();//Сброс матрицы
+    mMatrix.scale(0.5/2.5);
 
-        //mMatrix.lookAt({0,0,3},{0,0,0},{0,10,0});
 
-        //mMatrix.ortho(QRect{1,-1,1,1});
-        //glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
-    /*
-    QMatrix4x4 mMatrix;
-    mMatrix.translate(0,0);
-    //mMatrix.perspective(0,static_cast<double>(width)/height,-5,5);
-    //mMatrix.lookAt({0,0,3},{0,0,0},{0,1,0});
+    //mMatrix.translate(0,0.5);
 
-    glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
-*/
-
-    /*glMatrixMode(GL_PROJECTION);        //Без этого не растягивается
-    glLoadIdentity();                   //Без этого не работает
-    GLfloat ratio=(GLfloat)height/(GLfloat)width;
-
-    if (width>=height)
-       glOrtho(-1.0/ratio, 1.0/ratio, -1.0, 1.0, -10.0, 1.0);
-    else
-       glOrtho(-1.0, 1.0, -1.0*ratio, 1.0*ratio, -10.0, 1.0);
-*/
-    QMatrix4x4 mMatrix;
-    //mMatrix.scale(0.5);
-    mMatrix.translate(0,0.5);
+    if (width<height){
+        mMatrix.scale(static_cast<float>(height)/width, 1);
+    } else {
+        mMatrix.scale(1, static_cast<float>(width)/height);
+    }
 
     glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
 
@@ -342,3 +274,8 @@ void main(){
     gl_FragColor = u_Color;
 }
 */
+void Widget::slotUpdatePosition()
+{
+    //qDebug()<<QTime::currentTime().toString("hh:mm:ss");
+    updateGL();
+}

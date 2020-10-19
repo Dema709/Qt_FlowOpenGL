@@ -23,6 +23,8 @@ protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int width, int height);
+private slots:
+    void slotUpdatePosition();//Обновление физики (местоположения) и последующая отрисовка
 private:
     std::vector<GLfloat> vertices;
     Vertex V;
@@ -30,5 +32,10 @@ private:
     GLint uColorLocation;
     GLint uMatrixLocation;
     GLuint shaderProgram;
+
+    QMatrix4x4 mMatrix;
+
+    //QTimer *timer;
+
 };
 #endif // WIDGET_H

@@ -13,10 +13,12 @@ CONFIG += c++11
 SOURCES += \
     VertexLoader.cpp \
     main.cpp \
+    particle.cpp \
     widget.cpp
 
 HEADERS += \
     VertexLoader.h \
+    particle.h \
     widget.h
 
 # Default rules for deployment.

@@ -7,6 +7,7 @@
 struct VertexPair{
     size_t index;//Начальный индекс пары координат (точки)
     size_t count;//Количество точек
+    GLenum mode;
 };
 
 struct Vertex{
