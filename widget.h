@@ -6,6 +6,7 @@
 #include <QOpenGLShaderProgram>
 #include <QGLFunctions>
 #include "VertexLoader.h"
+#include "particle.h"//Временно, пока не уберётся в уровень
 
 #define HABR true
 
@@ -35,6 +36,7 @@ private:
 
     QMatrix4x4 mMatrix;
 
+    Particle particle;
     //QTimer *timer;
 
 };

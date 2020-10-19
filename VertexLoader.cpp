@@ -8,11 +8,11 @@ VertexLoader::VertexLoader()
         //Оси
         std::vector<GLfloat> current_vertices = {
             // ось X
-            -1, 0,
-             1, 0,
+            -500, 0,
+             500, 0,
             // ось Y
-            0, -1,
-            0,  1,
+            0, -500,
+            0,  500,
         };
         V.ASIX = {vertices.size()/2, current_vertices.size()/2,GL_LINES};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());

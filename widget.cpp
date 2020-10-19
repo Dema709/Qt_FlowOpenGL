@@ -6,9 +6,11 @@
 //#include <QOpenGLFunctions>
 #include <QtWidgets>
 #include <QtOpenGL>
+//#include <QRandomGenerator>//Временно для тестов
+
 
 Widget::Widget(QWidget *parent)
-    : QGLWidget(parent)
+    : QGLWidget(parent), particle(10)
 {
     qDebug()<<"Widget constructor";
     VertexLoader vertexLoader;
@@ -140,7 +142,7 @@ void Widget::initializeGL(){
         qDebug()<<"initializeGL end";
 };
 void Widget::paintGL(){
-    qDebug()<<"paintGL";
+    //qDebug()<<"paintGL";
 
     /*QMatrix4x4 mMatrix;
     mMatrix.perspective(0,1,-5,5);
@@ -205,16 +207,29 @@ void Widget::paintGL(){
 
     //glDrawArrays(V.PARTICLE.mode, V.PARTICLE.index, V.PARTICLE.count);
     //DRAW(PARTICLE);
-
+    {
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(1,0);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(SQUARE);
     glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
+    }
 
+    for (int i=0; i<particle.getCount(); i++){
+        QMatrix4x4 tempMatrix(mMatrix);
+        float maxLifetime = particle.getMaxLifeTime();
+        glUniform4f(uColorLocation, 0, 0, 1, (0.5 - abs(particle.getLifetime(i) - maxLifetime / 2.) / maxLifetime) * 0.26);//Цвет
+        tempMatrix.translate(-particle.getX(i), -particle.getY(i));
+        glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+        DRAW(PARTICLE);
+        glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
+    }
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
+
+    //QRandomGenerator r;
+
 
     //QMatrix4x4 mMatrix;
     //float* d = mMatrix.data();
@@ -230,7 +245,8 @@ void Widget::resizeGL(int width, int height){
     }qDebug()<<"mMatrix end";*/
 
     mMatrix.setToIdentity();//Сброс матрицы
-    mMatrix.scale(0.5/2.5);
+    //mMatrix.scale(0.5/2.5);
+    mMatrix.scale(1/120.);
 
 
     //mMatrix.translate(0,0.5);
@@ -246,36 +262,9 @@ void Widget::resizeGL(int width, int height){
     glViewport(0, 0, (GLint)width, (GLint)height);
 };
 
-
-/*
-https://stackoverflow.com/questions/42359575/implementing-a-fragment-shader-that-behaves-similar-to-glcolor4f
-
-GLint uColorLocation;//"in_Color"
-uColorLocation = glGetUniformLocation(shaderProgram, "in_Color");
-glUniform4f(uColorLocation, 0, 0, 0, 0.5);
-
-При этом шейдер:
-uniform vec4 in_Color;
-void main () {
-  gl_FragColor = in_Color;
-}
-*/
-
-
-/*
-java
-uColorLocation = glGetUniformLocation(programId, "u_Color");
-glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 0.5f);
-
-precision mediump float;
-uniform vec4 u_Color;
-//Фрагментный шейдер (?)
-void main(){
-    gl_FragColor = u_Color;
-}
-*/
 void Widget::slotUpdatePosition()
 {
     //qDebug()<<QTime::currentTime().toString("hh:mm:ss");
+    particle.updatePosition(1/30.);
     updateGL();
 }
