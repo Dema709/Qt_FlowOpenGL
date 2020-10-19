@@ -190,41 +190,81 @@ void Widget::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    /*glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();*/
- /*
-    glScalef(nSca, nSca, nSca);
-    glTranslatef(0.0f, zTra, 0.0f);//Меняет положение камеры!
-    glRotatef(xRot, 1.0f, 0.0f, 0.0f);
-    glRotatef(yRot, 0.0f, 1.0f, 0.0f);
-    glRotatef(zRot, 0.0f, 0.0f, 1.0f);*/
+    #define DRAW(figure_name) glDrawArrays(V.figure_name.mode,V.figure_name.index,V.figure_name.count)
+
+    if (true){//Тестовое отображение всех фигур
+        glLineWidth(3.0f);
+        glUniform4f(uColorLocation, 1, 0, 0, 1);//Красная ось x
+        glDrawArrays(V.ASIX.mode, V.ASIX.index, V.ASIX.count/2);
+
+        glUniform4f(uColorLocation, 0, 1, 0, 1);//Зелёная ось y
+        glDrawArrays(V.ASIX.mode, V.ASIX.index + V.ASIX.count/2, V.ASIX.count/2);
+
+        int figure_n = 0, max_figures_in_row = 10;//Текущий номер фигуры
+        float start_x = -450, start_y = -450;//Начальное смещение по осям
+        float dx = 100, dy = 100;
+        {
+            QMatrix4x4 tempMatrix(mMatrix);
+            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
+            tempMatrix.scale(50);    figure_n++;
+            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
+            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+            DRAW(SQUARE);//Квадрат
+        }
+
+        {
+            QMatrix4x4 tempMatrix(mMatrix);
+            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
+            tempMatrix.scale(6);    figure_n++;
+            glUniform4f(uColorLocation, 0, 0, 1, 0.2);
+            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+            DRAW(PARTICLE);//Частица
+        }
+
+        {
+            QMatrix4x4 tempMatrix(mMatrix);
+            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
+            tempMatrix.scale(3);    tempMatrix.rotate(45,0,0,1);   figure_n++;
+            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
+            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+            DRAW(ELLIPSE);//Эллипс
+        }
+
+        {
+            QMatrix4x4 tempMatrix(mMatrix);
+            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
+            tempMatrix.scale(40);    figure_n++;
+            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
+            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+            DRAW(ROUND);//Круг
+        }
+
+        {
+            QMatrix4x4 tempMatrix(mMatrix);
+            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
+            tempMatrix.scale(40);    figure_n++;
+            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
+            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+            DRAW(LOWPOLY_ROUND);//Низкополигональный круг
+        }
+
+        glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
+    }
 
 
-    //qDebug()<<vertices.size();
 
-#define DRAW(figure_name) glDrawArrays(V.figure_name.mode,V.figure_name.index,V.figure_name.count)
+    //
 
-    glLineWidth(3.0f);
-    glUniform4f(uColorLocation, 1, 0, 0, 1);//Красная ось x
-    glDrawArrays(V.ASIX.mode, V.ASIX.index, V.ASIX.count/2);
 
-    glUniform4f(uColorLocation, 0, 1, 0, 1);//Зелёная ось y
-    glDrawArrays(V.ASIX.mode, V.ASIX.index + V.ASIX.count/2, V.ASIX.count/2);
-
-    glUniform4f(uColorLocation, 0, 0, 1, 0.1);//Квадрат
-    //glDrawArrays(V.SQUARE.mode, V.SQUARE.index, V.SQUARE.count);
-    DRAW(SQUARE);
-
-    //glDrawArrays(V.PARTICLE.mode, V.PARTICLE.index, V.PARTICLE.count);
     //DRAW(PARTICLE);
-    {
+    /*{
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(1,0);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(SQUARE);
     glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
-    }
-
+    }*/
+/*
     for (int i=0; i<particle.getCount(); i++){
         QMatrix4x4 tempMatrix(mMatrix);
         float maxLifetime = particle.getMaxLifeTime();
@@ -233,32 +273,24 @@ void Widget::paintGL(){
         glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
         DRAW(PARTICLE);
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
+    }*/
+
+    {/*
+        openGLRenderer.drawEllipse(currentX, currentY,1+0.2f*multiplSize, orientation * 180 / (float) Math.PI);
+        openGLRenderer.drawLowpolyRound(currentX, currentY,3.5f);
+        openGLRenderer.drawLowpolyRoundTransfered(currentX, currentY,3.5f,orientation * 180 / (float) Math.PI,8.4f,0);
+        openGLRenderer.drawLowpolyRoundTransfered(currentX, currentY,3.5f,orientation * 180 / (float) Math.PI,-8.4f,0);
+        openGLRenderer.drawBezier(currentX, currentY,0.7f*1.5f,orientation * 180 / (float) Math.PI, multiplSnake);
+        */
+
     }
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
 
-    //QRandomGenerator r;
-
-
-    //QMatrix4x4 mMatrix;
-    //float* d = mMatrix.data();
-    /*qDebug()<<"mMatrix";
-    for (int i=0;i<4;i++){
-        QString s;
-        for (int j=0; j<4; j++){
-            QString tempS;
-            tempS.setNum(d[i]);
-            s+=tempS+"   ";
-        }
-        qDebug()<<s;
-    }qDebug()<<"mMatrix end";*/
-
     mMatrix.setToIdentity();//Сброс матрицы
     //mMatrix.scale(0.5/2.5);
-    mMatrix.scale(1/120.);
-
-
+    mMatrix.scale(1/500.);//-500 ... 500
     //mMatrix.translate(0,0.5);
 
     if (width<height){

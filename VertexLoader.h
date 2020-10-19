@@ -7,7 +7,11 @@
 struct VertexPair{
     size_t index;//Начальный индекс пары координат (точки)
     size_t count;//Количество точек
-    GLenum mode;
+    GLenum mode;//Режим отрисовки
+        //GL_LINES - линия между точками
+        //GL_TRIANGLES - треугольники по три точки
+        //GL_TRIANGLE_FAN - треугольники с общей первой точкой (и предыдущей)
+        //GL_TRIANGLE_STRIP - последовательные треугольники
 };
 
 struct Vertex{
@@ -15,6 +19,9 @@ struct Vertex{
     VertexPair ASIX;
     VertexPair SQUARE;
     VertexPair PARTICLE;//Фоновая частица
+    VertexPair ELLIPSE;
+    VertexPair ROUND;
+    VertexPair LOWPOLY_ROUND;
 };
 
 class VertexLoader

@@ -31,44 +31,82 @@ VertexLoader::VertexLoader()
     }
 
     {
-        //Частица
+        //Частица с радиусом 5, состоит их трёх окружностей
         std::vector<GLfloat> current_vertices;
-        int VERTEX_PARTICLE_COUNT = 16*9;
+        int VERTEX_COUNT = 16;//Число вершин одной окружности
+        float radius = 5;
         for (int j = 0; j < 3; j++) {
-            float radius = 2./3.*2.5;//Стандартный масштаб
-            int outerVertexCount = VERTEX_PARTICLE_COUNT/9 + 1;
-            for (int i = 0; i < outerVertexCount - 1; ++i) {
+            float percent, rad;
+            for (int i = 0; i < VERTEX_COUNT; ++i) {
                 current_vertices.push_back(0);
                 current_vertices.push_back(0);
-                float percent = (i / (float) (outerVertexCount - 1));
-                float rad = (float) (percent * 2*M_PI);
-                float outer_x = (float) (radius * (j + 1) * cos(rad));
-                float outer_y = (float) (radius * (j + 1) * sin(rad));
-                current_vertices.push_back(outer_x);
-                current_vertices.push_back(outer_y);
 
-                percent = ((i + 1) / (float) (outerVertexCount - 1));
-                rad = (float) (percent * 2*M_PI);
-                outer_x = (float) (radius * (j + 1) * cos(rad));
-                outer_y = (float) (radius * (j + 1) * sin(rad));
-                current_vertices.push_back(outer_x);
-                current_vertices.push_back(outer_y);
+                percent = static_cast<float>(i) / VERTEX_COUNT;
+                rad = percent * 2 * M_PI;
+                current_vertices.push_back(radius * (j + 1) / 3. * cos(rad));
+                current_vertices.push_back(radius * (j + 1) / 3. * sin(rad));
+
+                percent = static_cast<float>(i+1) / (float) (VERTEX_COUNT);
+                rad = percent * 2 * M_PI;
+                current_vertices.push_back(radius * (j + 1) / 3. * cos(rad));
+                current_vertices.push_back(radius * (j + 1) / 3. * sin(rad));
             }
         }
-/*
-        qDebug()<<"VERTEX_PARTICLE";
-        for (int i=0; i<current_vertices.size()/2;i++){
-            qDebug()<<current_vertices[i*2]<<current_vertices[i*2+1];
-        }
-        qDebug()<<"VERTEX_PARTICLE";
-*/
-
-
         V.PARTICLE = {vertices.size()/2, current_vertices.size()/2, GL_TRIANGLES};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
-    //qDebug()<<"Initial size:"<<vertices.size();
+    {
+        //Эллипс [(24 на 11 с толщиной 2)*0.7]
+        std::vector<GLfloat> current_vertices;
+        float radius1 = 24*0.7, radius2 = 11*0.7, ringwidth = 2*0.7/2;
+        int VERTEX_COUNT = 16;//Число внешних (внутренних) вершин эллипса
+        for (int i=0; i<VERTEX_COUNT*2+2; i++){
+            float percent = static_cast<float>(i) / VERTEX_COUNT / 2.;
+            float rad = percent * 2 * M_PI;
+            if (i%2==0){
+                //Чётные числа для внешего радиуса
+                current_vertices.push_back((radius1 + ringwidth) * cos(rad));
+                current_vertices.push_back((radius2 + ringwidth) * sin(rad));
+            } else {
+                current_vertices.push_back((radius1 - ringwidth) * cos(rad));
+                current_vertices.push_back((radius2 - ringwidth) * sin(rad));
+            }
+        }
+
+        V.ELLIPSE = {vertices.size()/2, current_vertices.size()/2, GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+    {
+        //Заполненный круг радиуса 1
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16;
+        current_vertices.push_back(0);  current_vertices.push_back(0);
+        for (int i=0; i<VERTEX_COUNT+1; i++){
+            float percent = static_cast<float>(i) / VERTEX_COUNT;
+            float rad = percent * 2 * M_PI;
+            current_vertices.push_back(cos(rad));
+            current_vertices.push_back(sin(rad));
+        }
+        V.ROUND = {vertices.size()/2, current_vertices.size()/2, GL_TRIANGLE_FAN};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+    {
+        //LowPoly круг радиуса 1
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 8;
+        current_vertices.push_back(0);  current_vertices.push_back(0);
+        for (int i=0; i<VERTEX_COUNT+1; i++){
+            float percent = static_cast<float>(i) / VERTEX_COUNT;
+            float rad = percent * 2 * M_PI;
+            current_vertices.push_back(cos(rad));
+            current_vertices.push_back(sin(rad));
+        }
+        V.LOWPOLY_ROUND = {vertices.size()/2, current_vertices.size()/2, GL_TRIANGLE_FAN};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
 }
 
 std::vector<GLfloat> VertexLoader::getVerticles(){

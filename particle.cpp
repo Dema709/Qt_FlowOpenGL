@@ -3,7 +3,8 @@
 
 #include <QDebug>//Временно
 
-Particle::Particle(int count_) : count(count_)//, randomGenerator(QRandomGenerator::securelySeeded())
+Particle::Particle(int count_, float maxLifeTime_, float maxRange_)
+    : count(count_), maxLifeTime(maxLifeTime_), maxRange(maxRange_)
 {
     pos_n_lifetime.reserve(count);
     for (int i=0; i<count; i++){
