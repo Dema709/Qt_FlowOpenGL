@@ -12,12 +12,12 @@ public:
     float getY(int);
     float getLifetime(int);
     float getMaxLifeTime();
-    void updatePosition(int);
+    void updatePosition(float dt);
 private:
     int count;
     std::vector<std::vector<float>> pos_n_lifetime;//pos_x, pox_y, lifetime
-    float maxLifeTime;// = 10;
-    float maxRange;// = 100;
+    float maxLifeTime;//Секунд
+    float maxRange;
 };
 
 #endif // PARTICLE_H
