@@ -142,17 +142,19 @@ void Widget::initializeGL(){
         mouse_pos_x = width()/2; mouse_pos_y=height()/2;
         //qDebug()<<mouse_pos_x<<mouse_pos_y;
 
+        QTimer *timer = new QTimer(this);
+        timer->setTimerType(Qt::PreciseTimer);//Precise timers try to keep millisecond accuracy
+        connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdatePosition()));
 
         #if FPS_DEBUG
             FPS_timer.start();
             #if FPS_DEBUG_DETAILED
-                detailed_FPS_timer.start();
                 delay_vector_for_fps.fill(0, frames_to_count);
+                detailed_FPS_timer.start();
             #endif
         #endif
-        QTimer *timer = new QTimer(this);
-        timer->setTimerType(Qt::PreciseTimer);//Precise timers try to keep millisecond accuracy
-        connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdatePosition()));
+
+        dt_timer.start();//Таймер для определения dt для физики
         timer->start(invertFPS); // И запустим таймер
 
         qDebug()<<"initializeGL end";
@@ -315,11 +317,10 @@ void Widget::resizeGL(int width, int height){
 
 void Widget::slotUpdatePosition()
 {
+    qint64 dt = dt_timer.elapsed();
+    dt_timer.start();
 
-
-    //qDebug()<<mouse_pos_x<<mouse_pos_y;
-
-    particle.updatePosition(invertFPS);
+    particle.updatePosition(dt);
     updateGL();
 }
 
