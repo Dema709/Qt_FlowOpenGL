@@ -38,7 +38,7 @@ float Particle::getMaxLifeTime(){
     return maxLifeTime;
 }
 
-void Particle::updatePosition(float dt){
+void Particle::updatePosition(int dt){//Принимает количество миллисекунд
     for (int i=0;i<count;i++){
         pos_n_lifetime[i][2] += dt;
         if (pos_n_lifetime[i][2]>maxLifeTime){//Если текущее время жизни больше максимально отведённого

@@ -41,10 +41,15 @@ private:
 
     Particle particle;
 
-    float invertFPS = 1./30;//Величина, обратная требуемому фпс
+    int invertFPS = 1000./30;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
 
     int mouse_pos_x, mouse_pos_y;
     bool is_mouse_pressed = false;
+
+    QElapsedTimer time_start;//Время окончания инициализации для определения реального delta_t
+    int frames_to_count = 50, cur_frame = 0;
+    QElapsedTimer fps_start;
+    QVector<qint64> fps_ms_saved_T;
 
 };
 #endif // WIDGET_H

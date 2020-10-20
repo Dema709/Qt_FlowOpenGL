@@ -12,7 +12,7 @@ public:
     float getY(int);
     float getLifetime(int);
     float getMaxLifeTime();
-    void updatePosition(float);
+    void updatePosition(int);
 private:
     int count;
     std::vector<std::vector<float>> pos_n_lifetime;//pos_x, pox_y, lifetime

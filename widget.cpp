@@ -9,7 +9,7 @@
 #include <QtWidgets>
 #include <QtOpenGL>
 //#include <QRandomGenerator>//Временно для тестов
-
+#include <algorithm>
 
 Widget::Widget(QWidget *parent)
     : QGLWidget(parent), particle(20)
@@ -145,7 +145,17 @@ void Widget::initializeGL(){
         mouse_pos_x = width()/2; mouse_pos_y=height()/2;
         //qDebug()<<mouse_pos_x<<mouse_pos_y;
 
+        //Проверка периода вызова таймера
+        //time_start = QTime::currentTime();//Лишний вызов просто так
+        //fps_ms_saved_T.reserve(frames_to_count);
+        fps_ms_saved_T.fill(0, frames_to_count);
+
+        time_start.start();// => use QElapsedTimer instead
+        fps_start.start();
+        //QElapsedTimer;
+
         QTimer *timer = new QTimer(this);
+        timer->setTimerType(Qt::PreciseTimer);//Precise timers try to keep millisecond accuracy
         connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdatePosition()));
         timer->start(invertFPS); // И запустим таймер
 
@@ -306,8 +316,22 @@ void Widget::resizeGL(int width, int height){
 
 void Widget::slotUpdatePosition()
 {
+    //qDebug()<<cur_frame;
+    if (cur_frame >= frames_to_count){
+        cur_frame = 0;
+        qDebug()<<frames_to_count * 1000. / fps_start.elapsed();
+        qDebug()<<frames_to_count * 1000. / std::accumulate(fps_ms_saved_T.begin(),fps_ms_saved_T.end(),0);
+        //QString tempS;
+        fps_start.start();
+    }
+
+    fps_ms_saved_T[cur_frame]=time_start.elapsed();
+    cur_frame++;
     //qDebug()<<QTime::currentTime().toString("hh:mm:ss");
     //qDebug()<<mouse_pos_x<<mouse_pos_y;
+
+    //qDebug()<<time_start.elapsed()<<invertFPS;
+    time_start.start();
     particle.updatePosition(invertFPS);
     updateGL();
 }
