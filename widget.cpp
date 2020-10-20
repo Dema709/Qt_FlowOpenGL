@@ -159,6 +159,9 @@ void Widget::initializeGL(){
 };
 void Widget::paintGL(){
     //qDebug()<<"paintGL";
+    #if FPS_DEBUG
+        calculateFPS();
+    #endif
 
     /*QMatrix4x4 mMatrix;
     mMatrix.perspective(0,1,-5,5);
@@ -312,27 +315,7 @@ void Widget::resizeGL(int width, int height){
 
 void Widget::slotUpdatePosition()
 {
-    #if FPS_DEBUG
-        if (cur_frame >= frames_to_count){
-            cur_frame = 0;
-            qDebug()<<"FPS1:"<<frames_to_count * 1000. / FPS_timer.elapsed();
-            FPS_timer.start();
-            #if FPS_DEBUG_DETAILED
-                qDebug()<<"FPS2:"<<frames_to_count * 1000. /
-                          std::accumulate(delay_vector_for_fps.begin(),delay_vector_for_fps.end(),0);
-                QString debugS, tempS;
-                for (auto t : delay_vector_for_fps){tempS.setNum(t);debugS+=tempS+" ";};
-                qDebug()<<"Delay array:"<<debugS;
-            #endif//#if FPS_DEBUG_DETAILED
-        }
 
-        #if FPS_DEBUG_DETAILED
-            delay_vector_for_fps[cur_frame]=detailed_FPS_timer.elapsed();
-            detailed_FPS_timer.start();
-        #endif//#if FPS_DEBUG_DETAILED
-
-        cur_frame++;
-    #endif//#if FPS_DEBUG
 
     //qDebug()<<mouse_pos_x<<mouse_pos_y;
 
@@ -360,3 +343,27 @@ void Widget::mouseReleaseEvent(QMouseEvent*)
    qDebug()<<"release";
    is_mouse_pressed = false;
 }
+
+#if FPS_DEBUG
+void Widget::calculateFPS(){
+        if (cur_frame >= frames_to_count){
+            cur_frame = 0;
+            qDebug()<<"FPS1:"<<frames_to_count * 1000. / FPS_timer.elapsed();
+            FPS_timer.start();
+            #if FPS_DEBUG_DETAILED
+                qDebug()<<"FPS2:"<<frames_to_count * 1000. /
+                          std::accumulate(delay_vector_for_fps.begin(),delay_vector_for_fps.end(),0);
+                QString debugS, tempS;
+                for (auto t : delay_vector_for_fps){tempS.setNum(t);debugS+=tempS+" ";};
+                qDebug()<<"Delay array:"<<debugS;
+            #endif//#if FPS_DEBUG_DETAILED
+        }
+
+        #if FPS_DEBUG_DETAILED
+            delay_vector_for_fps[cur_frame]=detailed_FPS_timer.elapsed();
+            detailed_FPS_timer.start();
+        #endif//#if FPS_DEBUG_DETAILED
+
+        cur_frame++;
+}
+#endif//#if FPS_DEBUG

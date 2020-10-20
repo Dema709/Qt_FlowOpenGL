@@ -9,7 +9,7 @@
 #include "particle.h"//Временно, пока не уберётся в уровень
 
 #define FPS_DEBUG true
-#define FPS_DEBUG_DETAILED false //Работает только при (FPS_DEBUG == true)
+#define FPS_DEBUG_DETAILED true //Работает только при (FPS_DEBUG == true)
 
 class Widget : public QGLWidget, protected QGLFunctions
 {
@@ -39,13 +39,14 @@ private:
 
     Particle particle;
 
-    int invertFPS = 1000./30;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
+    int invertFPS = 1000./60;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
     //FPS выше 60 смысла ставить нет (?)
 
     int mouse_pos_x, mouse_pos_y;
     bool is_mouse_pressed = false;
 
     #if FPS_DEBUG
+        void calculateFPS();
         int frames_to_count = 50, cur_frame = 0;
         QElapsedTimer FPS_timer;
         #if FPS_DEBUG_DETAILED
