@@ -8,12 +8,10 @@
 #include "VertexLoader.h"
 #include "particle.h"//Временно, пока не уберётся в уровень
 
-#define HABR true
+#define FPS_DEBUG true
+#define FPS_DEBUG_DETAILED false //Работает только при (FPS_DEBUG == true)
 
-class Widget : public QGLWidget
-        #if HABR
-                                , protected QGLFunctions
-        #endif
+class Widget : public QGLWidget, protected QGLFunctions
 {
     Q_OBJECT
 
@@ -42,14 +40,18 @@ private:
     Particle particle;
 
     int invertFPS = 1000./30;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
+    //FPS выше 60 смысла ставить нет (?)
 
     int mouse_pos_x, mouse_pos_y;
     bool is_mouse_pressed = false;
 
-    QElapsedTimer time_start;//Время окончания инициализации для определения реального delta_t
-    int frames_to_count = 50, cur_frame = 0;
-    QElapsedTimer fps_start;
-    QVector<qint64> fps_ms_saved_T;
-
+    #if FPS_DEBUG
+        int frames_to_count = 50, cur_frame = 0;
+        QElapsedTimer FPS_timer;
+        #if FPS_DEBUG_DETAILED
+            QElapsedTimer detailed_FPS_timer;//Время окончания инициализации для определения реального delta_t
+            QVector<qint64> delay_vector_for_fps;
+        #endif
+    #endif
 };
 #endif // WIDGET_H

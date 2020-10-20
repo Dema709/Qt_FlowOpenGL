@@ -2,14 +2,12 @@
 
 
 #include <QDebug>
-
 #include <QtGui>
-
-//#include <QOpenGLFunctions>
 #include <QtWidgets>
 #include <QtOpenGL>
-//#include <QRandomGenerator>//Временно для тестов
-#include <algorithm>
+#if FPS_DEBUG_DETAILED
+    #include <algorithm>//Для FPS_DEBUG_DETAILED
+#endif
 
 Widget::Widget(QWidget *parent)
     : QGLWidget(parent), particle(20)
@@ -62,7 +60,6 @@ void Widget::initializeGL(){
         0, 1,
     };*/
 
-    //#if HABR
         //См. https://habr.com/ru/post/311808/
         initializeGLFunctions();//Для включения функций, так как виджет унаследован от protected QGLFunctions
         //GLfloat vertices[] = {-0.5f, -0.5f, 0.0f,    0.5f, -0.5f, 0.0f,          0.0f,  0.5f, 0.0f        };
@@ -145,15 +142,14 @@ void Widget::initializeGL(){
         mouse_pos_x = width()/2; mouse_pos_y=height()/2;
         //qDebug()<<mouse_pos_x<<mouse_pos_y;
 
-        //Проверка периода вызова таймера
-        //time_start = QTime::currentTime();//Лишний вызов просто так
-        //fps_ms_saved_T.reserve(frames_to_count);
-        fps_ms_saved_T.fill(0, frames_to_count);
 
-        time_start.start();// => use QElapsedTimer instead
-        fps_start.start();
-        //QElapsedTimer;
-
+        #if FPS_DEBUG
+            FPS_timer.start();
+            #if FPS_DEBUG_DETAILED
+                detailed_FPS_timer.start();
+                delay_vector_for_fps.fill(0, frames_to_count);
+            #endif
+        #endif
         QTimer *timer = new QTimer(this);
         timer->setTimerType(Qt::PreciseTimer);//Precise timers try to keep millisecond accuracy
         connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdatePosition()));
@@ -316,22 +312,30 @@ void Widget::resizeGL(int width, int height){
 
 void Widget::slotUpdatePosition()
 {
-    //qDebug()<<cur_frame;
-    if (cur_frame >= frames_to_count){
-        cur_frame = 0;
-        qDebug()<<frames_to_count * 1000. / fps_start.elapsed();
-        qDebug()<<frames_to_count * 1000. / std::accumulate(fps_ms_saved_T.begin(),fps_ms_saved_T.end(),0);
-        //QString tempS;
-        fps_start.start();
-    }
+    #if FPS_DEBUG
+        if (cur_frame >= frames_to_count){
+            cur_frame = 0;
+            qDebug()<<"FPS1:"<<frames_to_count * 1000. / FPS_timer.elapsed();
+            FPS_timer.start();
+            #if FPS_DEBUG_DETAILED
+                qDebug()<<"FPS2:"<<frames_to_count * 1000. /
+                          std::accumulate(delay_vector_for_fps.begin(),delay_vector_for_fps.end(),0);
+                QString debugS, tempS;
+                for (auto t : delay_vector_for_fps){tempS.setNum(t);debugS+=tempS+" ";};
+                qDebug()<<"Delay array:"<<debugS;
+            #endif//#if FPS_DEBUG_DETAILED
+        }
 
-    fps_ms_saved_T[cur_frame]=time_start.elapsed();
-    cur_frame++;
-    //qDebug()<<QTime::currentTime().toString("hh:mm:ss");
+        #if FPS_DEBUG_DETAILED
+            delay_vector_for_fps[cur_frame]=detailed_FPS_timer.elapsed();
+            detailed_FPS_timer.start();
+        #endif//#if FPS_DEBUG_DETAILED
+
+        cur_frame++;
+    #endif//#if FPS_DEBUG
+
     //qDebug()<<mouse_pos_x<<mouse_pos_y;
 
-    //qDebug()<<time_start.elapsed()<<invertFPS;
-    time_start.start();
     particle.updatePosition(invertFPS);
     updateGL();
 }
