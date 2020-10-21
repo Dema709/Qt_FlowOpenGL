@@ -151,8 +151,8 @@ void Widget::paintGL(){
     drawRound(-300, 200, 25);
     drawLowpolyRound(-200, 200, 25);
     drawRoundedTriangleInCenter(-100, 200, 25, 0);
-    /*drawRoundedTriangleOutCenter(-100, 200, 25, 0);
-    drawPlus(-300, 100, 25 / 5f, 45);
+    drawRoundedTriangleOutCenter(-100, 200, 25, 0);
+    /*drawPlus(-300, 100, 25 / 5f, 45);
     drawEllipse(-200, 100, 3, -45);
     drawTriangle(-100, 100, 25, -90);*/
 };
@@ -313,4 +313,13 @@ void Widget::drawRoundedTriangleInCenter(float centerX, float centerY, float siz
     tempMatrix.rotate(orientation,0,0,1);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(ROUNDED_TRIANGLE_INCENTER);
+}
+
+void Widget::drawRoundedTriangleOutCenter(float centerX, float centerY, float sizeScale, float orientation){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation,0,0,1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(ROUNDED_TRIANGLE_OUTCENTER);
 }

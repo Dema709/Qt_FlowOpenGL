@@ -214,6 +214,56 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
+    {
+        //Треугольник в 60 градусов с вогнутой круглой стороной
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16+7;
+        float radius = 1, ringwidth = 0.1f/2, dAngle = (float)(12./2.*M_PI/180.);
+
+        current_vertices.push_back((radius-ringwidth)*cos(45*M_PI/180.-dAngle));
+        current_vertices.push_back((radius-ringwidth)*sin(45*M_PI/180.-dAngle));
+
+        current_vertices.push_back((radius-ringwidth)*cos(45*M_PI/180.));
+        current_vertices.push_back((radius-ringwidth)*sin(45*M_PI/180.));
+
+        current_vertices.push_back(ringwidth*3);
+        current_vertices.push_back(0);
+
+        current_vertices.push_back(0);
+        current_vertices.push_back(0);
+
+        current_vertices.push_back((radius-ringwidth)*cos(-45*M_PI/180.+dAngle));
+        current_vertices.push_back((radius-ringwidth)*sin(-45*M_PI/180.+dAngle));
+
+        current_vertices.push_back((radius-ringwidth)*cos(-45*M_PI/180.));
+        current_vertices.push_back((radius-ringwidth)*sin(-45*M_PI/180.));
+
+        current_vertices.push_back((radius-ringwidth)*cos(-45*M_PI/180.));
+        current_vertices.push_back((radius-ringwidth)*sin(-45*M_PI/180.));
+
+        int outerVertexCount=VERTEX_COUNT-7;
+        float percent, rad, outer_x, outer_y;
+        for (int i=0;i<outerVertexCount;++i){
+            if (i==outerVertexCount-1) percent=((i-1)/(float)(outerVertexCount-2));
+            else percent=(i/(float)(outerVertexCount-2));
+            rad=(float)((percent-0.5f)*2.*M_PI*90./360.);
+            //Log.wtf(LOG_TAG,"percent="+percent+" rad="+rad);
+            if (i%2==0){
+                outer_x=(float)((radius+ringwidth)*cos(rad));
+                outer_y=(float)((radius+ringwidth)*sin(rad));
+            }
+            else{
+                outer_x=(float)((radius-ringwidth)*cos(rad));
+                outer_y=(float)((radius-ringwidth)*sin(rad));
+            }
+            //Log.wtf(LOG_TAG,"alpha "+i+" " +rad/Math.PI*180+" radius="+Math.sqrt(outer_x*outer_x+outer_y*outer_y));
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }//Верхушка
+
+        V.ROUNDED_TRIANGLE_OUTCENTER = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
 }
 
 std::vector<GLfloat> VertexLoader::getVerticles(){

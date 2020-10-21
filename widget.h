@@ -62,5 +62,6 @@ private:
     void drawRound(float centerX, float centerY, float radius);
     void drawLowpolyRound(float centerX, float centerY, float radius);
     void drawRoundedTriangleInCenter(float centerX, float centerY, float sizeScale, float orientation);
+    void drawRoundedTriangleOutCenter(float centerX, float centerY, float sizeScale, float orientation);
 };
 #endif // WIDGET_H
