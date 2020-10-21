@@ -152,9 +152,9 @@ void Widget::paintGL(){
     drawLowpolyRound(-200, 200, 25);
     drawRoundedTriangleInCenter(-100, 200, 25, 0);
     drawRoundedTriangleOutCenter(-100, 200, 25, 0);
-    /*drawPlus(-300, 100, 25 / 5f, 45);
-    drawEllipse(-200, 100, 3, -45);
-    drawTriangle(-100, 100, 25, -90);*/
+    drawPlus(-300, 100, 25 / 5., 45);
+    //drawEllipse(-200, 100, 3, -45);
+    //drawTriangle(-100, 100, 25, -90);
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -322,4 +322,13 @@ void Widget::drawRoundedTriangleOutCenter(float centerX, float centerY, float si
     tempMatrix.rotate(orientation,0,0,1);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(ROUNDED_TRIANGLE_OUTCENTER);
+}
+
+void Widget::drawPlus(float centerX, float centerY, float sizeScale, float orientation){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation,0,0,1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(PLUS);
 }

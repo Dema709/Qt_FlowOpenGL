@@ -264,6 +264,64 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         V.ROUNDED_TRIANGLE_OUTCENTER = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
+
+    {
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16*2+10;//Количество вершин для плюсика *2+10
+
+        float radius = 1; float distToRadius=4;
+        int outerVertexCount=(VERTEX_COUNT-10)/2;
+
+        current_vertices.push_back(0);
+        current_vertices.push_back(0);
+        current_vertices.push_back(radius);
+        current_vertices.push_back(radius);
+
+        float percent, rad, outer_x, outer_y;
+
+        for (int i=0;i<outerVertexCount/2+1;++i){
+            percent=(i/(float)(outerVertexCount));
+            rad=(float)(percent*2*M_PI);
+            outer_x=(float)(radius*cos(rad));
+            outer_y=distToRadius+(float)(radius*sin(rad));
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }//Верхушка
+        current_vertices.push_back(-radius);current_vertices.push_back(radius);
+        for (int i=0;i<outerVertexCount/2+1;++i){
+            percent=(i/(float)(outerVertexCount));
+            //Log.wtf(LOG_TAG,"angle "+percent*360);
+            rad=(float)(percent*2*M_PI);
+            outer_x=-distToRadius-(float)(radius*sin(rad));
+            outer_y=(float)(radius*cos(rad));
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }//Левая часть
+        current_vertices.push_back(-radius);current_vertices.push_back(-radius);
+        for (int i=0;i<outerVertexCount/2+1;++i){
+            percent=(i/(float)(outerVertexCount));
+            //Log.wtf(LOG_TAG,"angle "+percent*360);
+            rad=(float)(percent*2*M_PI);
+            outer_x=-(float)(radius*cos(rad));
+            outer_y=-distToRadius-(float)(radius*sin(rad));
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }//Низ
+        current_vertices.push_back(radius);current_vertices.push_back(-radius);
+        for (int i=0;i<outerVertexCount/2+1;++i){
+            percent=(i/(float)(outerVertexCount));
+            //Log.wtf(LOG_TAG,"angle "+percent*360);
+            rad=(float)(percent*2*M_PI);
+            outer_x=distToRadius+(float)(radius*sin(rad));
+            outer_y=-(float)(radius*cos(rad));
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }//Правая часть
+        current_vertices.push_back(radius);current_vertices.push_back(radius);
+
+        V.PLUS = {vertices.size()/2, current_vertices.size()/2, GL_TRIANGLE_FAN};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
 }
 
 std::vector<GLfloat> VertexLoader::getVerticles(){
