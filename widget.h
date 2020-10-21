@@ -55,5 +55,7 @@ private:
             QVector<qint64> delay_vector_for_fps;
         #endif
     #endif
+
+    void drawAxes();
 };
 #endif // WIDGET_H

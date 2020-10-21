@@ -259,6 +259,26 @@ void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
 
     mMatrix.setToIdentity();//Сброс матрицы
+    /*
+
+                    resizeGL ->>>>>>>
+                    float ortho_half_widht, ortho_half_height, base = 360;
+                    if (width>height){
+                        ortho_half_height = base;
+                        ortho_half_widht = base * width / height;
+                    } else {
+                        ortho_half_widht = base;
+                        ortho_half_height = base * height / width;
+                    }
+
+
+                    float pos_x, pos_y;
+                    pos_x = 60; pos_y = 0;
+
+
+                    mMatrix.ortho(-ortho_half_widht,ortho_half_widht,-ortho_half_height,ortho_half_height,0,1);
+                    mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
+    */
     //mMatrix.scale(0.5/2.5);
     mMatrix.scale(1/500.);//-500 ... 500
     //mMatrix.translate(0,0.5);
@@ -327,3 +347,14 @@ void Widget::calculateFPS(){
         cur_frame++;
 }
 #endif//#if FPS_DEBUG
+
+void Widget::drawAxes(){
+    glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());//Как bindMatrix();
+    glLineWidth(3);
+
+    glUniform4f(uColorLocation, 1, 0, 0, 1);//Красная ось x
+    glDrawArrays(V.ASIX.mode, V.ASIX.index, V.ASIX.count/2);
+
+    glUniform4f(uColorLocation, 0, 1, 0, 1);//Зелёная ось y
+    glDrawArrays(V.ASIX.mode, V.ASIX.index + V.ASIX.count/2, V.ASIX.count/2);
+}
