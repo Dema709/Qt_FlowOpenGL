@@ -13,7 +13,7 @@ Widget::Widget(QWidget *parent)
     : QGLWidget(parent), particle(20)
 {
     qDebug()<<"Widget constructor";
-    VertexLoader vertexLoader;
+    VertexLoader vertexLoader(21);//Animation frames
     V = vertexLoader.getVertex();
     vertices = vertexLoader.getVerticles();
 
@@ -47,38 +47,13 @@ void Widget::initializeGL(){
     glClearColor(0,0x6D/255., 0xBB/255., 0);//Цвет фона
     glEnable(GL_BLEND);glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);//Прозрачность
 
-    /*vertices = {
-        //Исходные данные для треугольника
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.0f,  0.5f,
-        //Ось x
-        -1, 0,
-         1, 0,
-        //Ось y
-        0, -1,
-        0, 1,
-    };*/
-
         //См. https://habr.com/ru/post/311808/
         initializeGLFunctions();//Для включения функций, так как виджет унаследован от protected QGLFunctions
-        //GLfloat vertices[] = {-0.5f, -0.5f, 0.0f,    0.5f, -0.5f, 0.0f,          0.0f,  0.5f, 0.0f        };
         GLuint VBO;
         glGenBuffers(1, &VBO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-        /*//Добавочка для проверки sizeof(vertices), связана с каким-то приколом подсчёта занимаемого места
-        unsigned long long real_size1, vec_size2;
-        {
-            GLfloat v1[] =              {-0.5f, -0.5f, 0.0f,    0.5f, -0.5f, 0.0f,          0.0f,  0.5f};
-            std::vector<GLfloat> v2 =   {-0.5f, -0.5f, 0.0f,    0.5f, -0.5f, 0.0f,          0.0f,  0.5f};
-            real_size1 = sizeof(v1); vec_size2 = sizeof(v2);
-            qDebug()<<sizeof(v1)<<sizeof(v2);
-        }*/
-
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &(vertices[0]), GL_STATIC_DRAW);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size(), &(vertices[0]), GL_STATIC_DRAW);
-        //sizeof(vertices) В оригинале без умножения! Но для вектора как-то неправильно считается
+        //В оригинале без умножения, sizeof(vertices) для массива. Но для вектора так неправильно считается
 
         GLuint vertexShader;
         vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -128,19 +103,14 @@ void Widget::initializeGL(){
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
 
-
-        //Добавочка с https://stackoverflow.com/questions/42359575/implementing-a-fragment-shader-that-behaves-similar-to-glcolor4f
         uColorLocation = glGetUniformLocation(shaderProgram, "u_Color");
         glUniform4f(uColorLocation, 1, 0, 0, 1);//Красный цвет по умолчанию
 
-        //И из android приложения на счёт матрицы
         uMatrixLocation = glGetUniformLocation(shaderProgram, "u_Matrix");
-        //QMatrix4x4 mMatrix;
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());//Матрица по умолчанию
 
         //Начальные положения мышки
-        mouse_pos_x = width()/2; mouse_pos_y=height()/2;
-        //qDebug()<<mouse_pos_x<<mouse_pos_y;
+        mouse_pos_x = width()/2; mouse_pos_y=height()/2;        //qDebug()<<mouse_pos_x<<mouse_pos_y;
 
         QTimer *timer = new QTimer(this);
         timer->setTimerType(Qt::PreciseTimer);//Precise timers try to keep millisecond accuracy
@@ -155,53 +125,23 @@ void Widget::initializeGL(){
         #endif
 
         dt_timer.start();//Таймер для определения dt для физики
-        timer->start(invertFPS); // И запустим таймер
+        timer->start(invertFPS); //Таймер для вызова функции расчёта физики (и последующей отрисовки)
 
         qDebug()<<"initializeGL end";
 };
 void Widget::paintGL(){
     //qDebug()<<"paintGL";
+
     #if FPS_DEBUG
         calculateFPS();
     #endif
-
-    /*QMatrix4x4 mMatrix;
-    mMatrix.perspective(0,1,-5,5);
-    glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());*/
-    /*
-        float eyeX = 0;
-        float eyeY = 0;
-        float eyeZ = 3;
-
-        // точка направления камеры
-        float centerX = 0;
-        float centerY = 0;
-        float centerZ = 0;
-
-        // up-вектор
-        float upX = 0;
-        float upY = 1;
-        float upZ = 0;
-    */
-    //mMatrix.lookAt({0,0,3},{0,0,0},{0,1,0});
-    //matrix.perspective(0,1,-5,5);
-    //mMatrix.ortho(-1,1,-1,1,-5,5);
-    //mMatrix.scale(1.);//Больше - ближе
-    //mat4 zzzzzz = gperspective(90.0f, 1.0f, 0.1f, 100.0f);
-
-    /*
-    Then instead of using.
-    shaders->setUniformValue(projIndex, QMatrix4x4(glm::value_ptr(proj)) );
-    you must use :
-    shaders->setUniformValue(projIndex, QMatrix4x4(glm::value_ptr(proj)).transposed());
-    */
-
 
     glClearColor(0.9,0.9,1, 0);//Цвет фона
     glClear(GL_COLOR_BUFFER_BIT);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    #define DRAW(figure_name) glDrawArrays(V.figure_name.mode,V.figure_name.index,V.figure_name.count)
+    #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
+    #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
     if (true){//Тестовое отображение всех фигур
         glLineWidth(3.0f);
@@ -257,6 +197,25 @@ void Widget::paintGL(){
             glUniform4f(uColorLocation, 0, 0, 1, 0.7);
             glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
             DRAW(LOWPOLY_ROUND);//Низкополигональный круг
+        }
+
+        for (int i=0; i<21; i++)
+        {
+            QMatrix4x4 tempMatrix(mMatrix);
+            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
+            tempMatrix.scale(500./30/6);    figure_n++;
+            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
+            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+            DRAW_A(BEZIER, i);//Кривая Безье (лапка)
+
+
+
+/*
+            QMatrix4x4 tempMatrix; tempMatrix.scale(1./30);
+            glUniform4f(uColorLocation, 0, 0, 1, 0.3);
+            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+            DRAW_A(BEZIER, i);//glDrawArrays(V.BEZIER.mode, V.BEZIER.index+V.BEZIER.count*i, V.BEZIER.count);
+            */
         }
 
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
@@ -317,7 +276,7 @@ void Widget::resizeGL(int width, int height){
 
 void Widget::slotUpdatePosition()
 {
-    qint64 dt = dt_timer.elapsed();
+    float dt = dt_timer.elapsed() / 1000.;
     dt_timer.start();
 
     particle.updatePosition(dt);

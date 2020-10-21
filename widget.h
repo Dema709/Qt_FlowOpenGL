@@ -8,7 +8,7 @@
 #include "VertexLoader.h"
 #include "particle.h"//Временно, пока не уберётся в уровень
 
-#define FPS_DEBUG true
+#define FPS_DEBUG false
 #define FPS_DEBUG_DETAILED true //Работает только при (FPS_DEBUG == true)
 
 class Widget : public QGLWidget, protected QGLFunctions
@@ -39,7 +39,7 @@ private:
 
     Particle particle;
 
-    int invertFPS = 1000./50;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
+    int invertFPS = 1000/50;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
     //FPS выше 60 смысла ставить нет (?)
     QElapsedTimer dt_timer;
 

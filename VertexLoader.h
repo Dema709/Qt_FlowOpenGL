@@ -15,6 +15,8 @@ struct VertexPair{
 };
 
 struct Vertex{
+    int ANIMATION_FRAMES;//Количество кадров для анимации, должно выходить из требуемого FPS
+
     //Начальный номер для вершин фигуры и их количество
     VertexPair ASIX;
     VertexPair SQUARE;
@@ -28,14 +30,13 @@ struct Vertex{
 class VertexLoader
 {
 public:
-    VertexLoader();//Инициализация, создаёт массив вершин и связанную структуру, хранящую индексы моделей
+    VertexLoader(int ANIMATION_FRAMES_);//Инициализация, создаёт массив вершин и связанную структуру, хранящую индексы моделей
     std::vector<GLfloat> getVerticles();
     Vertex getVertex();
 
 private:
     Vertex V;
     std::vector<GLfloat> vertices;
-    int ANIMATION_FRAMES;//Количество кадров для анимации, должно выходить из требуемого FPS
 };
 
 #endif // VERTEX_INITIALIZATION

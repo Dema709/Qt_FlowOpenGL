@@ -2,8 +2,11 @@
 
 #include <QDebug>//Временное включение для отладки
 
-VertexLoader::VertexLoader()
+VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION_FRAMES_)
 {
+    V.ANIMATION_FRAMES = ANIMATION_FRAMES_;
+    int ANIMATION_FRAMES = ANIMATION_FRAMES_;//Чтобы не менять конструкторы-заполнители с вершин
+
     {
         //Оси
         std::vector<GLfloat> current_vertices = {
@@ -109,35 +112,34 @@ VertexLoader::VertexLoader()
     }
 
     {
-        //Лапки у type0 еды - через кривые безье
         std::vector<GLfloat> current_vertices;
-        //VERTEX_BEZIER_COUNT = 16+1;
-        /*
+        int VERTEX_BEZIER_COUNT = 16+1;
         float x0, y0, x1, y1, x2=0, y2 = 0; float animationStatus=0;
-        x0 = 0; y0 = 11-4.5f; x1 = 0; y1 = 18-4.5f;
-        for (int j=0;j<ANIMATION_FRAMES;++j) {
-            animationStatus=(j/(float)(ANIMATION_FRAMES-1));
-            x2 = -15*animationStatus; y2 = 28-10*animationStatus;//-4.5f;
-            outerVertexCount=VERTEX_BEZIER_COUNT;
-            for (int i=0;i<outerVertexCount;++i){
-                percent=(i/(float)(outerVertexCount-1));
-                if (i%2==0)//Чётные числа для внешего радиуса
-                {
-                    outer_x=(x0*(1-percent)*(1-percent)+2*percent*(1-percent)*x1+percent*percent*x2);
-                    outer_y=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*y1+percent*percent*y2);
+                x0 = 0; y0 = 11-4.5f; x1 = 0; y1 = 18-4.5f;
+                for (int j=0;j<ANIMATION_FRAMES;++j) {
+                    animationStatus=(j/(float)(ANIMATION_FRAMES-1));
+                    x2 = -15*animationStatus; y2 = 28-10*animationStatus;//-4.5f;
+                    int outerVertexCount=VERTEX_BEZIER_COUNT;
+                    for (int i=0;i<outerVertexCount;++i){
+                        float percent=(i/(float)(outerVertexCount-1));
+                        float outer_x, outer_y;
+                        if (i%2==0)//Чётные числа для внешего радиуса
+                        {
+                            outer_x=(x0*(1-percent)*(1-percent)+2*percent*(1-percent)*x1+percent*percent*x2);
+                            outer_y=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*y1+percent*percent*y2);
+                        }
+                        else{//Дополнительная кривая Безье для толщины
+                            outer_x=((x0+3)*(1-percent)*(1-percent)+2*percent*(1-percent)*(x1+2)+percent*percent*(x2+2*animationStatus*animationStatus));
+                            outer_y=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*(y1+2)+percent*percent*(y2+2*(1-animationStatus)*(1-animationStatus)));
+                            //Множители вроде animationStatus в квадрате, чтобы окончания крылышек не были прямоугольными
+                        }
+                        current_vertices.push_back(outer_x);
+                        current_vertices.push_back(outer_y);
+                    }
                 }
-                else{//Дополнительная кривая Безье для толщины
-                    outer_x=((x0+3)*(1-percent)*(1-percent)+2*percent*(1-percent)*(x1+2)+percent*percent*(x2+2*animationStatus*animationStatus));
-                    outer_y=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*(y1+2)+percent*percent*(y2+2*(1-animationStatus)*(1-animationStatus)));
-                    //Множители вроде animationStatus в квадрате, чтобы окончания крылышек не были прямоугольными
-                }
-                vertices[idx++]=outer_x;
-                vertices[idx++]=outer_y;
-                if (POSITION_COUNT==3) vertices[idx++]=0;
-            }
-        }
-        */
+
         //Вызов будет происходить для переопределённого DRAW и вычисления первой точки на основе текущего кадра анимации
+        qDebug()<<"V.BEZIER"<<current_vertices.size()/2;
         V.BEZIER = {vertices.size()/2, current_vertices.size()/2/ANIMATION_FRAMES, GL_TRIANGLE_STRIP};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
