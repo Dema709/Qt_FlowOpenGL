@@ -61,5 +61,6 @@ private:
     void drawPentagon(float centerX, float centerY, float sizeScale, float orientation);
     void drawRound(float centerX, float centerY, float radius);
     void drawLowpolyRound(float centerX, float centerY, float radius);
+    void drawRoundedTriangleInCenter(float centerX, float centerY, float sizeScale, float orientation);
 };
 #endif // WIDGET_H

@@ -113,13 +113,13 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
 
     {
         std::vector<GLfloat> current_vertices;
-        int VERTEX_BEZIER_COUNT = 16+1;
+        int VERTEX_COUNT = 16+1;
         float x0, y0, x1, y1, x2=0, y2 = 0; float animationStatus=0;
                 x0 = 0; y0 = 11-4.5f; x1 = 0; y1 = 18-4.5f;
                 for (int j=0;j<ANIMATION_FRAMES;++j) {
                     animationStatus=(j/(float)(ANIMATION_FRAMES-1));
                     x2 = -15*animationStatus; y2 = 28-10*animationStatus;//-4.5f;
-                    int outerVertexCount=VERTEX_BEZIER_COUNT;
+                    int outerVertexCount=VERTEX_COUNT;
                     for (int i=0;i<outerVertexCount;++i){
                         float percent=(i/(float)(outerVertexCount-1));
                         float outer_x, outer_y;
@@ -159,6 +159,58 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
             (float)(1.1*cos(M_PI*2/5*5)), (float)(1.1*sin(M_PI*2/5*5)),
         };
         V.PENTAGON = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+    {
+        //Треугольник в 60 градусов с выгнутой круглой стороной
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16+7;
+        float radius = 1, ringwidth = 0.1/2;
+        float dAngle = 15. / 2 * M_PI / 180;
+
+        current_vertices.push_back((-2*radius+(radius+ringwidth)*cos(30*M_PI/180.-dAngle)));
+        current_vertices.push_back(((radius+ringwidth)*sin(30*M_PI/180.-dAngle)));
+
+        current_vertices.push_back((-2*radius+(radius+ringwidth)*cos(30*M_PI/180.)));
+        current_vertices.push_back(((radius+ringwidth)*sin(30*M_PI/180.)));
+
+        current_vertices.push_back(-ringwidth*4);
+        current_vertices.push_back(0);
+
+        current_vertices.push_back(0);
+        current_vertices.push_back(0);
+
+        current_vertices.push_back((-2*radius+(radius+ringwidth)*cos(-30*M_PI/180.+dAngle)));
+        current_vertices.push_back(((radius+ringwidth)*sin(-30*M_PI/180.+dAngle)));
+
+        current_vertices.push_back((-2*radius+(radius+ringwidth)*cos(-30*M_PI/180.)));
+        current_vertices.push_back(((radius+ringwidth)*sin(-30*M_PI/180.)));
+
+        current_vertices.push_back((-2*radius+(radius+ringwidth)*cos(-30*M_PI/180.)));
+        current_vertices.push_back(((radius+ringwidth)*sin(-30*M_PI/180.)));
+
+        int outerVertexCount=VERTEX_COUNT-7;
+        float percent, rad, outer_x, outer_y;
+        for (int i=0;i<outerVertexCount;++i){
+            if (i==outerVertexCount-1) percent=((i-1)/(float)(outerVertexCount-2));
+            else percent=(i/(float)(outerVertexCount-2));
+            rad=(float)((percent-0.5f)*2*M_PI*60/360);
+            //Log.wtf(LOG_TAG,"percent="+percent+" rad="+rad);
+            if (i%2!=0){
+                outer_x=(float)(-2*radius+(radius+ringwidth)*cos(rad));
+                outer_y=(float)((radius+ringwidth)*sin(rad));
+            }
+            else{
+                outer_x=(float)(-2*radius+(radius-ringwidth)*cos(rad));
+                outer_y=(float)((radius-ringwidth)*sin(rad));
+            }
+
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }
+
+        V.ROUNDED_TRIANGLE_INCENTER = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 

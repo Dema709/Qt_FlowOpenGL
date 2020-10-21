@@ -25,7 +25,8 @@ struct Vertex{
     VertexPair ROUND;
     VertexPair LOWPOLY_ROUND;
     VertexPair BEZIER;//Лапки у type0 еды - через кривые безье
-    VertexPair PENTAGON;//Лапки у type0 еды - через кривые безье
+    VertexPair PENTAGON;//Пятиугольник с средним радиусом 1 и толщиной стенки 0.2f
+    VertexPair ROUNDED_TRIANGLE_INCENTER;//Треугольник в 60 градусов с выгнутой круглой стороной
 };
 
 class VertexLoader
