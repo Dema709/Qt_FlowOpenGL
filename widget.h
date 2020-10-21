@@ -57,5 +57,9 @@ private:
     #endif
 
     void drawAxes();
+    void drawSquare(float centerX, float centerY, float sizeScale, float orientation = 0);
+    void drawPentagon(float centerX, float centerY, float sizeScale, float orientation);
+    void drawRound(float centerX, float centerY, float radius);
+    void drawLowpolyRound(float centerX, float centerY, float radius);
 };
 #endif // WIDGET_H

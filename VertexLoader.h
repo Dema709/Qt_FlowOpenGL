@@ -25,6 +25,7 @@ struct Vertex{
     VertexPair ROUND;
     VertexPair LOWPOLY_ROUND;
     VertexPair BEZIER;//Лапки у type0 еды - через кривые безье
+    VertexPair PENTAGON;//Лапки у type0 еды - через кривые безье
 };
 
 class VertexLoader

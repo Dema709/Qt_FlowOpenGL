@@ -138,12 +138,29 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
                     }
                 }
 
-        //Вызов будет происходить для переопределённого DRAW и вычисления первой точки на основе текущего кадра анимации
-        qDebug()<<"V.BEZIER"<<current_vertices.size()/2;
         V.BEZIER = {vertices.size()/2, current_vertices.size()/2/ANIMATION_FRAMES, GL_TRIANGLE_STRIP};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
+    {
+        //Пятиугольник с средним радиусом 1 и толщиной стенки 0.2f
+        std::vector<GLfloat> current_vertices = {
+            (float)(0.9*cos(M_PI*2/5*0)), (float)(0.9*sin(M_PI*2/5*0)),
+            (float)(1.1*cos(M_PI*2/5*0)), (float)(1.1*sin(M_PI*2/5*0)),
+            (float)(0.9*cos(M_PI*2/5*1)), (float)(0.9*sin(M_PI*2/5*1)),
+            (float)(1.1*cos(M_PI*2/5*1)), (float)(1.1*sin(M_PI*2/5*1)),
+            (float)(0.9*cos(M_PI*2/5*2)), (float)(0.9*sin(M_PI*2/5*2)),
+            (float)(1.1*cos(M_PI*2/5*2)), (float)(1.1*sin(M_PI*2/5*2)),
+            (float)(0.9*cos(M_PI*2/5*3)), (float)(0.9*sin(M_PI*2/5*3)),
+            (float)(1.1*cos(M_PI*2/5*3)), (float)(1.1*sin(M_PI*2/5*3)),
+            (float)(0.9*cos(M_PI*2/5*4)), (float)(0.9*sin(M_PI*2/5*4)),
+            (float)(1.1*cos(M_PI*2/5*4)), (float)(1.1*sin(M_PI*2/5*4)),
+            (float)(0.9*cos(M_PI*2/5*5)), (float)(0.9*sin(M_PI*2/5*5)),
+            (float)(1.1*cos(M_PI*2/5*5)), (float)(1.1*sin(M_PI*2/5*5)),
+        };
+        V.PENTAGON = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
 
 }
 

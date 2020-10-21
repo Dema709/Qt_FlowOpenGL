@@ -143,124 +143,37 @@ void Widget::paintGL(){
     #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
-    if (true){//Тестовое отображение всех фигур
-        glLineWidth(3.0f);
-        glUniform4f(uColorLocation, 1, 0, 0, 1);//Красная ось x
-        glDrawArrays(V.ASIX.mode, V.ASIX.index, V.ASIX.count/2);
-
-        glUniform4f(uColorLocation, 0, 1, 0, 1);//Зелёная ось y
-        glDrawArrays(V.ASIX.mode, V.ASIX.index + V.ASIX.count/2, V.ASIX.count/2);
-
-        int figure_n = 0, max_figures_in_row = 10;//Текущий номер фигуры
-        float start_x = -450, start_y = -450;//Начальное смещение по осям
-        float dx = 100, dy = 100;
-        {
-            QMatrix4x4 tempMatrix(mMatrix);
-            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
-            tempMatrix.scale(50);    figure_n++;
-            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
-            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-            DRAW(SQUARE);//Квадрат
-        }
-
-        {
-            QMatrix4x4 tempMatrix(mMatrix);
-            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
-            tempMatrix.scale(6);    figure_n++;
-            glUniform4f(uColorLocation, 0, 0, 1, 0.2);
-            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-            DRAW(PARTICLE);//Частица
-        }
-
-        {
-            QMatrix4x4 tempMatrix(mMatrix);
-            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
-            tempMatrix.scale(3);    tempMatrix.rotate(45,0,0,1);   figure_n++;
-            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
-            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-            DRAW(ELLIPSE);//Эллипс
-        }
-
-        {
-            QMatrix4x4 tempMatrix(mMatrix);
-            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
-            tempMatrix.scale(40);    figure_n++;
-            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
-            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-            DRAW(ROUND);//Круг
-        }
-
-        {
-            QMatrix4x4 tempMatrix(mMatrix);
-            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
-            tempMatrix.scale(40);    figure_n++;
-            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
-            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-            DRAW(LOWPOLY_ROUND);//Низкополигональный круг
-        }
-
-        for (int i=0; i<21; i++)
-        {
-            QMatrix4x4 tempMatrix(mMatrix);
-            tempMatrix.translate(start_x+dx*(figure_n%max_figures_in_row), start_y+dy*(figure_n/max_figures_in_row));
-            tempMatrix.scale(500./30/6);    figure_n++;
-            glUniform4f(uColorLocation, 0, 0, 1, 0.7);
-            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-            DRAW_A(BEZIER, i);//Кривая Безье (лапка)
-
-
-
-/*
-            QMatrix4x4 tempMatrix; tempMatrix.scale(1./30);
-            glUniform4f(uColorLocation, 0, 0, 1, 0.3);
-            glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-            DRAW_A(BEZIER, i);//glDrawArrays(V.BEZIER.mode, V.BEZIER.index+V.BEZIER.count*i, V.BEZIER.count);
-            */
-        }
-
-        glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
-    }
-
-
-
-    //
-
-
-    //DRAW(PARTICLE);
-    /*{
-    QMatrix4x4 tempMatrix(mMatrix);
-    tempMatrix.translate(1,0);
-    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-    DRAW(SQUARE);
-    glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
-    }*/
-/*
-    for (int i=0; i<particle.getCount(); i++){
-        QMatrix4x4 tempMatrix(mMatrix);
-        float maxLifetime = particle.getMaxLifeTime();
-        glUniform4f(uColorLocation, 0, 0, 1, (0.5 - abs(particle.getLifetime(i) - maxLifetime / 2.) / maxLifetime) * 0.26);//Цвет
-        tempMatrix.translate(-particle.getX(i), -particle.getY(i));
-        glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
-        DRAW(PARTICLE);
-        glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
-    }*/
-
-    {/*
-        openGLRenderer.drawEllipse(currentX, currentY,1+0.2f*multiplSize, orientation * 180 / (float) Math.PI);
-        openGLRenderer.drawLowpolyRound(currentX, currentY,3.5f);
-        openGLRenderer.drawLowpolyRoundTransfered(currentX, currentY,3.5f,orientation * 180 / (float) Math.PI,8.4f,0);
-        openGLRenderer.drawLowpolyRoundTransfered(currentX, currentY,3.5f,orientation * 180 / (float) Math.PI,-8.4f,0);
-        openGLRenderer.drawBezier(currentX, currentY,0.7f*1.5f,orientation * 180 / (float) Math.PI, multiplSnake);
-        */
-
-    }
+    drawAxes();
+    glUniform4f(uColorLocation, 0, 0, 1, 0.7);
+    drawSquare(-300, 300, 50);
+    drawSquare(-200, 300, 50, 45);
+    drawPentagon(-100, 300, 25, 0);
+    drawRound(-300, 200, 25);
+    drawLowpolyRound(-200, 200, 25);
+    /*drawRoundedTriangleInCenter(-100, 200, 25, 0);
+    drawRoundedTriangleOutCenter(-100, 200, 25, 0);
+    drawPlus(-300, 100, 25 / 5f, 45);
+    drawEllipse(-200, 100, 3, -45);
+    drawTriangle(-100, 100, 25, -90);*/
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
 
     mMatrix.setToIdentity();//Сброс матрицы
-    /*
 
+    float ortho_half_widht, ortho_half_height, base = 360;
+    if (width>height){
+        ortho_half_height = base;
+        ortho_half_widht = base * width / height;
+    } else {
+        ortho_half_widht = base;
+        ortho_half_height = base * height / width;
+    }
+    mMatrix.ortho(-ortho_half_widht,ortho_half_widht,-ortho_half_height,ortho_half_height,0,1);
+    float pos_x=0, pos_y=0;
+    mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
+
+    /*
                     resizeGL ->>>>>>>
                     float ortho_half_widht, ortho_half_height, base = 360;
                     if (width>height){
@@ -280,14 +193,14 @@ void Widget::resizeGL(int width, int height){
                     mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
     */
     //mMatrix.scale(0.5/2.5);
-    mMatrix.scale(1/500.);//-500 ... 500
+    //mMatrix.scale(1/500.);//-500 ... 500
     //mMatrix.translate(0,0.5);
-
+/*
     if (width<height){
         mMatrix.scale(static_cast<float>(height)/width, 1);
     } else {
         mMatrix.scale(1, static_cast<float>(width)/height);
-    }
+    }*/
 
     glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
 
@@ -358,3 +271,37 @@ void Widget::drawAxes(){
     glUniform4f(uColorLocation, 0, 1, 0, 1);//Зелёная ось y
     glDrawArrays(V.ASIX.mode, V.ASIX.index + V.ASIX.count/2, V.ASIX.count/2);
 }
+
+void Widget::drawSquare(float centerX, float centerY, float sizeScale, float orientation){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.scale(sizeScale);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());//Как bindMatrix();
+    DRAW(SQUARE);
+}//Нарисовать квадрат со стороной sizeScale
+
+void Widget::drawPentagon(float centerX, float centerY, float sizeScale, float orientation){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.scale(sizeScale);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(PENTAGON);
+}
+
+void Widget::drawRound(float centerX, float centerY, float radius){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(ROUND);
+}//Нарисовать заполненный круг вершинами
+
+void Widget::drawLowpolyRound(float centerX, float centerY, float radius){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(LOWPOLY_ROUND);
+}//Нарисовать заполненный круг вершинами
