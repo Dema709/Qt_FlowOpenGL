@@ -34,6 +34,8 @@ struct Vertex{
     VertexPair RING2;//Кольцо с средним радиусом 1 и толщиной 0,3773584905660377
     VertexPair RING3;//Кольцо с средним радиусом 1 и толщиной 0,1f
     VertexPair HALFRING;//Полукольцо с средним радиусом 1 и толщиной 0,1886792452830189. Верхняя часть
+    VertexPair MOUTH;//Рот у ГГ - через кривые безье
+    VertexPair SHARKBODY;//Тело акулки //4 части * 3 точки у треугольника
 };
 
 class VertexLoader
@@ -46,6 +48,10 @@ public:
 private:
     Vertex V;
     std::vector<GLfloat> vertices;
+
+    //Убрать!
+    void sharkBodyBezier1(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX);
+    void sharkBodyBezier2(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX);
 };
 
 #endif // VERTEX_INITIALIZATION

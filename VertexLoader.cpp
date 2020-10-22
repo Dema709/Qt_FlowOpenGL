@@ -460,12 +460,139 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
+    {
+        //Тело акулки //4 части * 3 точки у треугольника
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16;
+
+        std::vector<float> vertexVector(2);
+        float deltaX=3;//Толщина линий
+        float outerVertexCount = VERTEX_COUNT;//Для быстрого перевода с java, убрать!
+        float animationStatus, percent, x0, y0, x1, y1, x2, y2;
+        for (int j=0;j<ANIMATION_FRAMES;++j) {
+            animationStatus = (j / (float) (ANIMATION_FRAMES - 1));
+
+            x0 = -36; y0 = -499;
+            x1 = 560; y1 = -329;//1.4f - масштабный множитель
+            x2 = 960; y2 = 0;
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                sharkBodyBezier1(vertexVector, i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+            }
+
+            //Здесь -vertexVector[1]
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                sharkBodyBezier1(vertexVector,i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+            }
+
+            x0 = -36; y0 = -499;
+            x1 = -302; y1 = -164;
+            x2 = -1113 - 410 * animationStatus; y2 = 0;
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                sharkBodyBezier2(vertexVector,i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(vertexVector[1]);
+                }
+            }
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                sharkBodyBezier2(vertexVector,i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    sharkBodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);current_vertices.push_back(-vertexVector[1]);
+                }
+            }
+
+        }
 
 
 
-
-
-
+        V.SHARKBODY = {vertices.size()/2, current_vertices.size()/2/ANIMATION_FRAMES,GL_TRIANGLES};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
 
     if (vertices.size()%2){
         qDebug()<<"ERROR::VertexLoader. Vertices init size:"<<vertices.size();
@@ -480,3 +607,31 @@ std::vector<GLfloat> VertexLoader::getVerticles(){
 Vertex VertexLoader::getVertex(){
     return std::move(V);
 }
+
+void VertexLoader::sharkBodyBezier1(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX){
+    //std::vector<float> whatIshouldReturn(2);
+    if (side%2==0)
+    {
+        whatIshouldReturn[0]= (x0*(1-percent)*(1-percent)+2*percent*(1-percent)*x1+percent*percent*x2);
+        whatIshouldReturn[1]=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*y1+percent*percent*y2);
+    }
+    else{//Дополнительная кривая Безье для толщины
+        whatIshouldReturn[0]= ((x0+3*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(x1-4*deltaX)+percent*percent*(x2-12*deltaX));
+        whatIshouldReturn[1]=((y0+10*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(y1+8*deltaX)+percent*percent*(y2));
+    }
+    //return whatIshouldReturn;
+}//Убрать!
+
+void VertexLoader::sharkBodyBezier2(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX){
+    //std::vector<float> whatIshouldReturn(2);
+    if (side%2==0)//Чётные числа для внешего радиуса
+    {
+        whatIshouldReturn[0]=(x0*(1-percent)*(1-percent)+2*percent*(1-percent)*x1+percent*percent*x2);
+        whatIshouldReturn[1]=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*y1+percent*percent*y2);
+    }
+    else{//Дополнительная кривая Безье для толщины
+        whatIshouldReturn[0]=((x0+3*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(x1+12*deltaX)+percent*percent*(x2+20*deltaX*(2+animationStatus)));
+        whatIshouldReturn[1]=((y0+10*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(y1+12*deltaX)+percent*percent*(y2));
+    }
+    //return whatIshouldReturn;
+}//Убрать!

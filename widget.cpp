@@ -144,7 +144,7 @@ void Widget::paintGL(){
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
     drawAxes();
-    glUniform4f(uColorLocation, 0, 0, 1, 0.7);
+    glUniform4f(uColorLocation, 0, 0, 1, 0.5);
     drawSquare(-300, 300, 50);
     drawSquare(-200, 300, 50, 45);
     drawPentagon(-100, 300, 25, 0);
@@ -176,12 +176,12 @@ void Widget::paintGL(){
     drawHalfRings(-200, -200, 25, 45, 0);
     drawHalfRings(-100, -200, 25, 45, 30);
 
-//    drawMouth(-300, -300, -45, 0);
-//    drawMouth(-200, -300, -45, 0.5f);
-//    drawMouth(-100, -300, -45, 1);
+    drawMouth(-300, -300, -45, 0);
+    drawMouth(-200, -300, -45, 0.5f);
+    drawMouth(-100, -300, -45, 1);
 
-//    drawSharkBody(-450, 350, 45, 0, 0.1f);
-//    drawSharkBody(-580, 350, 45, 1, 0.1f);
+    drawSharkBody(-450, 250, 45, 0, 0.1f);
+    drawSharkBody(-580, 250, 45, 1, 0.1f);
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -535,3 +535,31 @@ void Widget::drawHalfRings(float centerX, float centerY, float radius, float ori
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(HALFRING);
 }//Нарисовать два полукруга как открытый рот
+
+void Widget::drawMouth(float centerX, float centerY, float orientation, float multiplSnake){
+    int frame = multiplSnake * (V.ANIMATION_FRAMES - 1);//Кадр анимации
+
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,0,0,1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(MOUTH, frame);
+
+    tempMatrix = mMatrix;
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.scale(1,-1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(MOUTH, frame);
+}//Рот ГГ
+
+void Widget::drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish){
+    int frame = multiplSnake * (V.ANIMATION_FRAMES - 1);//Кадр анимации
+
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.scale(scaleForLittleOrBigFish);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(SHARKBODY, frame);
+}

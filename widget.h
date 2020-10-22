@@ -78,5 +78,10 @@ private:
     void drawBezier4(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);//Для еды типа 6 (сзади два, чуть поодаль друг от друга)
     void drawHalfRing(float centerX, float centerY, float radius);//Нарисовать полукруг (верхняя часть)
     void drawHalfRings(float centerX, float centerY, float radius, float orientation, float rotationForEating);//Нарисовать два полукруга как открытый рот
+    void drawMouth(float centerX, float centerY, float orientation, float multiplSnake);//Рот ГГ
+
+    void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
+
+
 };
 #endif // WIDGET_H
