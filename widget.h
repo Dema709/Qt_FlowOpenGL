@@ -8,8 +8,10 @@
 #include "VertexLoader.h"
 #include "particle.h"//Временно, пока не уберётся в уровень
 
+#include <mutex>
+
 #define FPS_DEBUG false
-#define FPS_DEBUG_DETAILED true //Работает только при (FPS_DEBUG == true)
+#define FPS_DEBUG_DETAILED false //Работает только при (FPS_DEBUG == true)
 
 class Widget : public QGLWidget, protected QGLFunctions
 {
@@ -82,6 +84,9 @@ private:
 
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
 
+    std::mutex window_size_mutex;
 
+    std::mutex mouse_control_mutex;
+    //Для mouse_pos_x, mouse_pos_y, is_mouse_pressed
 };
 #endif // WIDGET_H

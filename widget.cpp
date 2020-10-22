@@ -143,6 +143,7 @@ void Widget::paintGL(){
     #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
+    if (!true){
     drawAxes();
     glUniform4f(uColorLocation, 0, 0, 1, 0.5);
     drawSquare(-300, 300, 50);
@@ -182,6 +183,7 @@ void Widget::paintGL(){
 
     drawSharkBody(-450, 250, 45, 0, 0.1f);
     drawSharkBody(-580, 250, 45, 1, 0.1f);
+    }
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -245,23 +247,24 @@ void Widget::slotUpdatePosition()
 
 void Widget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-   //qDebug()<<mouseEvent->pos().x()<<mouseEvent->pos().y();
-   mouse_pos_x = mouseEvent->pos().x();
-   mouse_pos_y = mouseEvent->pos().y();
-
-   //updateGL();
+    //qDebug()<<mouseEvent->pos().x()<<mouseEvent->pos().y();
+    std::lock_guard<std::mutex> lockGuard(mouse_control_mutex);
+    mouse_pos_x = mouseEvent->pos().x();
+    mouse_pos_y = mouseEvent->pos().y();
 }
 
 void Widget::mousePressEvent(QMouseEvent*)
 {
-   qDebug()<<"press";
-   is_mouse_pressed = true;
+    //qDebug()<<"press";
+    std::lock_guard<std::mutex> lockGuard(mouse_control_mutex);
+    is_mouse_pressed = true;
 }
 
 void Widget::mouseReleaseEvent(QMouseEvent*)
 {
-   qDebug()<<"release";
-   is_mouse_pressed = false;
+    //qDebug()<<"release";
+    std::lock_guard<std::mutex> lockGuard(mouse_control_mutex);
+    is_mouse_pressed = false;
 }
 
 #if FPS_DEBUG

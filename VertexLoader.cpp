@@ -339,7 +339,6 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
-
     {
         //Кольцо с средним радиусом 1 и толщиной 0,1886792452830189
         std::vector<GLfloat> current_vertices;
@@ -598,6 +597,7 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         qDebug()<<"ERROR::VertexLoader. Vertices init size:"<<vertices.size();
         assert(false);
     }
+    qDebug()<<"vertices:"<<vertices.size()*sizeof(float)/1024<<"kB";
 }
 
 std::vector<GLfloat> VertexLoader::getVerticles(){
