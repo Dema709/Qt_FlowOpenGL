@@ -106,11 +106,19 @@ void Widget::initializeGL(){
         uColorLocation = glGetUniformLocation(shaderProgram, "u_Color");
         glUniform4f(uColorLocation, 1, 0, 0, 1);//Красный цвет по умолчанию
 
+        //Настройка матрицы обзора (View + Projection Matrix)
+        float pos_x=0, pos_y=0;
+        mMatrix.setToIdentity();//Сброс матрицы
+        mMatrix.ortho(-half_widht,half_widht,-half_height,half_height,0,1);
+        mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
+
         uMatrixLocation = glGetUniformLocation(shaderProgram, "u_Matrix");
-        glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());//Матрица по умолчанию
+        glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
 
         //Начальные положения мышки
-        mouse_pos_x = width()/2; mouse_pos_y=height()/2;        //qDebug()<<mouse_pos_x<<mouse_pos_y;
+        mouse_pos_x = width()/2; mouse_pos_y = height()/2;        //qDebug()<<mouse_pos_x<<mouse_pos_y;
+        //Начальные положения размера окна
+        half_widht = mouse_pos_x; half_height = mouse_pos_y;
 
         QTimer *timer = new QTimer(this);
         timer->setTimerType(Qt::PreciseTimer);//Precise timers try to keep millisecond accuracy
@@ -132,18 +140,24 @@ void Widget::initializeGL(){
 void Widget::paintGL(){
     //qDebug()<<"paintGL";
 
+    //Настройка матрицы обзора (View + Projection Matrix)
+    float pos_x=0, pos_y=0;
+    mMatrix.setToIdentity();//Сброс матрицы
+    mMatrix.ortho(-half_widht,half_widht,-half_height,half_height,0,1);
+    mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
+    //Без загрузки сразу в память
+
     #if FPS_DEBUG
         calculateFPS();
     #endif
 
     glClearColor(0.9,0.9,1, 0);//Цвет фона
-    glClear(GL_COLOR_BUFFER_BIT);
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
-    if (!true){
+    if (true){
     drawAxes();
     glUniform4f(uColorLocation, 0, 0, 1, 0.5);
     drawSquare(-300, 300, 50);
@@ -188,6 +202,18 @@ void Widget::paintGL(){
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
 
+    {
+        std::lock_guard<std::mutex> lockGuard(window_size_mutex);
+        if (width>height){
+            half_height = view_base;
+            half_widht = view_base * width / height;
+        } else {
+            half_widht = view_base;
+            half_height = view_base * height / width;
+        }
+    }
+    //////////////////////////////////////////////Далее - временная затычка
+/*
     mMatrix.setToIdentity();//Сброс матрицы
 
     float ortho_half_widht, ortho_half_height, base = 360;
@@ -201,7 +227,7 @@ void Widget::resizeGL(int width, int height){
     mMatrix.ortho(-ortho_half_widht,ortho_half_widht,-ortho_half_height,ortho_half_height,0,1);
     float pos_x=0, pos_y=0;
     mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
-
+*/
     /*
                     resizeGL ->>>>>>>
                     float ortho_half_widht, ortho_half_height, base = 360;
@@ -231,7 +257,7 @@ void Widget::resizeGL(int width, int height){
         mMatrix.scale(1, static_cast<float>(width)/height);
     }*/
 
-    glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
+    //glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
 
     glViewport(0, 0, (GLint)width, (GLint)height);
 };

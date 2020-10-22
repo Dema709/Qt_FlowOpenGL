@@ -41,7 +41,7 @@ private:
 
     Particle particle;
 
-    int invertFPS = 1000/50;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
+    int invertFPS = 1000/20;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
     //FPS выше 60 смысла ставить нет (?)
     QElapsedTimer dt_timer;
 
@@ -84,8 +84,10 @@ private:
 
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
 
+    int view_base = 360;//Минимальная половина зона обзора по одной из осей
+    int half_widht, half_height;//Половинные размеры зоны обзора для подсчёта матрицы
     std::mutex window_size_mutex;
-
+    //Для half_widht, half_height
     std::mutex mouse_control_mutex;
     //Для mouse_pos_x, mouse_pos_y, is_mouse_pressed
 };
