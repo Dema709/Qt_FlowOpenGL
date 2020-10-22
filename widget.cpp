@@ -168,9 +168,20 @@ void Widget::paintGL(){
     drawBezier3(500, 100, 2, 0, 0);
     drawBezier3(550, 100, 2, 0, 0.5f);
     drawBezier3(600, 100, 2, 0, 1);
-//    drawBezier4(500, 0, 2, 0, 0);
-//    drawBezier4(550, 0, 2, 0, 0.5f);
-//    drawBezier4(600, 0, 2, 0, 1);
+    drawBezier4(500, 0, 2, 0, 0);
+    drawBezier4(550, 0, 2, 0, 0.5f);
+    drawBezier4(600, 0, 2, 0, 1);
+
+//    drawHalfRing(-300, -200, 25);
+//    drawHalfRings(-200, -200, 25, 45, 0);
+//    drawHalfRings(-100, -200, 25, 45, 30);
+
+//    drawMouth(-300, -300, -45, 0);
+//    drawMouth(-200, -300, -45, 0.5f);
+//    drawMouth(-100, -300, -45, 1);
+
+//    drawSharkBody(-450, 350, 45, 0, 0.1f);
+//    drawSharkBody(-580, 350, 45, 1, 0.1f);
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -458,37 +469,39 @@ void Widget::drawBezier2(float centerX, float centerY, float sizeScale, float or
 }//Для еды типа 3 (сзади два)
 
 void Widget::drawBezier3(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake) {
-//    Matrix.setIdentityM(mModelMatrix, 0);
-//   Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
-//   if (multiplSnake>=0.5){
-//       Matrix.scaleM(mModelMatrix,0,sizeScale,sizeScale,1);
-//       Matrix.rotateM(mModelMatrix,0,orientation+90,0,0,1);
-//       Matrix.translateM(mModelMatrix,0,-1,1,0);//Состыковка
-//       bindMatrix();
-//       glDrawArrays(GL_TRIANGLE_STRIP,VERTEX_SUM_BEZIER_COUNT+VERTEX_BEZIER_COUNT*Math.round((multiplSnake-0.5f)*2*(ANIMATION_FRAMES-1)),VERTEX_BEZIER_COUNT);
-//   }
-//   else{
-//       Matrix.scaleM(mModelMatrix,0,sizeScale,-sizeScale,1);
-//       Matrix.rotateM(mModelMatrix,0,-orientation+90,0,0,1);
-//       Matrix.translateM(mModelMatrix,0,-1,1,0);
-//       bindMatrix();
-//       glDrawArrays(GL_TRIANGLE_STRIP,VERTEX_SUM_BEZIER_COUNT+VERTEX_BEZIER_COUNT*Math.round((1-multiplSnake*2)*(ANIMATION_FRAMES-1)),VERTEX_BEZIER_COUNT);
-//   }//Зеркалим
-    //int frame = multiplSnake * (V.ANIMATION_FRAMES - 1);//Кадр анимации
-    int frame;
+    int frame;//Кадр анимации
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     if (multiplSnake>=0.5){
         tempMatrix.scale(sizeScale);
         tempMatrix.rotate(orientation+90,0,0,1);
-        frame = (multiplSnake-0.5f)*2*(V.ANIMATION_FRAMES - 1);//Math.round((multiplSnake-0.5f)*2*(ANIMATION_FRAMES-1))
+        frame = (multiplSnake-0.5f)*2*(V.ANIMATION_FRAMES - 1);
     } else {
         tempMatrix.scale(sizeScale, -sizeScale);
         tempMatrix.rotate(-orientation+90,0,0,1);
-        frame = (1-multiplSnake*2)*(V.ANIMATION_FRAMES - 1);//Math.round((1-multiplSnake*2)*(ANIMATION_FRAMES-1))
+        frame = (1-multiplSnake*2)*(V.ANIMATION_FRAMES - 1);
     }
     tempMatrix.translate(-1,1);//Состыковка
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
-
 }//Для еды типа 4 (сзади один)
+
+void Widget::drawBezier4(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake){
+    int frame = multiplSnake * (V.ANIMATION_FRAMES - 1);//Кадр анимации
+
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation+90,0,0,1);
+    tempMatrix.translate(-5,0);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(BEZIER,frame);
+
+    tempMatrix = mMatrix;
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale, -sizeScale);
+    tempMatrix.rotate(-orientation+90,0,0,1);
+    tempMatrix.translate(-5,0);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(BEZIER,frame);
+}//Для еды типа 6 (сзади два, чуть поодаль друг от друга)
