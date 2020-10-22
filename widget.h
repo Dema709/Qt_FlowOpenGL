@@ -74,5 +74,6 @@ private:
     void drawRing3Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
     void drawBezier(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);//Для еды типа 0 (по бокам)
     void drawBezier2(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);//Для еды типа 3 (сзади два)
+    void drawBezier3(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);//Для еды типа 4 (сзади один)
 };
 #endif // WIDGET_H
