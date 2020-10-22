@@ -418,6 +418,55 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
+    {
+        //Полукольцо с средним радиусом 1 и толщиной 0,1886792452830189. Верхняя часть
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16;
+        float radius = 1, ringwidth = 0.1886792452830189/2;
+
+        current_vertices.push_back(sqrt(pow(radius-ringwidth,2)-pow(2*ringwidth,2))-0.0175f);
+        current_vertices.push_back(ringwidth*2);
+
+        current_vertices.push_back(-sqrt(pow(radius-ringwidth,2)-pow(2*ringwidth,2))+0.0175f);
+        current_vertices.push_back(ringwidth*2);
+
+        current_vertices.push_back(radius-ringwidth);
+        current_vertices.push_back(0);
+
+        current_vertices.push_back(-(radius-ringwidth));
+        current_vertices.push_back(0);
+
+        current_vertices.push_back(-radius);
+        current_vertices.push_back(0);
+
+        float percent, rad, outer_x, outer_y;
+        for (int i=0;i<VERTEX_COUNT+2;i++){
+            if (i%2==0)//Чётные числа для внешего радиуса
+            {
+                percent=(0.5f*i/(float)(VERTEX_COUNT));
+                rad=(float)(percent*2*M_PI);
+                outer_x=(float)((radius+ringwidth)*cos(rad));
+                outer_y=(float)((radius+ringwidth)*sin(rad));
+            }
+            else{
+                outer_x=(float)((radius-ringwidth)*cos(rad));
+                outer_y=(float)((radius-ringwidth)*sin(rad));
+            }
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }
+
+        V.HALFRING = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+
+
+
+
+
+
+
     if (vertices.size()%2){
         qDebug()<<"ERROR::VertexLoader. Vertices init size:"<<vertices.size();
         assert(false);

@@ -172,9 +172,9 @@ void Widget::paintGL(){
     drawBezier4(550, 0, 2, 0, 0.5f);
     drawBezier4(600, 0, 2, 0, 1);
 
-//    drawHalfRing(-300, -200, 25);
-//    drawHalfRings(-200, -200, 25, 45, 0);
-//    drawHalfRings(-100, -200, 25, 45, 30);
+    drawHalfRing(-300, -200, 25);
+    drawHalfRings(-200, -200, 25, 45, 0);
+    drawHalfRings(-100, -200, 25, 45, 30);
 
 //    drawMouth(-300, -300, -45, 0);
 //    drawMouth(-200, -300, -45, 0.5f);
@@ -505,3 +505,33 @@ void Widget::drawBezier4(float centerX, float centerY, float sizeScale, float or
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
 }//Для еды типа 6 (сзади два, чуть поодаль друг от друга)
+
+void Widget::drawHalfRing(float centerX, float centerY, float radius){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(HALFRING);
+}//Нарисовать полукруг (верхняя часть)
+void Widget::drawHalfRings(float centerX, float centerY, float radius, float orientation, float rotationForEating){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.scale(radius);
+    tempMatrix.translate(-1.0943396226415094+(float)cos(rotationForEating/180*M_PI),(float)sin(rotationForEating/180*M_PI));
+    tempMatrix.rotate(rotationForEating,0,0,1);
+    tempMatrix.translate(0.0943396226415094f,0);//Сдвиг в исходной системе из-за рамки
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(HALFRING);
+
+    tempMatrix = mMatrix;
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.scale(radius);
+    tempMatrix.translate(-1.0943396226415094+(float)cos(rotationForEating/180*M_PI),(float)sin(-rotationForEating/180*M_PI));
+    tempMatrix.rotate(-rotationForEating,0,0,1);
+    tempMatrix.scale(1,-1);//Зеркалим нижнюю челюсть
+    tempMatrix.translate(0.0943396226415094f,0);//Сдвиг в исходной системе из-за рамки
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(HALFRING);
+}//Нарисовать два полукруга как открытый рот
