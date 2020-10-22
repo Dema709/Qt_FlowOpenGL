@@ -162,9 +162,9 @@ void Widget::paintGL(){
     drawBezier(500, 300, 2, 0, 0);
     drawBezier(550, 300, 2, 0, 0.5f);
     drawBezier(600, 300, 2, 0, 1);
-//    drawBezier2(500, 200, 2, 0, 0);
-//    drawBezier2(550, 200, 2, 0, 0.5f);
-//    drawBezier2(600, 200, 2, 0, 1);
+    drawBezier2(500, 200, 2, 0, 0);
+    drawBezier2(550, 200, 2, 0, 0.5f);
+    drawBezier2(600, 200, 2, 0, 1);
 //    drawBezier3(500, 100, 2, 0, 0);
 //    drawBezier3(550, 100, 2, 0, 0.5f);
 //    drawBezier3(600, 100, 2, 0, 1);
@@ -437,4 +437,36 @@ void Widget::drawBezier(float centerX, float centerY, float sizeScale, float ori
     tempMatrix.rotate(-orientation,0,0,1);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
-}
+}//Для еды типа 0 (по бокам)
+
+void Widget::drawBezier2(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake){
+    /*
+     * Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
+        Matrix.scaleM(mModelMatrix,0,sizeScale,sizeScale,1);
+        Matrix.rotateM(mModelMatrix,0,orientation+90,0,0,1);
+        bindMatrix();
+        glDrawArrays(GL_TRIANGLE_STRIP,VERTEX_SUM_BEZIER_COUNT+VERTEX_BEZIER_COUNT*Math.round(multiplSnake*(ANIMATION_FRAMES-1)),VERTEX_BEZIER_COUNT);
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
+        Matrix.scaleM(mModelMatrix,0,sizeScale,-sizeScale,1);
+        Matrix.rotateM(mModelMatrix,0,-orientation+90,0,0,1);
+        bindMatrix();
+        glDrawArrays(GL_TRIANGLE_STRIP,VERTEX_SUM_BEZIER_COUNT+VERTEX_BEZIER_COUNT*Math.round(multiplSnake*(ANIMATION_FRAMES-1)),VERTEX_BEZIER_COUNT);
+        */
+    int frame = multiplSnake * (V.ANIMATION_FRAMES - 1);//Кадр анимации
+
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation+90,0,0,1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(BEZIER,frame);
+
+    tempMatrix = mMatrix;
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale, -sizeScale);
+    tempMatrix.rotate(-orientation+90,0,0,1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(BEZIER,frame);
+}//Для еды типа 3 (сзади два)

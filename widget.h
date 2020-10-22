@@ -72,6 +72,7 @@ private:
     void drawRingTransfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
     void drawRing2Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
     void drawRing3Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
-    void drawBezier(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);
+    void drawBezier(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);//Для еды типа 0 (по бокам)
+    void drawBezier2(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);//Для еды типа 3 (сзади два)
 };
 #endif // WIDGET_H
