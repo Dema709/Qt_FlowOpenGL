@@ -30,6 +30,9 @@ struct Vertex{
     VertexPair ROUNDED_TRIANGLE_OUTCENTER;//Треугольник в 60 градусов с вогнутой круглой стороной
     VertexPair PLUS;//Плюсик
     VertexPair TRIANGLE;//Треугольник
+    VertexPair RING1;//Кольцо с средним радиусом 1 и толщиной 0,1886792452830189
+    VertexPair RING2;//Кольцо с средним радиусом 1 и толщиной 0,3773584905660377
+    VertexPair RING3;//Кольцо с средним радиусом 1 и толщиной 0,1f
 };
 
 class VertexLoader

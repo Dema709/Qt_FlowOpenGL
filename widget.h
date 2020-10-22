@@ -66,5 +66,11 @@ private:
     void drawPlus(float centerX, float centerY, float sizeScale, float orientation);
     void drawEllipse(float centerX, float centerY, float sizeScale, float orientation);
     void drawTriangle(float centerX, float centerY, float radius, float orientation);
+    void drawRing(float centerX, float centerY, float radius);
+    void drawRing2(float centerX, float centerY, float radius);
+    void drawRing3(float centerX, float centerY, float radius);
+    void drawRingTransfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
+    void drawRing2Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
+    void drawRing3Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
 };
 #endif // WIDGET_H

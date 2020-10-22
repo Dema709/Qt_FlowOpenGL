@@ -155,6 +155,9 @@ void Widget::paintGL(){
     drawPlus(-300, 100, 25 / 5., 45);
     drawEllipse(-200, 100, 3, -45);
     drawTriangle(-100, 100, 25, -90);
+    drawRing2(-300, -100, 25);
+    drawRing(-200, -100, 25);
+    drawRing3(-100, -100, 25);
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -349,4 +352,58 @@ void Widget::drawTriangle(float centerX, float centerY, float radius, float orie
     tempMatrix.rotate(orientation,0,0,1);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(TRIANGLE);
+}
+
+void Widget::drawRing(float centerX, float centerY, float radius){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(RING1);
+}
+
+void Widget::drawRing2(float centerX, float centerY, float radius){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(RING2);
+}
+
+void Widget::drawRing3(float centerX, float centerY, float radius){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(RING3);
+}
+
+void Widget::drawRingTransfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.translate(offsetX/radius,offsetY/radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(RING1);
+}
+
+void Widget::drawRing2Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.translate(offsetX/radius,offsetY/radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(RING2);
+}
+
+void Widget::drawRing3Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.translate(offsetX/radius,offsetY/radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(RING3);
 }

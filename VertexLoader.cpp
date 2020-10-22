@@ -339,6 +339,85 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
+
+    {
+        //Кольцо с средним радиусом 1 и толщиной 0,1886792452830189
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16*2+2;
+        float radius = 1, ringwidth = 0.1886792452830189f/2;
+        float percent, rad, outer_x, outer_y;
+        for (int i=0;i<VERTEX_COUNT;++i){
+            percent=(i/(float)(VERTEX_COUNT-2));
+            rad=(float)(percent*2*M_PI);
+            if (i%2==0)//Чётные числа для внешего радиуса
+            {
+                outer_x=(float)((radius+ringwidth)*cos(rad));
+                outer_y=(float)((radius+ringwidth)*sin(rad));
+            }
+            else{
+                outer_x=(float)((radius-ringwidth)*cos(rad));
+                outer_y=(float)((radius-ringwidth)*sin(rad));
+            }
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }
+
+        V.RING1 = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+    {
+        //Кольцо с средним радиусом 1 и толщиной 0,3773584905660377
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16*2+2;
+        float radius = 1, ringwidth = 0.3773584905660377/2;
+        float percent, rad, outer_x, outer_y;
+        for (int i=0;i<VERTEX_COUNT;++i){
+            percent=(i/(float)(VERTEX_COUNT-2));
+            rad=(float)(percent*2*M_PI);
+            if (i%2==0)//Чётные числа для внешего радиуса
+            {
+                outer_x=(float)((radius+ringwidth)*cos(rad));
+                outer_y=(float)((radius+ringwidth)*sin(rad));
+            }
+            else{
+                outer_x=(float)((radius-ringwidth)*cos(rad));
+                outer_y=(float)((radius-ringwidth)*sin(rad));
+            }
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }
+
+        V.RING2 = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+    {
+        //Кольцо с средним радиусом 1 и толщиной 0,1
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16*2+2;
+        float radius = 1, ringwidth = 0.1/2;
+        float percent, rad, outer_x, outer_y;
+        for (int i=0;i<VERTEX_COUNT;++i){
+            percent=(i/(float)(VERTEX_COUNT-2));
+            rad=(float)(percent*2*M_PI);
+            if (i%2==0)//Чётные числа для внешего радиуса
+            {
+                outer_x=(float)((radius+ringwidth)*cos(rad));
+                outer_y=(float)((radius+ringwidth)*sin(rad));
+            }
+            else{
+                outer_x=(float)((radius-ringwidth)*cos(rad));
+                outer_y=(float)((radius-ringwidth)*sin(rad));
+            }
+            current_vertices.push_back(outer_x);
+            current_vertices.push_back(outer_y);
+        }
+
+        V.RING3 = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
     if (vertices.size()%2){
         qDebug()<<"ERROR::VertexLoader. Vertices init size:"<<vertices.size();
         assert(false);
