@@ -72,5 +72,6 @@ private:
     void drawRingTransfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
     void drawRing2Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
     void drawRing3Transfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
+    void drawBezier(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake);
 };
 #endif // WIDGET_H

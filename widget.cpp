@@ -158,6 +158,19 @@ void Widget::paintGL(){
     drawRing2(-300, -100, 25);
     drawRing(-200, -100, 25);
     drawRing3(-100, -100, 25);
+
+    drawBezier(500, 300, 2, 0, 0);
+    drawBezier(550, 300, 2, 0, 0.5f);
+    drawBezier(600, 300, 2, 0, 1);
+//    drawBezier2(500, 200, 2, 0, 0);
+//    drawBezier2(550, 200, 2, 0, 0.5f);
+//    drawBezier2(600, 200, 2, 0, 1);
+//    drawBezier3(500, 100, 2, 0, 0);
+//    drawBezier3(550, 100, 2, 0, 0.5f);
+//    drawBezier3(600, 100, 2, 0, 1);
+//    drawBezier4(500, 0, 2, 0, 0);
+//    drawBezier4(550, 0, 2, 0, 0.5f);
+//    drawBezier4(600, 0, 2, 0, 1);
 };
 void Widget::resizeGL(int width, int height){
     qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -406,4 +419,22 @@ void Widget::drawRing3Transfered(float centerX, float centerY, float radius, flo
     tempMatrix.translate(offsetX/radius,offsetY/radius);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(RING3);
+}
+
+void Widget::drawBezier(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake) {
+    int frame = multiplSnake * (V.ANIMATION_FRAMES - 1);//Кадр анимации
+
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation,0,0,1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(BEZIER,frame);
+
+    tempMatrix = mMatrix;
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale, -sizeScale);
+    tempMatrix.rotate(-orientation,0,0,1);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW_A(BEZIER,frame);
 }
