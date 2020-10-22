@@ -322,6 +322,27 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         V.PLUS = {vertices.size()/2, current_vertices.size()/2, GL_TRIANGLE_FAN};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
+
+    {
+        //Треугольник
+        std::vector<GLfloat> current_vertices = {
+            (float)((1-0.16)*cos(M_PI*2/3*0)),(float)((1-0.16)*sin(M_PI*2/3*0)),
+            (float)((1+0.16)*cos(M_PI*2/3*0)),(float)((1+0.16)*sin(M_PI*2/3*0)),
+            (float)((1-0.16)*cos(M_PI*2/3*1)),(float)((1-0.16)*sin(M_PI*2/3*1)),
+            (float)((1+0.16)*cos(M_PI*2/3*1)),(float)((1+0.16)*sin(M_PI*2/3*1)),
+            (float)((1-0.16)*cos(M_PI*2/3*2)),(float)((1-0.16)*sin(M_PI*2/3*2)),
+            (float)((1+0.16)*cos(M_PI*2/3*2)),(float)((1+0.16)*sin(M_PI*2/3*2)),
+            (float)((1-0.16)*cos(M_PI*2/3*3)),(float)((1-0.16)*sin(M_PI*2/3*3)),
+            (float)((1+0.16)*cos(M_PI*2/3*3)),(float)((1+0.16)*sin(M_PI*2/3*3)),
+        };
+        V.TRIANGLE = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+    if (vertices.size()%2){
+        qDebug()<<"ERROR::VertexLoader. Vertices init size:"<<vertices.size();
+        assert(false);
+    }
 }
 
 std::vector<GLfloat> VertexLoader::getVerticles(){

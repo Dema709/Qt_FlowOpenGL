@@ -29,6 +29,7 @@ struct Vertex{
     VertexPair ROUNDED_TRIANGLE_INCENTER;//Треугольник в 60 градусов с выгнутой круглой стороной
     VertexPair ROUNDED_TRIANGLE_OUTCENTER;//Треугольник в 60 градусов с вогнутой круглой стороной
     VertexPair PLUS;//Плюсик
+    VertexPair TRIANGLE;//Треугольник
 };
 
 class VertexLoader
