@@ -2,6 +2,7 @@
 #define PARTICLE_H
 
 #include <vector>
+class Widget;
 
 class Particle
 {
@@ -13,6 +14,7 @@ public:
     float getLifetime(int);
     float getMaxLifeTime();
     void updatePosition(float dt);
+    void draw(Widget& widget);
 private:
     int count;
     std::vector<std::vector<float>> pos_n_lifetime;//pos_x, pox_y, lifetime

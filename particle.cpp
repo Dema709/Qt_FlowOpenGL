@@ -2,6 +2,7 @@
 #include "random.hpp"
 
 #include <QDebug>//Временно
+#include "widget.h"/////////////////?
 
 Particle::Particle(int count_, float maxLifeTime_, float maxRange_)
     : count(count_), maxLifeTime(maxLifeTime_), maxRange(maxRange_)
@@ -47,7 +48,16 @@ void Particle::updatePosition(float dt){//Принимает количеств�
             pos_n_lifetime[i][1] = effolkronium::random_static::get(-maxRange,maxRange);
             //Добавить сюда зависимость от положения гг
         }
-
     }
+}
 
+void Particle::draw(Widget& widget){
+    //qDebug()<<"Drawing:";
+
+    for (auto p : pos_n_lifetime){
+        float alpha = (0.5 - abs(p[2] - maxLifeTime / 2.) / maxLifeTime) * 0.26;
+        //widget.drawPatricle(p[0], p[1], 1);
+        widget.drawPatricle(p[0], p[1], alpha);
+        //qDebug()<<p[0]<<p[1]<<p[2];
+    }
 }

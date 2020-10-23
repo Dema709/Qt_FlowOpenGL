@@ -9,8 +9,10 @@
     #include <algorithm>//Для FPS_DEBUG_DETAILED
 #endif
 
+#include "particle.h"///////////////////////////?
+
 Widget::Widget(QWidget *parent)
-    : QGLWidget(parent), particle(20)
+    : QGLWidget(parent), particle(20*1000,1,1000)
 {
     qDebug()<<"Widget constructor";
     VertexLoader vertexLoader(21);//Animation frames
@@ -140,10 +142,15 @@ void Widget::initializeGL(){
 void Widget::paintGL(){
     //qDebug()<<"paintGL";
 
+    std::lock_guard<std::mutex> globalLockGuard(global_mutex);
+
     //Настройка матрицы обзора (View + Projection Matrix)
     float pos_x=0, pos_y=0;
     mMatrix.setToIdentity();//Сброс матрицы
-    mMatrix.ortho(-half_widht,half_widht,-half_height,half_height,0,1);
+    {
+        std::lock_guard<std::mutex> screenLockGuard(screen_size_mutex);
+        mMatrix.ortho(-half_widht,half_widht,-half_height,half_height,0,1);
+    }
     mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
     //Без загрузки сразу в память
 
@@ -151,13 +158,14 @@ void Widget::paintGL(){
         calculateFPS();
     #endif
 
-    glClearColor(0.9,0.9,1, 0);//Цвет фона
+    glClearColor(0,(float)0x6D/255, (float)0xBB/255, 0);//Цвет фона
+    //glClearColor(0.9,0.9,1, 0);//Цвет фона
     glClear(GL_COLOR_BUFFER_BIT);    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
-    if (true){
+    if (!true){
     drawAxes();
     glUniform4f(uColorLocation, 0, 0, 1, 0.5);
     drawSquare(-300, 300, 50);
@@ -198,12 +206,14 @@ void Widget::paintGL(){
     drawSharkBody(-450, 250, 45, 0, 0.1f);
     drawSharkBody(-580, 250, 45, 1, 0.1f);
     }
+
+    particle.draw(*this);
 };
 void Widget::resizeGL(int width, int height){
-    qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
+    //qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
 
     {
-        std::lock_guard<std::mutex> lockGuard(window_size_mutex);
+        std::lock_guard<std::mutex> screenLockGuard(screen_size_mutex);
         if (width>height){
             half_height = view_base;
             half_widht = view_base * width / height;
@@ -211,85 +221,61 @@ void Widget::resizeGL(int width, int height){
             half_widht = view_base;
             half_height = view_base * height / width;
         }
+        qDebug()<<"resizeGL. half_widht:"<<half_widht<<"; half_height:"<<half_height;
     }
-    //////////////////////////////////////////////Далее - временная затычка
-/*
-    mMatrix.setToIdentity();//Сброс матрицы
-
-    float ortho_half_widht, ortho_half_height, base = 360;
-    if (width>height){
-        ortho_half_height = base;
-        ortho_half_widht = base * width / height;
-    } else {
-        ortho_half_widht = base;
-        ortho_half_height = base * height / width;
-    }
-    mMatrix.ortho(-ortho_half_widht,ortho_half_widht,-ortho_half_height,ortho_half_height,0,1);
-    float pos_x=0, pos_y=0;
-    mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
-*/
-    /*
-                    resizeGL ->>>>>>>
-                    float ortho_half_widht, ortho_half_height, base = 360;
-                    if (width>height){
-                        ortho_half_height = base;
-                        ortho_half_widht = base * width / height;
-                    } else {
-                        ortho_half_widht = base;
-                        ortho_half_height = base * height / width;
-                    }
-
-
-                    float pos_x, pos_y;
-                    pos_x = 60; pos_y = 0;
-
-
-                    mMatrix.ortho(-ortho_half_widht,ortho_half_widht,-ortho_half_height,ortho_half_height,0,1);
-                    mMatrix.lookAt({pos_x,pos_y,1},{pos_x,pos_y,0},{0,1,0});
-    */
-    //mMatrix.scale(0.5/2.5);
-    //mMatrix.scale(1/500.);//-500 ... 500
-    //mMatrix.translate(0,0.5);
-/*
-    if (width<height){
-        mMatrix.scale(static_cast<float>(height)/width, 1);
-    } else {
-        mMatrix.scale(1, static_cast<float>(width)/height);
-    }*/
-
-    //glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix.constData());
 
     glViewport(0, 0, (GLint)width, (GLint)height);
 };
 
 void Widget::slotUpdatePosition()
 {
+    //Все подсчёты перед отображением
+
+    //Получение прошеднего времени с расчёта прошлого кадра
     float dt = dt_timer.elapsed() / 1000.;
     dt_timer.start();
 
-    particle.updatePosition(dt);
+    //Потокобезопасные переменные для дальнейших расчётов
+    int mouse_pos_x_, mouse_pos_y_;
+    bool is_mouse_pressed_;
+    {
+        std::lock_guard<std::mutex> mouseLockGuard(mouse_control_mutex);
+        mouse_pos_x_ = mouse_pos_x;
+        mouse_pos_y_ = mouse_pos_y;
+        is_mouse_pressed_ = is_mouse_pressed;
+    }
+    int half_height_, half_widht_;
+    {
+        std::lock_guard<std::mutex> screenLockGuard(screen_size_mutex);
+        half_height_ = half_height;
+        half_widht_ = half_widht;
+    }
+
+    //Расчёт физики и перемещения
+    {
+        std::lock_guard<std::mutex> globalLockGuard(global_mutex);
+        particle.updatePosition(dt);
+    }
+
     updateGL();
 }
 
 void Widget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-    //qDebug()<<mouseEvent->pos().x()<<mouseEvent->pos().y();
-    std::lock_guard<std::mutex> lockGuard(mouse_control_mutex);
+    std::lock_guard<std::mutex> mouseLockGuard(mouse_control_mutex);
     mouse_pos_x = mouseEvent->pos().x();
     mouse_pos_y = mouseEvent->pos().y();
 }
 
 void Widget::mousePressEvent(QMouseEvent*)
 {
-    //qDebug()<<"press";
-    std::lock_guard<std::mutex> lockGuard(mouse_control_mutex);
+    std::lock_guard<std::mutex> mouseLockGuard(mouse_control_mutex);
     is_mouse_pressed = true;
 }
 
 void Widget::mouseReleaseEvent(QMouseEvent*)
 {
-    //qDebug()<<"release";
-    std::lock_guard<std::mutex> lockGuard(mouse_control_mutex);
+    std::lock_guard<std::mutex> mouseLockGuard(mouse_control_mutex);
     is_mouse_pressed = false;
 }
 
@@ -591,4 +577,12 @@ void Widget::drawSharkBody(float centerX, float centerY, float orientation, floa
     tempMatrix.scale(scaleForLittleOrBigFish);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(SHARKBODY, frame);
+}
+
+void Widget::drawPatricle(float centerX, float centerY, float alpha){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    glUniform4f(uColorLocation, 1, 1, 1, alpha);
+    DRAW(PARTICLE);
 }
