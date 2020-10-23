@@ -45,7 +45,7 @@ private:
     //FPS выше 60 смысла ставить нет (?)
     QElapsedTimer dt_timer;
 
-    int mouse_pos_x, mouse_pos_y;
+    float mouse_pos_x, mouse_pos_y;
     bool is_mouse_pressed = false;
 
     #if FPS_DEBUG
@@ -59,9 +59,10 @@ private:
     #endif
 
     int view_base = 360;//Минимальная половина зона обзора по одной из осей
-    int half_widht, half_height;//Половинные размеры зоны обзора для подсчёта матрицы
+    float half_widht, half_height;//Половинные размеры зоны обзора для подсчёта матрицы (соотношение сторон)
+    float screen_widht, screen_height;//Размеры окна
     std::mutex screen_size_mutex;
-    //Для half_widht, half_height
+    //Для half_widht, half_height, screen_widht, screen_height
     std::mutex mouse_control_mutex;
     //Для mouse_pos_x, mouse_pos_y, is_mouse_pressed
     std::mutex global_mutex;
@@ -95,6 +96,5 @@ public:
 
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
     void drawPatricle(float centerX, float centerY, float alpha);
-
 };
 #endif // WIDGET_H

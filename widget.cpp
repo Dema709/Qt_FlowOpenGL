@@ -12,7 +12,7 @@
 #include "particle.h"///////////////////////////?
 
 Widget::Widget(QWidget *parent)
-    : QGLWidget(parent), particle(20*1000,1,1000)
+    : QGLWidget(parent), particle(20*10,10,1000)
 {
     qDebug()<<"Widget constructor";
     VertexLoader vertexLoader(21);//Animation frames
@@ -121,6 +121,7 @@ void Widget::initializeGL(){
         mouse_pos_x = width()/2; mouse_pos_y = height()/2;        //qDebug()<<mouse_pos_x<<mouse_pos_y;
         //Начальные положения размера окна
         half_widht = mouse_pos_x; half_height = mouse_pos_y;
+        screen_widht = mouse_pos_x*2; screen_height = mouse_pos_y*2;
 
         QTimer *timer = new QTimer(this);
         timer->setTimerType(Qt::PreciseTimer);//Precise timers try to keep millisecond accuracy
@@ -145,7 +146,7 @@ void Widget::paintGL(){
     std::lock_guard<std::mutex> globalLockGuard(global_mutex);
 
     //Настройка матрицы обзора (View + Projection Matrix)
-    float pos_x=0, pos_y=0;
+    float pos_x=0, pos_y=0;//Временно!
     mMatrix.setToIdentity();//Сброс матрицы
     {
         std::lock_guard<std::mutex> screenLockGuard(screen_size_mutex);
@@ -207,6 +208,10 @@ void Widget::paintGL(){
     drawSharkBody(-580, 250, 45, 1, 0.1f);
     }
 
+    drawAxes();//Временно:
+    float x_to_draw = (mouse_pos_x-screen_widht /2) / screen_widht  * half_widht  * 2;
+    float y_to_draw = (mouse_pos_y-screen_height/2) / screen_height * half_height * 2;
+    drawPlus(x_to_draw, -y_to_draw, 10, 0);
     particle.draw(*this);
 };
 void Widget::resizeGL(int width, int height){
@@ -221,7 +226,9 @@ void Widget::resizeGL(int width, int height){
             half_widht = view_base;
             half_height = view_base * height / width;
         }
-        qDebug()<<"resizeGL. half_widht:"<<half_widht<<"; half_height:"<<half_height;
+        screen_widht = width;
+        screen_height = height;
+        //qDebug()<<"resizeGL. half_widht:"<<half_widht<<"; half_height:"<<half_height;
     }
 
     glViewport(0, 0, (GLint)width, (GLint)height);
@@ -244,11 +251,13 @@ void Widget::slotUpdatePosition()
         mouse_pos_y_ = mouse_pos_y;
         is_mouse_pressed_ = is_mouse_pressed;
     }
-    int half_height_, half_widht_;
+    int half_height_, half_widht_, screen_height_, screen_widht_;
     {
         std::lock_guard<std::mutex> screenLockGuard(screen_size_mutex);
         half_height_ = half_height;
         half_widht_ = half_widht;
+        screen_height_ = screen_height;
+        screen_widht_ = screen_widht;
     }
 
     //Расчёт физики и перемещения
