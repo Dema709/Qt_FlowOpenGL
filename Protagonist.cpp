@@ -21,7 +21,9 @@ float Protagonist::getCurrentSpeed(){
 float Protagonist::getMaxSpeed(){
     return maxSpeed;
 }
-
+float Protagonist::getOrientationInDegrees(){
+    return orientation * 180 / M_PI;
+}
 void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, float target_y) {
     //target_x = -400; target_y = 0;
 
@@ -98,4 +100,10 @@ void Protagonist::draw(Widget& widget){
     widget.setColor(0,1,0,1);
     widget.drawTriangle(currentX,currentY,50,orientation * 180 / M_PI - delta);
     widget.drawRing2Transfered(currentX,currentY,10,orientation * 180 / M_PI - delta, -50, 0);
+    if (canvasEat>=1){
+        widget.drawMouth(currentX,currentY, this->getOrientationInDegrees(),1-abs(canvasEat-1-0.5f)*2);
+    } else {
+        widget.drawMouth(currentX,currentY, this->getOrientationInDegrees(),1-abs(canvasEat-0.5f)*2);
+    }
+
 }

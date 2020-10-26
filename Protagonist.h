@@ -13,6 +13,7 @@ public:
     float getMaxSpeed();
     void updateMapPosition(float dt, bool isPressed, float target_x, float target_y);
     void draw(Widget& widget);
+    float getOrientationInDegrees();
 private:
     float currentX = 200, currentY = 0;//Положение на карте
     float orientation = 90 * 3.1415 / 180;//Ориентация, в радианах
@@ -23,6 +24,7 @@ private:
     float screenSizeX, screenSizeY;
     float canvasSize = 0;
     float canvasSnake = 0;
+    float canvasEat = 0;
 };
 
 #endif // PROTAGONIST_H
