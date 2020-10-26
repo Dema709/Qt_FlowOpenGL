@@ -3,6 +3,7 @@
 
 #include <vector>
 class Widget;
+class Protagonist;
 
 class Particle
 {
@@ -13,7 +14,7 @@ public:
     float getY(int);
     float getLifetime(int);
     float getMaxLifeTime();
-    void updatePosition(float dt);
+    void updatePosition(float dt, Protagonist& p);
     void draw(Widget& widget);
 private:
     int count;

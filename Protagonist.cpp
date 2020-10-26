@@ -57,7 +57,7 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
     }
 
     //orientation = 1 * M_PI / 2;// M_PI * 180.;
-    currentSpeed = 0;//maxSpeed;
+    //currentSpeed = 10;//maxSpeed;
 
     //qDebug()<<cos(0)<<cos(45)<<cos(45./180*M_PI);
     //Позиция

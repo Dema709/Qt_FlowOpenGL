@@ -3,6 +3,7 @@
 
 #include <QDebug>//Временно
 #include "widget.h"/////////////////?
+#include "Protagonist.h"
 
 Particle::Particle(int count_, float maxLifeTime_, float maxRange_)
     : count(count_), maxLifeTime(maxLifeTime_), maxRange(maxRange_)
@@ -39,13 +40,13 @@ float Particle::getMaxLifeTime(){
     return maxLifeTime;
 }
 
-void Particle::updatePosition(float dt){//Принимает количество миллисекунд
+void Particle::updatePosition(float dt, Protagonist& protagonist){//Принимает количество миллисекунд
     for (int i=0;i<count;i++){
         pos_n_lifetime[i][2] += dt;
         if (pos_n_lifetime[i][2]>maxLifeTime){//Если текущее время жизни больше максимально отведённого
             pos_n_lifetime[i][2] -= maxLifeTime;
-            pos_n_lifetime[i][0] = effolkronium::random_static::get(-maxRange,maxRange);
-            pos_n_lifetime[i][1] = effolkronium::random_static::get(-maxRange,maxRange);
+            pos_n_lifetime[i][0] = protagonist.getCurrentX() + effolkronium::random_static::get(-maxRange,maxRange);
+            pos_n_lifetime[i][1] = protagonist.getCurrentY() + effolkronium::random_static::get(-maxRange,maxRange);
             //Добавить сюда зависимость от положения гг
         }
     }

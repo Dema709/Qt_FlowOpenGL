@@ -36,14 +36,14 @@ void Camera::updateMovement(float dt, Protagonist protagonist){
 
    // qDebug()<<distanceEllips<<distance<<angle;
 
-    /*if (distance>minSpeedMultiplier*protagonist.getMaxSpeed()*dt*1.5) {//if Для исключения дёргания на месте
+    if (distance>minSpeedMultiplier*protagonist.getMaxSpeed()*dt*1.5) {//if Для исключения дёргания на месте
         currentSpeed = std::max(currentSpeed * 1.0f * distanceEllips, minSpeed);///Чуток другой вариант приближения камеры, побыстрее
         currentX += currentSpeed * (float) cos(angle) * dt;
         currentY += currentSpeed * (float) sin(angle) * dt;
-    } else {*/
+    } /*else {
         currentX = targetX;
         currentY = targetY;
-    //}
+    }*/
     //qDebug()<<"CameraC:"<<currentX<<currentY;
     //qDebug()<<"CameraT:"<<targetX<<targetY;
 }

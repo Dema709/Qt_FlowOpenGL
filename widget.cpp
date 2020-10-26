@@ -278,7 +278,7 @@ void Widget::slotUpdatePosition()
         float target_y = camera.getCurrentY() - (mouse_pos_y_ * 2 - screen_height_) * half_height_ / screen_height_;
         protagonist.updateMapPosition(dt, is_mouse_pressed, target_x, target_y);
 
-        particle.updatePosition(dt);
+        particle.updatePosition(dt, protagonist);
     }
 
     updateGL();
