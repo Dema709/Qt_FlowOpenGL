@@ -14,7 +14,7 @@ public:
     void updateMapPosition(float dt, bool isPressed, float target_x, float target_y);
     void draw(Widget& widget);
 private:
-    float currentX = 0*200, currentY = 0;//Положение на карте
+    float currentX = 200, currentY = 0;//Положение на карте
     float orientation = 90 * 3.1415 / 180;//Ориентация, в радианах
     float orientationAim = 0;
     float currentSpeed = 0, maxSpeed = 200, maxBoostSpeed = 700;//В пикселях в секунду
