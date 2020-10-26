@@ -460,6 +460,45 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
     }
 
     {
+        //Рот у ГГ - через кривые безье
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16;//VERTEX_MOUTH_COUNT = 16+2+1;
+
+        float deltaX=9;
+        float animationStatus, percent, x0, y0, x1, y1, x2, y2;
+        float outer_x, outer_y;
+        for (int j=0;j<ANIMATION_FRAMES;++j) {
+            animationStatus=(j/(float)(ANIMATION_FRAMES-1));
+            current_vertices.push_back(4+deltaX);
+            current_vertices.push_back(0);
+
+            x0 = 0; y0 = 0;
+            x1 = 0; y1 = 18*1.4f;//1.4f - масштабный множитель
+            x2 = (15+15*animationStatus)*1.4f; y2 = (28-25*animationStatus)*1.4f;
+            for (int i=0;i<VERTEX_COUNT+1;++i){//16+1
+                percent=(i/(float)VERTEX_COUNT);//16
+                if (i%2==0)//Чётные числа для внешего радиуса
+                {
+                    outer_x=(x0*(1-percent)*(1-percent)+2*percent*(1-percent)*x1+percent*percent*x2);
+                    outer_y=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*y1+percent*percent*y2);
+                }
+                else{//Дополнительная кривая Безье для толщины
+                    outer_x=((x0+3*1.4f)*(1-percent)*(1-percent)+2*percent*(1-percent)*(x1+2+2*animationStatus)+percent*percent*(x2/*+2*animationStatus*animationStatus*/));
+                    outer_y=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*(y1-2)+percent*percent*(y2-3*1.4f/*2*(1-animationStatus)*(1-animationStatus)*/));
+                    //Множители вроде animationStatus в квадрате, чтобы окончания крылышек не были прямоугольными
+                }
+                current_vertices.push_back(outer_x+deltaX);
+                current_vertices.push_back(outer_y);
+            }
+            current_vertices.push_back(x2-3.5f*animationStatus+deltaX);
+            current_vertices.push_back(y2-3*1.4f+1.5f*animationStatus);
+        }
+
+        V.MOUTH = {vertices.size()/2, current_vertices.size()/2/ANIMATION_FRAMES,GL_TRIANGLE_STRIP};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
+    {
         //Тело акулки //4 части * 3 точки у треугольника
         std::vector<GLfloat> current_vertices;
         int VERTEX_COUNT = 16;

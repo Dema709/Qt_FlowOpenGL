@@ -91,6 +91,9 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
             segments[k].updateMapPosition(segments[k-1].getCurrentX(), segments[k-1].getCurrentY(), dt, currentSpeed);
         }
     }*/
+
+    canvasEat += dt*1.6f;
+    if (canvasEat>=2) canvasEat -= 2;
 }
 
 void Protagonist::draw(Widget& widget){
@@ -98,8 +101,10 @@ void Protagonist::draw(Widget& widget){
     //widget.setColor(1,0,0,1);
     //widget.drawPentagon(currentX,currentY,50,orientation * 180 / M_PI - delta);
     widget.setColor(0,1,0,1);
-    widget.drawTriangle(currentX,currentY,50,orientation * 180 / M_PI - delta);
-    widget.drawRing2Transfered(currentX,currentY,10,orientation * 180 / M_PI - delta, -50, 0);
+
+    widget.drawRing2(currentX,currentY,2*0.7f*5.3f);
+    //widget.drawSquareTransfered(currentX,currentY,3.36f,this.getOrientationInDegrees(),-21,0);
+
     if (canvasEat>=1){
         widget.drawMouth(currentX,currentY, this->getOrientationInDegrees(),1-abs(canvasEat-1-0.5f)*2);
     } else {
