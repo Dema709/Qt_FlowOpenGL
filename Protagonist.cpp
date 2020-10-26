@@ -103,7 +103,7 @@ void Protagonist::draw(Widget& widget){
     widget.setColor(0,1,0,1);
 
     widget.drawRing2(currentX,currentY,2*0.7f*5.3f);
-    //widget.drawSquareTransfered(currentX,currentY,3.36f,this.getOrientationInDegrees(),-21,0);
+    widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),-21,0);
 
     if (canvasEat>=1){
         widget.drawMouth(currentX,currentY, this->getOrientationInDegrees(),1-abs(canvasEat-1-0.5f)*2);

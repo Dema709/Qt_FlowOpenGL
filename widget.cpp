@@ -614,3 +614,21 @@ void Widget::drawPatricle(float centerX, float centerY, float alpha){
 void Widget::setColor(float r, float g, float b, float alpha){
     glUniform4f(uColorLocation, r, g, b, alpha);
 }
+
+void Widget::drawSquareTransfered(float centerX, float centerY, float sizeScale, float orientation, float offsetX, float offsetY){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation,rotating_about);
+    tempMatrix.translate(offsetX/sizeScale,offsetY/sizeScale);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(SQUARE);
+/*
+    Matrix.setIdentityM(mModelMatrix, 0);
+    Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
+    Matrix.scaleM(mModelMatrix,0,sizeScale,sizeScale,1);
+    Matrix.rotateM(mModelMatrix,0,orientation,0,0,1);
+    Matrix.translateM(mModelMatrix,0,offsetX/sizeScale,offsetY/sizeScale,0);
+    bindMatrix();
+    glDrawArrays(GL_TRIANGLE_FAN, 4, 4);*/
+}

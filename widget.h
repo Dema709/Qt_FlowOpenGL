@@ -98,6 +98,7 @@ public:
 
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
     void drawPatricle(float centerX, float centerY, float alpha);
+    void drawSquareTransfered(float centerX, float centerY, float sizeScale, float orientation, float offsetX, float offsetY);
     void setColor(float r, float g, float b, float a);
 private:
     ChakaPon::Camera camera;
