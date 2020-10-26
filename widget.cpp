@@ -49,6 +49,9 @@ void Widget::initializeGL(){
     glClearColor(0,0x6D/255., 0xBB/255., 0);//Цвет фона
     glEnable(GL_BLEND);glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);//Прозрачность
 
+    //Мультисэмплинг (антиалиасинг) = здесь + перед созданием QGLWidget в main.cpp
+    glEnable(GL_MULTISAMPLE);
+
         //См. https://habr.com/ru/post/311808/
         initializeGLFunctions();//Для включения функций, так как виджет унаследован от protected QGLFunctions
         GLuint VBO;
