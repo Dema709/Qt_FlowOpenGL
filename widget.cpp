@@ -214,6 +214,7 @@ void Widget::paintGL(){
     float y_to_draw = (mouse_pos_y-screen_height/2) / screen_height * half_height * 2;
     drawPlus(x_to_draw, -y_to_draw, 10, 0);*/
     particle.draw(*this);
+    protagonist.draw(*this);
 };
 void Widget::resizeGL(int width, int height){
     //qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -246,7 +247,7 @@ void Widget::slotUpdatePosition()
     dt_timer.start();
 
     //Потокобезопасные переменные для дальнейших расчётов
-    int mouse_pos_x_, mouse_pos_y_;
+    float mouse_pos_x_, mouse_pos_y_;
     bool is_mouse_pressed_;
     {
         std::lock_guard<std::mutex> mouseLockGuard(mouse_control_mutex);
@@ -254,7 +255,7 @@ void Widget::slotUpdatePosition()
         mouse_pos_y_ = mouse_pos_y;
         is_mouse_pressed_ = is_mouse_pressed;
     }
-    int half_height_, half_widht_, screen_height_, screen_widht_;
+    float half_height_, half_widht_, screen_height_, screen_widht_;
     {
         std::lock_guard<std::mutex> screenLockGuard(screen_size_mutex);
         half_height_ = half_height;
@@ -267,6 +268,19 @@ void Widget::slotUpdatePosition()
     {
         std::lock_guard<std::mutex> globalLockGuard(global_mutex);
         camera.updateMovement(dt, protagonist);
+        //void updateMapPosition(float dt, bool isPressed,
+        //  float touchX_screen, float touchY_screen, ChakaPon::Camera camera);
+        //protagonist.updateMapPosition(dt, is_mouse_pressed, );
+
+        float target_x = camera.getCurrentX() + (mouse_pos_x_ * 2 - screen_widht_ ) * half_widht_  / screen_widht_;
+        float target_y = camera.getCurrentY() - (mouse_pos_y_ * 2 - screen_height_) * half_height_ / screen_height_;
+        protagonist.updateMapPosition(dt, is_mouse_pressed, target_x, target_y);
+        /*qDebug()<<"Mouse:"<<mouse_pos_x_<<mouse_pos_y_;
+        qDebug()<<"Screen:"<<screen_widht_<<screen_height_;
+        qDebug()<<"GameScreen:"<<half_widht_<<half_height_;
+        qDebug()<<"Camera"<<camera.getCurrentX()<<camera.getCurrentY();
+        qDebug()<<target_x<<target_y;
+*/
         particle.updatePosition(dt);
     }
 
@@ -330,7 +344,7 @@ void Widget::drawAxes(){
 void Widget::drawSquare(float centerX, float centerY, float sizeScale, float orientation){
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.scale(sizeScale);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());//Как bindMatrix();
     DRAW(SQUARE);
@@ -339,7 +353,7 @@ void Widget::drawSquare(float centerX, float centerY, float sizeScale, float ori
 void Widget::drawPentagon(float centerX, float centerY, float sizeScale, float orientation){
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.scale(sizeScale);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(PENTAGON);
@@ -365,7 +379,7 @@ void Widget::drawRoundedTriangleInCenter(float centerX, float centerY, float siz
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(ROUNDED_TRIANGLE_INCENTER);
 }
@@ -374,7 +388,7 @@ void Widget::drawRoundedTriangleOutCenter(float centerX, float centerY, float si
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(ROUNDED_TRIANGLE_OUTCENTER);
 }
@@ -383,7 +397,7 @@ void Widget::drawPlus(float centerX, float centerY, float sizeScale, float orien
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(PLUS);
 }
@@ -392,7 +406,7 @@ void Widget::drawEllipse(float centerX, float centerY, float sizeScale, float or
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(ELLIPSE);
 }
@@ -401,7 +415,7 @@ void Widget::drawTriangle(float centerX, float centerY, float radius, float orie
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(radius);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(TRIANGLE);
 }
@@ -434,7 +448,7 @@ void Widget::drawRingTransfered(float centerX, float centerY, float radius, floa
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(radius);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.translate(offsetX/radius,offsetY/radius);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(RING1);
@@ -444,7 +458,7 @@ void Widget::drawRing2Transfered(float centerX, float centerY, float radius, flo
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(radius);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.translate(offsetX/radius,offsetY/radius);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(RING2);
@@ -454,7 +468,7 @@ void Widget::drawRing3Transfered(float centerX, float centerY, float radius, flo
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(radius);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.translate(offsetX/radius,offsetY/radius);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(RING3);
@@ -466,14 +480,14 @@ void Widget::drawBezier(float centerX, float centerY, float sizeScale, float ori
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
 
     tempMatrix = mMatrix;
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale, -sizeScale);
-    tempMatrix.rotate(-orientation,0,0,1);
+    tempMatrix.rotate(-orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
 }//Для еды типа 0 (по бокам)
@@ -484,14 +498,14 @@ void Widget::drawBezier2(float centerX, float centerY, float sizeScale, float or
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale);
-    tempMatrix.rotate(orientation+90,0,0,1);
+    tempMatrix.rotate(orientation+90,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
 
     tempMatrix = mMatrix;
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale, -sizeScale);
-    tempMatrix.rotate(-orientation+90,0,0,1);
+    tempMatrix.rotate(-orientation+90,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
 }//Для еды типа 3 (сзади два)
@@ -502,11 +516,11 @@ void Widget::drawBezier3(float centerX, float centerY, float sizeScale, float or
     tempMatrix.translate(centerX,centerY);
     if (multiplSnake>=0.5){
         tempMatrix.scale(sizeScale);
-        tempMatrix.rotate(orientation+90,0,0,1);
+        tempMatrix.rotate(orientation+90,rotating_about);
         frame = (multiplSnake-0.5f)*2*(V.ANIMATION_FRAMES - 1);
     } else {
         tempMatrix.scale(sizeScale, -sizeScale);
-        tempMatrix.rotate(-orientation+90,0,0,1);
+        tempMatrix.rotate(-orientation+90,rotating_about);
         frame = (1-multiplSnake*2)*(V.ANIMATION_FRAMES - 1);
     }
     tempMatrix.translate(-1,1);//Состыковка
@@ -520,7 +534,7 @@ void Widget::drawBezier4(float centerX, float centerY, float sizeScale, float or
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale);
-    tempMatrix.rotate(orientation+90,0,0,1);
+    tempMatrix.rotate(orientation+90,rotating_about);
     tempMatrix.translate(-5,0);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
@@ -528,7 +542,7 @@ void Widget::drawBezier4(float centerX, float centerY, float sizeScale, float or
     tempMatrix = mMatrix;
     tempMatrix.translate(centerX,centerY);
     tempMatrix.scale(sizeScale, -sizeScale);
-    tempMatrix.rotate(-orientation+90,0,0,1);
+    tempMatrix.rotate(-orientation+90,rotating_about);
     tempMatrix.translate(-5,0);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER,frame);
@@ -544,20 +558,20 @@ void Widget::drawHalfRing(float centerX, float centerY, float radius){
 void Widget::drawHalfRings(float centerX, float centerY, float radius, float orientation, float rotationForEating){
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.scale(radius);
     tempMatrix.translate(-1.0943396226415094+(float)cos(rotationForEating/180*M_PI),(float)sin(rotationForEating/180*M_PI));
-    tempMatrix.rotate(rotationForEating,0,0,1);
+    tempMatrix.rotate(rotationForEating,rotating_about);
     tempMatrix.translate(0.0943396226415094f,0);//Сдвиг в исходной системе из-за рамки
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(HALFRING);
 
     tempMatrix = mMatrix;
     tempMatrix.translate(centerX,centerY);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.scale(radius);
     tempMatrix.translate(-1.0943396226415094+(float)cos(rotationForEating/180*M_PI),(float)sin(-rotationForEating/180*M_PI));
-    tempMatrix.rotate(-rotationForEating,0,0,1);
+    tempMatrix.rotate(-rotationForEating,rotating_about);
     tempMatrix.scale(1,-1);//Зеркалим нижнюю челюсть
     tempMatrix.translate(0.0943396226415094f,0);//Сдвиг в исходной системе из-за рамки
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
@@ -569,13 +583,13 @@ void Widget::drawMouth(float centerX, float centerY, float orientation, float mu
 
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(MOUTH, frame);
 
     tempMatrix = mMatrix;
     tempMatrix.translate(centerX,centerY);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.scale(1,-1);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(MOUTH, frame);
@@ -586,7 +600,7 @@ void Widget::drawSharkBody(float centerX, float centerY, float orientation, floa
 
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
-    tempMatrix.rotate(orientation,0,0,1);
+    tempMatrix.rotate(orientation,rotating_about);
     tempMatrix.scale(scaleForLittleOrBigFish);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(SHARKBODY, frame);
@@ -598,4 +612,8 @@ void Widget::drawPatricle(float centerX, float centerY, float alpha){
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     glUniform4f(uColorLocation, 1, 1, 1, alpha);
     DRAW(PARTICLE);
+}
+
+void Widget::setColor(float r, float g, float b, float alpha){
+    glUniform4f(uColorLocation, r, g, b, alpha);
 }

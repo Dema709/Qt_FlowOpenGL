@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include <cmath>//pow
+#include <cmath>//pow, atan2, sqrt
 #include <algorithm>//max
 
 #include <QDebug>//Временно
@@ -42,8 +42,8 @@ void Camera::updateMovement(float dt, Protagonist protagonist){
         currentX = currentX + currentSpeed * (float) cos(angle) * dt;
         currentY = currentY + currentSpeed * (float) sin(angle) * dt;
     }
-    qDebug()<<"CameraC:"<<currentX<<currentY;
-    qDebug()<<"CameraT:"<<targetX<<targetY;
+    //qDebug()<<"CameraC:"<<currentX<<currentY;
+    //qDebug()<<"CameraT:"<<targetX<<targetY;
 }
 
 }

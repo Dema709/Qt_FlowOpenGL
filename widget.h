@@ -98,9 +98,10 @@ public:
 
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
     void drawPatricle(float centerX, float centerY, float alpha);
-
+    void setColor(float r, float g, float b, float a);
 private:
     ChakaPon::Camera camera;
     Protagonist protagonist;
+    QVector3D rotating_about = {0,0,-1};//Вектор, относительно которого происходит вращение
 };
 #endif // WIDGET_H
