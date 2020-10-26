@@ -147,6 +147,7 @@ void Widget::paintGL(){
 
     //Настройка матрицы обзора (View + Projection Matrix)
     float pos_x=0, pos_y=0;//Временно!
+    pos_x = camera.getCurrentX(); pos_y = camera.getCurrentY();
     mMatrix.setToIdentity();//Сброс матрицы
     {
         std::lock_guard<std::mutex> screenLockGuard(screen_size_mutex);
@@ -166,7 +167,7 @@ void Widget::paintGL(){
     #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
-    if (!true){
+    if (true){
     drawAxes();
     glUniform4f(uColorLocation, 0, 0, 1, 0.5);
     drawSquare(-300, 300, 50);
@@ -208,10 +209,10 @@ void Widget::paintGL(){
     drawSharkBody(-580, 250, 45, 1, 0.1f);
     }
 
-    drawAxes();//Временно:
-    float x_to_draw = (mouse_pos_x-screen_widht /2) / screen_widht  * half_widht  * 2;
+    //drawAxes();//Временно:
+    /*float x_to_draw = (mouse_pos_x-screen_widht /2) / screen_widht  * half_widht  * 2;
     float y_to_draw = (mouse_pos_y-screen_height/2) / screen_height * half_height * 2;
-    drawPlus(x_to_draw, -y_to_draw, 10, 0);
+    drawPlus(x_to_draw, -y_to_draw, 10, 0);*/
     particle.draw(*this);
 };
 void Widget::resizeGL(int width, int height){
@@ -229,6 +230,8 @@ void Widget::resizeGL(int width, int height){
         screen_widht = width;
         screen_height = height;
         //qDebug()<<"resizeGL. half_widht:"<<half_widht<<"; half_height:"<<half_height;
+
+        camera.setScreen(half_widht, half_height);
     }
 
     glViewport(0, 0, (GLint)width, (GLint)height);
@@ -263,6 +266,7 @@ void Widget::slotUpdatePosition()
     //Расчёт физики и перемещения
     {
         std::lock_guard<std::mutex> globalLockGuard(global_mutex);
+        camera.updateMovement(dt, protagonist);
         particle.updatePosition(dt);
     }
 

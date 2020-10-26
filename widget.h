@@ -7,6 +7,8 @@
 #include <QGLFunctions>
 #include "VertexLoader.h"
 #include "particle.h"//Временно, пока не уберётся в уровень
+#include "Camera.h"
+#include "Protagonist.h"
 
 #include <mutex>
 
@@ -96,5 +98,9 @@ public:
 
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
     void drawPatricle(float centerX, float centerY, float alpha);
+
+private:
+    ChakaPon::Camera camera;
+    Protagonist protagonist;
 };
 #endif // WIDGET_H
