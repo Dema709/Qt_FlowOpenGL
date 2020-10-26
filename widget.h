@@ -102,6 +102,6 @@ public:
 private:
     ChakaPon::Camera camera;
     Protagonist protagonist;
-    QVector3D rotating_about = {0,0,-1};//Вектор, относительно которого происходит вращение
+    QVector3D rotating_about = {0,0,1};//Вектор, относительно которого происходит вращение
 };
 #endif // WIDGET_H

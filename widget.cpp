@@ -162,7 +162,8 @@ void Widget::paintGL(){
 
     glClearColor(0,(float)0x6D/255, (float)0xBB/255, 0);//Цвет фона
     //glClearColor(0.9,0.9,1, 0);//Цвет фона
-    glClear(GL_COLOR_BUFFER_BIT);    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
@@ -243,7 +244,7 @@ void Widget::slotUpdatePosition()
     //Все подсчёты перед отображением
 
     //Получение прошеднего времени с расчёта прошлого кадра
-    float dt = dt_timer.elapsed() / 1000.;
+    float dt = dt_timer.elapsed() / 1000.;  //dt = invertFPS / 1000.;
     dt_timer.start();
 
     //Потокобезопасные переменные для дальнейших расчётов
@@ -268,19 +269,12 @@ void Widget::slotUpdatePosition()
     {
         std::lock_guard<std::mutex> globalLockGuard(global_mutex);
         camera.updateMovement(dt, protagonist);
-        //void updateMapPosition(float dt, bool isPressed,
-        //  float touchX_screen, float touchY_screen, ChakaPon::Camera camera);
-        //protagonist.updateMapPosition(dt, is_mouse_pressed, );
 
+        //TouchX/Y - координаты на карте. Преобразуются из координат касания экрана
         float target_x = camera.getCurrentX() + (mouse_pos_x_ * 2 - screen_widht_ ) * half_widht_  / screen_widht_;
         float target_y = camera.getCurrentY() - (mouse_pos_y_ * 2 - screen_height_) * half_height_ / screen_height_;
         protagonist.updateMapPosition(dt, is_mouse_pressed, target_x, target_y);
-        /*qDebug()<<"Mouse:"<<mouse_pos_x_<<mouse_pos_y_;
-        qDebug()<<"Screen:"<<screen_widht_<<screen_height_;
-        qDebug()<<"GameScreen:"<<half_widht_<<half_height_;
-        qDebug()<<"Camera"<<camera.getCurrentX()<<camera.getCurrentY();
-        qDebug()<<target_x<<target_y;
-*/
+
         particle.updatePosition(dt);
     }
 
