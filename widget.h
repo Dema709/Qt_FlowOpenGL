@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Protagonist.h"
 #include "Food.h"
+#include "Level.h"
 
 #include <mutex>
 
@@ -94,7 +95,6 @@ public:
     void drawHalfRing(float centerX, float centerY, float radius);//Нарисовать полукруг (верхняя часть)
     void drawHalfRings(float centerX, float centerY, float radius, float orientation, float rotationForEating);//Нарисовать два полукруга как открытый рот
     void drawMouth(float centerX, float centerY, float orientation, float multiplSnake);//Рот ГГ
-
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
     void drawPatricle(float centerX, float centerY, float alpha);
     void drawSquareTransfered(float centerX, float centerY, float sizeScale, float orientation, float offsetX, float offsetY);
@@ -110,5 +110,11 @@ private:
     QVector3D rotating_about = {0,0,1};//Вектор, относительно которого происходит вращение
     std::vector<Food> food, test_food;
 
+    std::vector<Level> levelArray;
+    int shouldIChangeLevel=0;
+    int levelNum=8;//Количество уровней = Последний уровень + 1
+    int currentLevel=0;
+
+    std::vector<float> currentColor, oldColor, newColor;
 };
 #endif // WIDGET_H

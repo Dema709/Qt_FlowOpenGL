@@ -23,8 +23,13 @@ Widget::Widget(QWidget *parent)
     //unless mouse tracking has been enabled with QWidget::setMouseTracking().
     setMouseTracking(true);//Отслеживание мыши вне зависимости от нажатия
 
-    int foodCount = 900;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
+    int foodCount = 0*900;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
     int testFoodCount = 9; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
+
+    for (int i=0; i<levelNum; i++){
+        levelArray.push_back(Level(i));
+    }
+    currentColor = levelArray[currentLevel].getColor();
 }
 
 Widget::~Widget()
@@ -49,7 +54,7 @@ Widget::~Widget()
 void Widget::initializeGL(){
     qDebug()<<"initializeGL";
 
-    glClearColor(0,0x6D/255., 0xBB/255., 0);//Цвет фона
+    glClearColor(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);//Цвет фона
     glEnable(GL_BLEND);glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);//Прозрачность
 
     //Мультисэмплинг (антиалиасинг) = здесь + перед созданием QGLWidget в main.cpp
@@ -166,7 +171,8 @@ void Widget::paintGL(){
         calculateFPS();
     #endif
 
-    glClearColor(0,(float)0x6D/255, (float)0xBB/255, 0);//Цвет фона
+
+    glClearColor(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);//Цвет фона
     //glClearColor(0.9,0.9,1, 0);//Цвет фона
     glClear(GL_COLOR_BUFFER_BIT);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -174,7 +180,7 @@ void Widget::paintGL(){
     #define DRAW(figure_name) glDrawArrays(V.figure_name.mode, V.figure_name.index, V.figure_name.count)
     #define DRAW_A(figure_name, animation_frame) glDrawArrays(V.figure_name.mode, V.figure_name.index+V.figure_name.count*animation_frame, V.figure_name.count)
 
-    if (true){
+    if (!true){
     drawAxes();
     glUniform4f(uColorLocation, 0, 0, 1, 0.5);
     drawSquare(-300, 300, 50);
@@ -285,11 +291,12 @@ void Widget::slotUpdatePosition()
         //TouchX/Y - координаты на карте. Преобразуются из координат касания экрана
         float target_x = camera.getCurrentX() + (mouse_pos_x_ * 2 - screen_widht_ ) * half_widht_  / screen_widht_;
         float target_y = camera.getCurrentY() - (mouse_pos_y_ * 2 - screen_height_) * half_height_ / screen_height_;
-        protagonist.updateMapPosition(dt, is_mouse_pressed, target_x, target_y);
+        protagonist.updateMapPosition(dt, is_mouse_pressed_, target_x, target_y);
 
         particle.updatePosition(dt, protagonist);
 
         for (auto & f : food){f.updateMapPosition(dt);}
+        protagonist.updateEat(food);
         for (auto & f : test_food){f.updateMapPositionTest(dt);}
     }
 
@@ -307,6 +314,8 @@ void Widget::mousePressEvent(QMouseEvent*)
 {
     std::lock_guard<std::mutex> mouseLockGuard(mouse_control_mutex);
     is_mouse_pressed = true;
+
+    //if (currentLevel + 1 < levelArray.size()) {currentLevel++; currentColor = levelArray[currentLevel].getColor();}//Мини-тест смены цветов фона
 }
 
 void Widget::mouseReleaseEvent(QMouseEvent*)
