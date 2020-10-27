@@ -16,7 +16,7 @@ Food::Food()
     canvasSize = effolkronium::random_static::get<float>(0, 1);
     canvasSnake = effolkronium::random_static::get<float>(0, 1);
     isEaten=false;
-    type = effolkronium::random_static::get(0,2);//(0,6)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Временно
+    type = effolkronium::random_static::get<int>(0,6);
     this->goToRandomLocation();
     this->setRadius();
 }
