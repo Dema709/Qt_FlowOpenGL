@@ -97,7 +97,7 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
                 itWasVoidFood=false;
             }
             else{
-                //this->evolveLittle();!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Реализовать
+                this->evolveLittle();//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Реализовать
             }
             isEatingRightNow = false;
         }
@@ -130,5 +130,113 @@ void Protagonist::draw(Widget& widget){
 
     for (int k=0;k<Nsegm;k++){
         segments[k].drawWithScale(widget,k,Nsegm);
+    }
+}
+
+void Protagonist::evolveLittle(){
+    //Нажрать кружочки
+    //Попробовать восстановить weakPoint
+    //Если удалось - return
+    int kT = 0;
+    while (kT < Nsegm) {
+        if (segments[kT].isWeakPointDamaged()) {//сработает только на weakPoint
+            segments[kT].restoreWeakPoint();
+            return;//break;
+        }//Восстановление weakPoint
+        kT++;
+    }
+    ////////////////////////////////////////////////Можно сделать проще - как выше
+    int saturationSum = 0;
+    for (int k = 0; k < Nsegm - 1; k++) {
+        if (segments[k].getSaturation())
+            saturationSum++;
+    }
+    if (saturationSum == Nsegm - 1) {
+        this->evolveBig();
+    } else {
+        //Ищи наименьшую пустую и наполняй
+        int k = 0;
+        while (k < Nsegm - 1) {
+            if (!segments[k].getSaturation()) {
+                segments[k].setSaturation(true);
+                break;
+            }
+            k++;
+        }
+    }
+}
+
+void Protagonist::evolveBig(){
+
+    std::vector<int> k_types(3);
+    //int [] k_types;
+    //k_types=new int[3];//Сколько сегментов какого типа, кроме хвостика(?)
+    int k2=0;//Счётчик перебора
+    while (k2<Nsegm-1){
+        k_types[segments[k2].getType()]++;
+        k2++;
+    }
+
+
+    if (Nsegm<NsegmMax){
+
+        if (Nsegm-k_types[2]>3){
+            //добавить лапку
+            int k0=0;
+            while (k0<Nsegm-1){
+                if (segments[k0].getType()==0){
+                    //segments[k0].setSaturation(false);
+                    segments[k0].changeType(2);//
+                    break;
+                }
+                k0++;
+            }
+
+            for (int k = 0; k < Nsegm - 1; k++) {//Убрать насыщение
+                //segments[k].changeType(0);//
+                segments[k].setSaturation(false);
+            }
+        }
+        else {
+
+            Nsegm++;
+            //segments[Nsegm - 1] = new Segment(segments[Nsegm - 2].getCurrentX(), segments[Nsegm - 2].getCurrentY(), segments[Nsegm - 2].getOrientation(), 1);//Хвост
+            segments.push_back(Segment(segments[Nsegm - 2].getCurrentX(), segments[Nsegm - 2].getCurrentY(), segments[Nsegm - 2].getOrientation(), 1));
+            segments[Nsegm - 2].changeType(0);//
+            segments[Nsegm - 2].setWeakPoint();
+/////////////////////////NET!
+            for (int k = 0; k < Nsegm - 1; k++) {
+                //segments[k].changeType(0);//
+                segments[k].setSaturation(false);
+            }
+
+        }
+    }
+
+
+    else{
+        int k0=0;
+        while (k0<Nsegm-1){
+            if (segments[k0].getType()==0){
+                //segments[k0].setSaturation(false);
+                segments[k0].changeType(2);//
+                break;
+            }
+            k0++;
+        }
+
+
+        int segmTypeSum=0;
+        for (int k=0;k<Nsegm-1;k++) {
+            if (segments[k].getType()==2)
+                segmTypeSum++;
+        }
+        if (segmTypeSum!=Nsegm-1) {
+
+            for (int k = 0; k < Nsegm - 1; k++) {
+                //segments[k].changeType(0);//
+                segments[k].setSaturation(false);
+            }
+        }
     }
 }

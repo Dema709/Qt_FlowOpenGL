@@ -35,6 +35,9 @@ private:
 
     std::vector<Segment> segments;
     int Nsegm;int NsegmMax=8;
+
+    void evolveLittle();
+    void evolveBig();
 };
 
 #endif // PROTAGONIST_H

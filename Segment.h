@@ -16,6 +16,12 @@ public:
     float getCurrentX();
     float getCurrentY();
     float getOrientation();
+    bool isWeakPointDamaged();
+    void restoreWeakPoint();
+    bool getSaturation();
+    void setSaturation(bool saturation_);
+    int getType();
+    void changeType(int type_);
 private:
     int type;
     float distance;
@@ -24,7 +30,7 @@ private:
     bool saturation;
     float canvasSnake=0;//Махать лапками
     float currentRadius=20;
-    bool isWeakPoint=false, isWeakPointDamaged=false;
+    bool isWeakPoint=false, isWeakPointDamaged_ = false;
     float howMuchIsTheFish=1;
     bool isFirst=false;
 

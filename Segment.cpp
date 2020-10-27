@@ -53,7 +53,7 @@ void Segment::drawWithScale(Widget& widget, float segNum, float NsegmMax){
     case 0://Сегменты
         widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),30*0.7f,0);
         if (isWeakPoint){
-            if (isWeakPointDamaged)
+            if (isWeakPointDamaged_)
                 widget.setColor(1, 1, 1, 0.23);//Ghostly white
             widget.drawRing2(currentX, currentY,12*0.7f);
             if (saturation){
@@ -64,7 +64,7 @@ void Segment::drawWithScale(Widget& widget, float segNum, float NsegmMax){
                 //notSaturated
                 widget.drawRing2(currentX, currentY,5.5f*0.7f);
             }
-            if (isWeakPointDamaged)
+            if (isWeakPointDamaged_)
                 widget.setColor(1, 1, 1, 0.47);//Вернуть цвет обратно на стандартный белый
         }
         else{
@@ -86,7 +86,7 @@ void Segment::drawWithScale(Widget& widget, float segNum, float NsegmMax){
     case 2://Лапки
         widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),30*0.7f,0);
         if (isWeakPoint){
-            if (isWeakPointDamaged)
+            if (isWeakPointDamaged_)
                 widget.setColor(1, 1, 1, 0.23);//Ghostly white
             widget.drawRing2(currentX, currentY,12*0.7f);
             if (saturation){
@@ -97,7 +97,7 @@ void Segment::drawWithScale(Widget& widget, float segNum, float NsegmMax){
                 //notSaturated
                 widget.drawRing2(currentX, currentY,5.5f*0.7f);
             }
-            if (isWeakPointDamaged)
+            if (isWeakPointDamaged_)
                 widget.setColor(1, 1, 1, 0.47);//Вернуть цвет обратно на стандартный белый
         }
         else{
@@ -143,4 +143,32 @@ float Segment::getCurrentY(){
 
 float Segment::getOrientation(){
     return orientation;
+}
+
+bool Segment::isWeakPointDamaged(){
+    return isWeakPointDamaged_;
+}
+
+void Segment::restoreWeakPoint(){
+    isWeakPointDamaged_ = false;
+}
+
+bool Segment::getSaturation(){
+    return saturation;
+}
+
+void Segment::setSaturation(bool saturation_){
+    saturation=saturation_;
+}
+
+int Segment::getType() {
+    return type;
+}
+
+void Segment::changeType(int type_){
+    type=type_;
+    if (!isFirst)
+    {
+        this->setDistance();
+    }
 }
