@@ -12,6 +12,7 @@ CONFIG += c++11
 
 SOURCES += \
     Camera.cpp \
+    ChangeLevelFood.cpp \
     Food.cpp \
     Level.cpp \
     Protagonist.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     Camera.h \
+    ChangeLevelFood.h \
     Food.h \
     Level.h \
     Protagonist.h \

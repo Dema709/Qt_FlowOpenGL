@@ -157,6 +157,7 @@ void Food::draw(Widget& widget){
 
     //if (abs(currentX-camera.getCurrentX())<camera.getGamefieldHalfX()&&Math.abs(currentY-camera.getCurrentY())<camera.getGamefieldHalfY())
 
+    widget.setColor(1, 1, 1, 0.47);//Standart white
     switch (type){
         case 0:
             widget.drawEllipse(currentX, currentY,1+0.2f*multiplSize, orientation * 180 / (float) M_PI);

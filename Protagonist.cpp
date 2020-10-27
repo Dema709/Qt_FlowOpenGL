@@ -241,7 +241,7 @@ void Protagonist::evolveBig(){
     }
 }
 
-int Protagonist::updateEat(std::vector<Food>& foods_array){
+int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, std::vector<Food>& foods_array){
     //minus lvl ot damaga
     if (levelDownCosDamaged){
         segments[0].restoreWeakPoint();
@@ -254,13 +254,24 @@ int Protagonist::updateEat(std::vector<Food>& foods_array){
     float mouthDist = 30;
     float mouthRadius = 20;
 
+    //Поедание еды на смену уровня
+    for (auto & t : changeLevelFood_array){
+        if (pow(currentX + mouthDist * cos(orientation) - t.getCurrentX(), 2) +
+                pow(currentY + mouthDist * sin(orientation) - t.getCurrentY(), 2) <
+                pow(mouthRadius + t.getCurrentRadius(), 2)) {
+            isEatingRightNow = true;
+            itWasVoidFood = true;
+            return t.getType();
+        }
+    }
+
     //Поедание мелких
-    for (int i = 0; i < foods_array.size(); i++) {
-        if (!foods_array[i].isEaten()) {
-            if (pow(currentX + mouthDist * cos(orientation) - foods_array[i].getCurrentX(), 2) + pow(currentY + mouthDist * sin(orientation) - foods_array[i].getCurrentY(), 2) <
-                    pow(mouthRadius + foods_array[i].getCurrentRadius(), 2)) {
+    for (auto & t : foods_array){
+        if (!t.isEaten()) {
+            if (pow(currentX + mouthDist * cos(orientation) - t.getCurrentX(), 2) + pow(currentY + mouthDist * sin(orientation) - t.getCurrentY(), 2) <
+                    pow(mouthRadius + t.getCurrentRadius(), 2)) {
                 isEatingRightNow = true;
-                foods_array[i].setEaten();
+                t.setEaten();
                 return 0;
             }
         }

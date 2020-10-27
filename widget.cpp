@@ -24,7 +24,7 @@ Widget::Widget(QWidget *parent)
     setMouseTracking(true);//Отслеживание мыши вне зависимости от нажатия
 
     int foodCount = 0*900;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
-    int testFoodCount = 9; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
+    int testFoodCount = 0*9; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
 
     for (int i=0; i<levelNum; i++){
         levelArray.push_back(Level(i));
@@ -226,8 +226,9 @@ void Widget::paintGL(){
     /*float x_to_draw = (mouse_pos_x-screen_widht /2) / screen_widht  * half_widht  * 2;
     float y_to_draw = (mouse_pos_y-screen_height/2) / screen_height * half_height * 2;
     drawPlus(x_to_draw, -y_to_draw, 10, 0);*/
-    particle.draw(*this);
     protagonist.draw(*this);
+    particle.draw(*this);
+    levelArray[currentLevel].draw(*this);
     for (auto & f : food){
         f.draw(*this);
     }
@@ -294,10 +295,11 @@ void Widget::slotUpdatePosition()
         protagonist.updateMapPosition(dt, is_mouse_pressed_, target_x, target_y);
 
         particle.updatePosition(dt, protagonist);
+        shouldIChangeLevel = levelArray[currentLevel].updateFoodMapPosition(dt, protagonist);
 
-        for (auto & f : food){f.updateMapPosition(dt);}
-        protagonist.updateEat(food);
-        for (auto & f : test_food){f.updateMapPositionTest(dt);}
+        //for (auto & f : food){f.updateMapPosition(dt);}
+        //protagonist.updateEat(food);
+        //for (auto & f : test_food){f.updateMapPositionTest(dt);}
     }
 
     updateGL();
