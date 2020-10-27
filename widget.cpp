@@ -24,7 +24,7 @@ Widget::Widget(QWidget *parent)
     setMouseTracking(true);//Отслеживание мыши вне зависимости от нажатия
 
     int foodCount = 0;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
-    int testFoodCount = 7; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
+    int testFoodCount = 9; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
 }
 
 Widget::~Widget()
@@ -645,4 +645,24 @@ void Widget::drawLowpolyRoundTransfered(float centerX, float centerY, float radi
     tempMatrix.translate(offsetX/radius,offsetY/radius);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(LOWPOLY_ROUND);
+}
+
+void Widget::drawRoundedTriangleInCenterTransfered(float centerX, float centerY, float sizeScale, float orientation){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation,rotating_about);
+    tempMatrix.translate(2, 0);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(ROUNDED_TRIANGLE_INCENTER);
+}
+
+void Widget::drawRoundedTriangleOutCenterTransfered(float centerX, float centerY, float sizeScale, float orientation){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation,rotating_about);
+    tempMatrix.translate(0.538f, 0);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(ROUNDED_TRIANGLE_OUTCENTER);
 }

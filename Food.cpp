@@ -194,10 +194,10 @@ void Food::draw(Widget& widget){
             widget.drawLowpolyRoundTransfered(currentX, currentY,4,orientation * 180 / (float) M_PI,0,-6.2f);
             widget.drawBezier4(currentX, currentY,1.05f,orientation * 180 / (float) M_PI, multiplSnake);
             break;
-        /*case 7://Переход вниз
-            widget.setColor(5);
-            widget.drawLowpolyRound(currentX, currentY,5f);
-            widget.setColor(0);
+        case 7://Переход вниз
+            widget.setColor(0, 1, 1, 1);//Cyan
+            widget.drawLowpolyRound(currentX, currentY,5);
+            widget.setColor(1, 1, 1, 0.47);//Standart white
             widget.drawRing3(currentX,currentY,28*multiplSize);
 
             widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSnake,45+orientation * 180 / (float) M_PI);
@@ -207,9 +207,9 @@ void Food::draw(Widget& widget){
 
             break;
         case 8://Переход наверх
-            widget.setColor(6);
-            widget.drawLowpolyRound(currentX, currentY,3f);
-            widget.setColor(0);
+            widget.setColor(1, 0, 0, 1);//Red
+            widget.drawLowpolyRound(currentX, currentY,3);
+            widget.setColor(1, 1, 1, 0.47);//Standart white
             widget.drawRing3(currentX,currentY,28*multiplSize);
 
             widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSnake,45+orientation * 180 / (float) M_PI);
@@ -217,7 +217,7 @@ void Food::draw(Widget& widget){
             widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSnake,45+180+orientation * 180 / (float) M_PI);
             widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSnake,45+270+orientation * 180 / (float) M_PI);
 
-            break;*/
+            break;
         default:
             qDebug()<<"Food::draw"<<"Тип еды задан неправильно. Обновление картинки";
             //Log.wtf(LOG_TAG,"Тип еды задан неправильно. Обновление картинки");

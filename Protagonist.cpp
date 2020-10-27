@@ -97,7 +97,7 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
 }
 
 void Protagonist::draw(Widget& widget){
-    widget.setColor(1, 1, 1, 0.47);
+    widget.setColor(1, 1, 1, 0.47);//Standart white
 
     widget.drawRing2(currentX,currentY,2*0.7f*5.3f);
     widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),-21,0);
