@@ -7,7 +7,7 @@ class Food
 {
 public:
     Food();
-    Food(int testType);
+    Food(int testType);//Для тестового отображения
     void updateMapPosition(float dt);
     void updateMapPositionTest(float dt);//Для тестового отображения, без перемещения
     void draw(Widget& widget);

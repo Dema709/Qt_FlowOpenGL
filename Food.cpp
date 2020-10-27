@@ -199,7 +199,6 @@ void Food::draw(Widget& widget){
             widget.drawLowpolyRound(currentX, currentY,5);
             widget.setColor(1, 1, 1, 0.47);//Standart white
             widget.drawRing3(currentX,currentY,28*multiplSize);
-
             widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSnake,45+orientation * 180 / (float) M_PI);
             widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSnake,45+90+orientation * 180 / (float) M_PI);
             widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSnake,45+180+orientation * 180 / (float) M_PI);
@@ -211,7 +210,6 @@ void Food::draw(Widget& widget){
             widget.drawLowpolyRound(currentX, currentY,3);
             widget.setColor(1, 1, 1, 0.47);//Standart white
             widget.drawRing3(currentX,currentY,28*multiplSize);
-
             widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSnake,45+orientation * 180 / (float) M_PI);
             widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSnake,45+90+orientation * 180 / (float) M_PI);
             widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSnake,45+180+orientation * 180 / (float) M_PI);

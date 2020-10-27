@@ -25,17 +25,10 @@ float Protagonist::getOrientationInDegrees(){
     return orientation * 180 / M_PI;
 }
 void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, float target_y) {
-    //target_x = -400; target_y = 0;
-
     //Вместо isDoubleTapped используется isPressed, а isPressed не используется вовсе
     //То есть всегда с ускорением
     orientationAim = atan2(target_y - currentY, target_x - currentX);// orientationAim *= -1;
     float orientationDelta = remainderf(orientationAim - orientation, M_PI * 2);
-    /*qDebug()<<"";
-    qDebug()<<(int) target_x<<(int) target_y<<(int) currentX<<(int) currentY;
-    qDebug()<<"orientationAim"<<orientationAim * 180 / M_PI;
-    qDebug()<<"orientation"<<orientation * 180 / M_PI;
-    qDebug()<<"orientationDelta"<<orientationDelta * 180 / M_PI;*/
     if (abs(orientationDelta) > turnSpeed * dt) {//Если изменение угла не слишком маленькое
         if (orientationDelta>0){
         //if ((orientationDelta <= -M_PI) || ((orientationDelta > 0) && (orientationDelta <= M_PI))) {
@@ -48,6 +41,7 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
         orientation = orientationAim;
     }
 
+    /*  //Рабочий предыдущий вариант
     if (isPressed) {
         currentSpeed = std::min(maxBoostSpeed, currentSpeed + dt * 400);//400 - прирост скорости?
     } else {
@@ -56,18 +50,44 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
         } else {
             currentSpeed = std::min(maxSpeed, currentSpeed + dt * 400 * 0.5f);
         }
+    }*/
+
+    //Slowing-down protagonist when mouse is near
+    if (isPressed) {
+        currentSpeed = std::min(maxBoostSpeed, currentSpeed + dt * 400);//400 - прирост скорости?
+    } else {
+        float distance = sqrt(pow(target_y - currentY,2) + pow(target_x - currentX,2));
+        float control_distance = 100;
+        if (distance >= control_distance){
+            if (currentSpeed > maxSpeed) {//Теряем скорость после ускорения
+                currentSpeed = std::max(currentSpeed * (float) pow(0.98, dt * 30), maxSpeed);//FPS=30
+            } else {
+                currentSpeed = std::min(maxSpeed, currentSpeed + dt * 400 * 0.5f);
+            }
+        } else {
+            //Замедление, когда близко
+            float max_cur_speed = maxSpeed * distance / control_distance;//Да, вот такая кривотень с названием)
+            if (currentSpeed > max_cur_speed) {//Теряем скорость после ускорения
+                currentSpeed = std::max(currentSpeed * (float) pow(0.98, dt * 30), max_cur_speed);//FPS=30
+            } else {
+                currentSpeed = std::min(max_cur_speed, currentSpeed + dt * 400 * 0.5f);
+            }
+        }
+        qDebug()<<(int)distance<<(int)currentSpeed;
     }
 
-    //orientation = 1 * M_PI / 2;// M_PI * 180.;
-    //currentSpeed = 10;//maxSpeed;
 
-    //qDebug()<<cos(0)<<cos(45)<<cos(45./180*M_PI);
+    /*if (distance < 50){
+        currentSpeed *= pow(0.98, dt * 30);
+    }*/
+    //qDebug()<<(int)distance<<(int)currentSpeed;
+
     //Позиция
     currentX += currentSpeed * cos(orientation) * dt;
     currentY += currentSpeed * sin(orientation) * dt;
 
-    canvasSize += dt*0.8f; while (canvasSize>1) canvasSize--;
-    canvasSnake += dt*currentSpeed/maxSpeed; while (canvasSnake>1) canvasSnake--;
+    canvasSize += dt*0.8f; canvasSize = fmodf(canvasSize, 1);//while (canvasSize>1) canvasSize--;
+    canvasSnake += dt*currentSpeed/maxSpeed; canvasSnake = fmodf(canvasSnake, 1);//while (canvasSnake>1) canvasSnake--;
 /*
     if (isEatingRightNow){
         canvasEat=(canvasEat+dt*0.8f*2);

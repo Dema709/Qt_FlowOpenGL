@@ -23,7 +23,7 @@ Widget::Widget(QWidget *parent)
     //unless mouse tracking has been enabled with QWidget::setMouseTracking().
     setMouseTracking(true);//Отслеживание мыши вне зависимости от нажатия
 
-    int foodCount = 0;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
+    int foodCount = 900;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
     int testFoodCount = 9; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
 }
 
