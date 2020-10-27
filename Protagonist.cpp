@@ -52,35 +52,25 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
         }
     }*/
 
-    //Slowing-down protagonist when mouse is near
+    //Если нажата клавиша маши и гг рядом с мышкой, он замедляется
     if (isPressed) {
         currentSpeed = std::min(maxBoostSpeed, currentSpeed + dt * 400);//400 - прирост скорости?
     } else {
         float distance = sqrt(pow(target_y - currentY,2) + pow(target_x - currentX,2));
         float control_distance = 100;
-        if (distance >= control_distance){
-            if (currentSpeed > maxSpeed) {//Теряем скорость после ускорения
-                currentSpeed = std::max(currentSpeed * (float) pow(0.98, dt * 30), maxSpeed);//FPS=30
-            } else {
-                currentSpeed = std::min(maxSpeed, currentSpeed + dt * 400 * 0.5f);
-            }
+        float max_cur_speed;//Да, вот такая кривотень с названием) Это временно, надеюсь
+        if (distance < control_distance){
+            max_cur_speed = maxSpeed * distance / control_distance;
         } else {
-            //Замедление, когда близко
-            float max_cur_speed = maxSpeed * distance / control_distance;//Да, вот такая кривотень с названием)
-            if (currentSpeed > max_cur_speed) {//Теряем скорость после ускорения
-                currentSpeed = std::max(currentSpeed * (float) pow(0.98, dt * 30), max_cur_speed);//FPS=30
-            } else {
-                currentSpeed = std::min(max_cur_speed, currentSpeed + dt * 400 * 0.5f);
-            }
+            max_cur_speed = maxSpeed;//Замедление, когда близко
         }
-        qDebug()<<(int)distance<<(int)currentSpeed;
+        if (currentSpeed > max_cur_speed) {//Теряем скорость после ускорения
+            currentSpeed = std::max(currentSpeed * (float) pow(0.98, dt * 30), max_cur_speed);//FPS=30
+        } else {
+            currentSpeed = std::min(max_cur_speed, currentSpeed + dt * 400 * 0.5f);
+        }
+        //qDebug()<<(int)distance<<(int)currentSpeed;
     }
-
-
-    /*if (distance < 50){
-        currentSpeed *= pow(0.98, dt * 30);
-    }*/
-    //qDebug()<<(int)distance<<(int)currentSpeed;
 
     //Позиция
     currentX += currentSpeed * cos(orientation) * dt;
