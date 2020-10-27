@@ -22,6 +22,9 @@ Widget::Widget(QWidget *parent)
     //Mouse move events will occur only when a mouse button is pressed down,
     //unless mouse tracking has been enabled with QWidget::setMouseTracking().
     setMouseTracking(true);//Отслеживание мыши вне зависимости от нажатия
+
+    int foodCount = 0;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
+    int testFoodCount = 7; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
 }
 
 Widget::~Widget()
@@ -219,6 +222,12 @@ void Widget::paintGL(){
     drawPlus(x_to_draw, -y_to_draw, 10, 0);*/
     particle.draw(*this);
     protagonist.draw(*this);
+    for (auto & f : food){
+        f.draw(*this);
+    }
+    for (auto & f : test_food){
+        f.draw(*this);
+    }
 };
 void Widget::resizeGL(int width, int height){
     //qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -279,6 +288,9 @@ void Widget::slotUpdatePosition()
         protagonist.updateMapPosition(dt, is_mouse_pressed, target_x, target_y);
 
         particle.updatePosition(dt, protagonist);
+
+        for (auto & f : food){f.updateMapPosition(dt);}
+        for (auto & f : test_food){f.updateMapPositionTest(dt);}
     }
 
     updateGL();
@@ -623,12 +635,14 @@ void Widget::drawSquareTransfered(float centerX, float centerY, float sizeScale,
     tempMatrix.translate(offsetX/sizeScale,offsetY/sizeScale);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(SQUARE);
-/*
-    Matrix.setIdentityM(mModelMatrix, 0);
-    Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
-    Matrix.scaleM(mModelMatrix,0,sizeScale,sizeScale,1);
-    Matrix.rotateM(mModelMatrix,0,orientation,0,0,1);
-    Matrix.translateM(mModelMatrix,0,offsetX/sizeScale,offsetY/sizeScale,0);
-    bindMatrix();
-    glDrawArrays(GL_TRIANGLE_FAN, 4, 4);*/
+}
+
+void Widget::drawLowpolyRoundTransfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(radius);
+    tempMatrix.rotate(orientation,rotating_about);
+    tempMatrix.translate(offsetX/radius,offsetY/radius);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(LOWPOLY_ROUND);
 }

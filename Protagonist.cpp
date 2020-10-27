@@ -30,12 +30,12 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
     //Вместо isDoubleTapped используется isPressed, а isPressed не используется вовсе
     //То есть всегда с ускорением
     orientationAim = atan2(target_y - currentY, target_x - currentX);// orientationAim *= -1;
-    float orientationDelta = remainder(orientationAim - orientation, M_PI * 2);
-    qDebug()<<"";
+    float orientationDelta = remainderf(orientationAim - orientation, M_PI * 2);
+    /*qDebug()<<"";
     qDebug()<<(int) target_x<<(int) target_y<<(int) currentX<<(int) currentY;
     qDebug()<<"orientationAim"<<orientationAim * 180 / M_PI;
     qDebug()<<"orientation"<<orientation * 180 / M_PI;
-    qDebug()<<"orientationDelta"<<orientationDelta * 180 / M_PI;
+    qDebug()<<"orientationDelta"<<orientationDelta * 180 / M_PI;*/
     if (abs(orientationDelta) > turnSpeed * dt) {//Если изменение угла не слишком маленькое
         if (orientationDelta>0){
         //if ((orientationDelta <= -M_PI) || ((orientationDelta > 0) && (orientationDelta <= M_PI))) {
@@ -92,15 +92,12 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
         }
     }*/
 
-    canvasEat += dt*1.6f;
-    if (canvasEat>=2) canvasEat -= 2;
+    //canvasEat += dt*1.6f;
+    //if (canvasEat>=2) canvasEat -= 2;
 }
 
 void Protagonist::draw(Widget& widget){
-    float delta = 0;
-    //widget.setColor(1,0,0,1);
-    //widget.drawPentagon(currentX,currentY,50,orientation * 180 / M_PI - delta);
-    widget.setColor(0,1,0,1);
+    widget.setColor(1, 1, 1, 0.47);
 
     widget.drawRing2(currentX,currentY,2*0.7f*5.3f);
     widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),-21,0);

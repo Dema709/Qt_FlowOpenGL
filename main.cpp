@@ -6,6 +6,15 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    /*float test;//canvasSize = (canvasSize + dt * 0.8) % 1;
+    for (int i=0; i<100; i++)
+    {
+        float dt = 0.5;
+        test += dt * 0.8;
+        test = fmodf(test, 1.);
+        qDebug()<<"Main i:"<<i<<(i+1)*0.5*0.8<<"->"<<test;
+    }*/
+
     //Мультисэмплинг (антиалиасинг) = здесь + glEnable(GL_MULTISAMPLE);
     QGLFormat fmt;
     fmt.setSampleBuffers(true);

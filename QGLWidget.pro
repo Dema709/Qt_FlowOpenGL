@@ -12,6 +12,7 @@ CONFIG += c++11
 
 SOURCES += \
     Camera.cpp \
+    Food.cpp \
     Protagonist.cpp \
     VertexLoader.cpp \
     main.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 
 HEADERS += \
     Camera.h \
+    Food.h \
     Protagonist.h \
     VertexLoader.h \
     particle.h \

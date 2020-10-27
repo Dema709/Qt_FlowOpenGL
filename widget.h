@@ -9,6 +9,7 @@
 #include "particle.h"//Временно, пока не уберётся в уровень
 #include "Camera.h"
 #include "Protagonist.h"
+#include "Food.h"
 
 #include <mutex>
 
@@ -40,8 +41,6 @@ private:
     GLuint shaderProgram;
 
     QMatrix4x4 mMatrix;
-
-    Particle particle;
 
     int invertFPS = 1000/50;//Величина, обратная требуемому фпс; Период подсчёта кадров в миллисекундах
     //FPS выше 60 смысла ставить нет (?)
@@ -99,10 +98,14 @@ public:
     void drawSharkBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
     void drawPatricle(float centerX, float centerY, float alpha);
     void drawSquareTransfered(float centerX, float centerY, float sizeScale, float orientation, float offsetX, float offsetY);
+    void drawLowpolyRoundTransfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
     void setColor(float r, float g, float b, float a);
 private:
     ChakaPon::Camera camera;
+    Particle particle;
     Protagonist protagonist;
     QVector3D rotating_about = {0,0,1};//Вектор, относительно которого происходит вращение
+    std::vector<Food> food, test_food;
+
 };
 #endif // WIDGET_H

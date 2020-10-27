@@ -5,6 +5,7 @@
 #include "widget.h"/////////////////?
 #include "Protagonist.h"
 
+
 Particle::Particle(int count_, float maxLifeTime_, float maxRange_)
     : count(count_), maxLifeTime(maxLifeTime_), maxRange(maxRange_)
 {
