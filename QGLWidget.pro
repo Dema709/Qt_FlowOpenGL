@@ -13,6 +13,7 @@ CONFIG += c++11
 SOURCES += \
     Camera.cpp \
     Food.cpp \
+    Level.cpp \
     Protagonist.cpp \
     Segment.cpp \
     VertexLoader.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 HEADERS += \
     Camera.h \
     Food.h \
+    Level.h \
     Protagonist.h \
     Segment.h \
     VertexLoader.h \

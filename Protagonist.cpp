@@ -240,3 +240,31 @@ void Protagonist::evolveBig(){
         }
     }
 }
+
+int Protagonist::updateEat(std::vector<Food>& foods_array){
+    //minus lvl ot damaga
+    if (levelDownCosDamaged){
+        segments[0].restoreWeakPoint();
+        levelDownCosDamaged = false;
+        return -1;
+    }
+
+    if (isEatingRightNow) return 0;
+
+    float mouthDist = 30;
+    float mouthRadius = 20;
+
+    //Поедание мелких
+    for (int i = 0; i < foods_array.size(); i++) {
+        if (!foods_array[i].isEaten()) {
+            if (pow(currentX + mouthDist * cos(orientation) - foods_array[i].getCurrentX(), 2) + pow(currentY + mouthDist * sin(orientation) - foods_array[i].getCurrentY(), 2) <
+                    pow(mouthRadius + foods_array[i].getCurrentRadius(), 2)) {
+                isEatingRightNow = true;
+                foods_array[i].setEaten();
+                return 0;
+            }
+        }
+    }
+
+    return 0;
+}

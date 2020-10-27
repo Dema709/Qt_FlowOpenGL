@@ -15,7 +15,7 @@ Food::Food()
     turnSpeed = 50. / 180. * M_PI;
     canvasSize = effolkronium::random_static::get<float>(0, 1);
     canvasSnake = effolkronium::random_static::get<float>(0, 1);
-    isEaten=false;
+    isEaten_=false;
     type = effolkronium::random_static::get<int>(0,6);
     this->goToRandomLocation();
     this->setRadius();
@@ -66,12 +66,12 @@ void Food::updateMapPosition(float dt){
     if (isInvisible){
         if (invisibleTimer>0) {
             isInvisible=false;
-            isEaten=false;
+            isEaten_=false;
         }
         invisibleTimer=invisibleTimer+dt;
     }
 
-    if (!isEaten) {
+    if (!isEaten_) {
         if (sqrt(pow((currentX - aimX), 2) + pow((currentY - aimY), 2)) < 5) {
             goToRandomLocation();
         }
@@ -153,7 +153,7 @@ void Food::updateMapPosition(float dt){
 }
 
 void Food::draw(Widget& widget){
-    if (isEaten) return;
+    if (isEaten_) return;
 
     //if (abs(currentX-camera.getCurrentX())<camera.getGamefieldHalfX()&&Math.abs(currentY-camera.getCurrentY())<camera.getGamefieldHalfY())
 
@@ -291,5 +291,25 @@ Food::Food(int testType){
     type=testType;//this.randomizeType();
 
     this->setRadius();
-    isEaten=false;
+    isEaten_=false;
+}
+
+bool Food::isEaten(){
+    return isEaten_;
+}
+
+float Food::getCurrentX(){
+    return currentX;
+}
+
+float Food::getCurrentY(){
+    return currentY;
+}
+
+float Food::getCurrentRadius(){
+    return currentRadius;
+}
+
+void Food::setEaten(){
+    isEaten_ = true;
 }

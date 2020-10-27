@@ -11,6 +11,11 @@ public:
     void updateMapPosition(float dt);
     void updateMapPositionTest(float dt);//Для тестового отображения, без перемещения
     void draw(Widget& widget);
+    bool isEaten();
+    float getCurrentX();
+    float getCurrentY();
+    float getCurrentRadius();
+    void setEaten();
 private:
     float currentX,currentY;//Положение на карте
     float orientation;//Ориентация, в радианах
@@ -22,7 +27,7 @@ private:
     float canvasSnake;
     int type;
     float currentRadius;
-    bool isEaten;
+    bool isEaten_;
     bool isInvisible=false;
     float invisibleTimer;
     float flockieBirdRadius=50;

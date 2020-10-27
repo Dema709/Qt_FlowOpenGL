@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Segment.h"
+#include "Food.h"
 
 class Widget;
 //class Segment;
@@ -18,6 +19,7 @@ public:
     void updateMapPosition(float dt, bool isPressed, float target_x, float target_y);
     void draw(Widget& widget);
     float getOrientationInDegrees();
+    int updateEat(std::vector<Food>& food);
 private:
     float currentX = 200, currentY = 0;//Положение на карте
     float orientation = 90 * 3.1415 / 180;//Ориентация, в радианах
@@ -31,6 +33,7 @@ private:
     float canvasEat = 0;
     bool isEatingRightNow = false;
     bool itWasVoidFood = false;
+    bool levelDownCosDamaged = false;
 
 
     std::vector<Segment> segments;
