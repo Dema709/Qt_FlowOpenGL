@@ -723,17 +723,20 @@ void Widget::drawSquaresTransferedWithScale(float centerX, float centerY, float 
 }
 
 void Widget::drawBezier5(float centerX, float centerY, float sizeScale, float orientation, float multiplSnake, float changeLevelFoodRadius) {
-    int frame = (1-multiplSnake*2) * (V.ANIMATION_FRAMES - 1);//Кадр анимации
+    int frame;
 
     QMatrix4x4 tempMatrix(mMatrix);
     tempMatrix.translate(centerX,centerY);
     if (multiplSnake>=0.5){
         tempMatrix.scale(sizeScale);
         tempMatrix.rotate(orientation+90,rotating_about);
+        frame = (multiplSnake-0.5f) * 2 * (V.ANIMATION_FRAMES - 1);//Кадр анимации
     } else {
         tempMatrix.scale(sizeScale, -sizeScale);
         tempMatrix.rotate(-orientation+90,rotating_about);
+        frame = (1-multiplSnake*2) * (V.ANIMATION_FRAMES - 1);//Кадр анимации
     }
+
     tempMatrix.translate(-1, changeLevelFoodRadius+1);
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER, frame);

@@ -85,33 +85,32 @@ int ChangeLevelFood::getType(){
 void ChangeLevelFood::draw(Widget& widget){
     //qDebug()<<"ChangeLevelFood::draw";
     widget.setColor(1, 1, 1, 0.47);//Standart white
-    /*switch (type){
+    switch (type){
         case 0://Переход вниз
-
             widget.setColor(0, 1, 1, 1);//Cyan
-            widget.drawLowpolyRound(currentX, currentY,5f);
+            widget.drawLowpolyRound(currentX, currentY,5);
             widget.setColor(1, 1, 1, 0.47);//Standart white
             widget.drawRing3(currentX,currentY,28*multiplSize);
 
-            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+orientation * 180 / (float) Math.PI);
-            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+90+orientation * 180 / (float) Math.PI);
-            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+180+orientation * 180 / (float) Math.PI);
-            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+270+orientation * 180 / (float) Math.PI);
-            widget.drawBezier5(currentX,currentY,1.5f,orientation * 180 / (float) Math.PI,Math.abs(canvasSnake-0.5f)*2f,21*multiplSize-10);
+            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+orientation * 180 / (float) M_PI);
+            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+90+orientation * 180 / (float) M_PI);
+            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+180+orientation * 180 / (float) M_PI);
+            widget.drawRoundedTriangleInCenterTransfered(currentX,currentY,multiplSize2,45+270+orientation * 180 / (float) M_PI);
+            widget.drawBezier5(currentX,currentY,1.5f,orientation * 180 / (float) M_PI,abs(canvasSnake-0.5f)*2,21*multiplSize-10);
             break;
         case 1://Переход наверх
             widget.setColor(1, 0, 0, 1);//Red
-            widget.drawLowpolyRound(currentX, currentY,3f);
+            widget.drawLowpolyRound(currentX, currentY,3);
             widget.setColor(1, 1, 1, 0.47);//Standart white
             widget.drawRing3(currentX,currentY,28*multiplSize);
-            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+orientation * 180 / (float) Math.PI);
-            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+90+orientation * 180 / (float) Math.PI);
-            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+180+orientation * 180 / (float) Math.PI);
-            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+270+orientation * 180 / (float) Math.PI);
-            widget.drawBezier5(currentX,currentY,1.5f,orientation * 180 / (float) Math.PI,Math.abs(canvasSnake-0.5f)*2f,21*multiplSize-10);
+            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+orientation * 180 / (float) M_PI);
+            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+90+orientation * 180 / (float) M_PI);
+            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+180+orientation * 180 / (float) M_PI);
+            widget.drawRoundedTriangleOutCenterTransfered(currentX,currentY,multiplSize2,45+270+orientation * 180 / (float) M_PI);
+            widget.drawBezier5(currentX,currentY,1.5f,orientation * 180 / (float) M_PI,abs(canvasSnake-0.5f)*2,21*multiplSize-10);
             break;
         default:
             qDebug()<<"ChangeLevelFood::draw"<<"Тип еды задан неправильно. Обновление картинки"<<type;
             break;
-    }*/
+    }
 }
