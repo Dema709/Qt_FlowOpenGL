@@ -14,6 +14,7 @@ SOURCES += \
     Camera.cpp \
     Food.cpp \
     Protagonist.cpp \
+    Segment.cpp \
     VertexLoader.cpp \
     main.cpp \
     particle.cpp \
@@ -23,6 +24,7 @@ HEADERS += \
     Camera.h \
     Food.h \
     Protagonist.h \
+    Segment.h \
     VertexLoader.h \
     particle.h \
     random.hpp \

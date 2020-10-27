@@ -1,3 +1,4 @@
+//#include "Segment.h"
 #include "Protagonist.h"
 #include <cmath>//pow, atan2, sqrt
 #include "widget.h"/////////////////?Отрисовка
@@ -6,7 +7,16 @@
 
 Protagonist::Protagonist()
 {
-
+    Nsegm = 2;
+    segments.reserve(NsegmMax);//segments = new Segment[NsegmMax];
+        /*for (int k = 0; k < Nsegm; k++) {
+            segments[k] = new Segment(currentX, currentY, orientation, k);
+        }*/
+    segments.push_back(Segment(currentX, currentY, orientation, 0));//segments[0] = Segment(currentX, currentY, orientation, 0);
+    segments[0].setFirst();
+    segments[0].setWeakPoint();
+    //segments[1] = new Segment(segments[0].getCurrentX(), segments[0].getCurrentY(), segments[0].getOrientation(), 1);
+    segments.push_back(Segment(segments[0].getCurrentX(), segments[0].getCurrentY(), segments[0].getOrientation(), 1));
 }
 
 float Protagonist::getCurrentX(){
@@ -78,7 +88,7 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
 
     canvasSize += dt*0.8f; canvasSize = fmodf(canvasSize, 1);//while (canvasSize>1) canvasSize--;
     canvasSnake += dt*currentSpeed/maxSpeed; canvasSnake = fmodf(canvasSnake, 1);//while (canvasSnake>1) canvasSnake--;
-/*
+
     if (isEatingRightNow){
         canvasEat=(canvasEat+dt*0.8f*2);
         if (canvasEat>=2) {
@@ -87,7 +97,7 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
                 itWasVoidFood=false;
             }
             else{
-                this.evolveLittle();
+                //this->evolveLittle();!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Реализовать
             }
             isEatingRightNow = false;
         }
@@ -100,7 +110,7 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
         else {
             segments[k].updateMapPosition(segments[k-1].getCurrentX(), segments[k-1].getCurrentY(), dt, currentSpeed);
         }
-    }*/
+    }
 
     //canvasEat += dt*1.6f;
     //if (canvasEat>=2) canvasEat -= 2;
@@ -118,4 +128,7 @@ void Protagonist::draw(Widget& widget){
         widget.drawMouth(currentX,currentY, this->getOrientationInDegrees(),1-abs(canvasEat-0.5f)*2);
     }
 
+    for (int k=0;k<Nsegm;k++){
+        segments[k].drawWithScale(widget,k,Nsegm);
+    }
 }

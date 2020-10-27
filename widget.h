@@ -101,6 +101,7 @@ public:
     void drawLowpolyRoundTransfered(float centerX, float centerY, float radius, float orientation, float offsetX, float offsetY);
     void drawRoundedTriangleInCenterTransfered(float centerX, float centerY, float sizeScale, float orientation);
     void drawRoundedTriangleOutCenterTransfered(float centerX, float centerY, float sizeScale, float orientation);
+    void drawSquaresTransferedWithScale(float centerX, float centerY, float orientation, float deltaAngle, float scale);
     void setColor(float r, float g, float b, float a);
 private:
     ChakaPon::Camera camera;

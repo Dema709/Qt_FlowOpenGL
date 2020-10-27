@@ -1,7 +1,11 @@
 #ifndef PROTAGONIST_H
 #define PROTAGONIST_H
 
+#include <vector>
+#include "Segment.h"
+
 class Widget;
+//class Segment;
 
 class Protagonist
 {
@@ -25,6 +29,12 @@ private:
     float canvasSize = 0;
     float canvasSnake = 0;
     float canvasEat = 0;
+    bool isEatingRightNow = false;
+    bool itWasVoidFood = false;
+
+
+    std::vector<Segment> segments;
+    int Nsegm;int NsegmMax=8;
 };
 
 #endif // PROTAGONIST_H

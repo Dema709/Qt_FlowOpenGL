@@ -666,3 +666,47 @@ void Widget::drawRoundedTriangleOutCenterTransfered(float centerX, float centerY
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(ROUNDED_TRIANGLE_OUTCENTER);
 }
+
+void Widget::drawSquaresTransferedWithScale(float centerX, float centerY, float orientation, float deltaAngle, float scale){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,rotating_about);
+    tempMatrix.translate(2, 16*0.7f);
+
+    tempMatrix.rotate(deltaAngle,rotating_about);
+    tempMatrix.translate(scale, 0);
+    tempMatrix.scale(scale*2,3);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(SQUARE);
+//Matrix.setIdentityM(mModelMatrix, 0);
+//Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
+//Matrix.rotateM(mModelMatrix,0,orientation,0,0,1);
+//Matrix.translateM(mModelMatrix,0,2,16*0.7f,0);
+
+//Matrix.rotateM(mModelMatrix,0,deltaAngle,0,0,1);
+//Matrix.translateM(mModelMatrix,0,scale,0,0);//50=100/2
+//Matrix.scaleM(mModelMatrix,0,scale*2,3,1);//100
+//bindMatrix();
+//glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+
+    tempMatrix = mMatrix;
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.rotate(orientation,rotating_about);
+    tempMatrix.translate(2, -16*0.7f);
+
+    tempMatrix.rotate(-deltaAngle,rotating_about);
+    tempMatrix.translate(scale, 0);
+    tempMatrix.scale(scale*2,3);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(SQUARE);
+//Matrix.setIdentityM(mModelMatrix, 0);
+//Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
+//Matrix.rotateM(mModelMatrix,0,orientation,0,0,1);
+//Matrix.translateM(mModelMatrix,0,2,-16*0.7f,0);
+
+//Matrix.rotateM(mModelMatrix,0,-deltaAngle,0,0,1);
+//Matrix.translateM(mModelMatrix,0,scale,0,0);//50=100/2
+//Matrix.scaleM(mModelMatrix,0,scale*2,3,1);//100
+//bindMatrix();
+//glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+}
