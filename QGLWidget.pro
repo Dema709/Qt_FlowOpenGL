@@ -17,6 +17,7 @@ SOURCES += \
     Level.cpp \
     Protagonist.cpp \
     Segment.cpp \
+    SnakeHunter.cpp \
     VertexLoader.cpp \
     main.cpp \
     particle.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     Level.h \
     Protagonist.h \
     Segment.h \
+    SnakeHunter.h \
     VertexLoader.h \
     particle.h \
     random.hpp \

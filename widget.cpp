@@ -243,7 +243,7 @@ void Widget::paintGL(){
     drawSharkBody(-580, 250, 45, 1, 0.1f);
     }
 
-    drawAxes();//Временно:
+    //drawAxes();//Временно:
 
     protagonist.draw(*this);
     particle.draw(*this);
