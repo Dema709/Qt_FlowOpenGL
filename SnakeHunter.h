@@ -6,6 +6,7 @@
 #include "widget.h"/////////////////?Отрисовка
 
 class Widget;
+class Food;
 
 class SnakeHunter
 {
@@ -20,6 +21,7 @@ public:
     float getCurrentSegY(int nSegm);
     float getCurrentSegRadius(int nSegm);
     void setDamaged(int nSegm);
+    void findNearFood(std::vector<Food>& food);
 private:
     float currentX,currentY;//Положение на карте
     float orientation;//Ориентация, в радианах

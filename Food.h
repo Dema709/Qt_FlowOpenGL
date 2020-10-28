@@ -16,6 +16,8 @@ public:
     float getCurrentY();
     float getCurrentRadius();
     void setEaten();
+    bool isEatenAndNotInvisible();
+    void setInvisible(float timer,float segCurrentX, float segCurrentY);
 private:
     float currentX,currentY;//Положение на карте
     float orientation;//Ориентация, в радианах

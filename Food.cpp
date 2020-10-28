@@ -16,7 +16,7 @@ Food::Food()
     canvasSize = effolkronium::random_static::get<float>(0, 1);
     canvasSnake = effolkronium::random_static::get<float>(0, 1);
     isEaten_=false;
-    type = effolkronium::random_static::get<int>(0,6);
+    type = effolkronium::random_static::get<int>(0,6);//randomize type есть ещё в одном месте
     this->goToRandomLocation();
     this->setRadius();
 }
@@ -313,4 +313,20 @@ float Food::getCurrentRadius(){
 
 void Food::setEaten(){
     isEaten_ = true;
+}
+
+bool Food::isEatenAndNotInvisible(){
+    return isEaten_&&!isInvisible;
+}
+
+void Food::setInvisible(float timer,float segCurrentX, float segCurrentY){
+    invisibleTimer=-timer;
+    currentX=segCurrentX;
+    currentY=segCurrentY;
+    isInvisible=true;
+    this->goToRandomLocation();
+    currentSpeed=0;
+    type = effolkronium::random_static::get<int>(0,6);//this->randomizeType();
+
+    isEaten_=false;
 }

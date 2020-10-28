@@ -1,5 +1,6 @@
 #include "SnakeHunter.h"
 #include "random.hpp"
+#include "Food.h"
 
 SnakeHunter::SnakeHunter(int Nsegm_, int NsegmEvolved_)
 {
@@ -321,4 +322,61 @@ void SnakeHunter::setDamaged(int nSegm){
         isPanic=true;
         panicTimer=0;
     }//Больно! Надо ускориться! Паника!
+}
+
+void SnakeHunter::findNearFood(std::vector<Food>& foods_array){
+    if (!isEaten_){
+        if (!isPanic) {
+            if (!isEatingRightNow) {
+                float mouthDist = 30;
+                float mouthRadius = 20;
+                hasTarget = false;
+
+                //Поедание мелких
+                for (int i = 0; i < foods_array.size(); i++) {
+                    if (!foods_array[i].isEaten()) {
+                        if (pow(currentX + mouthDist * cos(orientation) - foods_array[i].getCurrentX(), 2) +
+                                pow(currentY + mouthDist * sin(orientation) - foods_array[i].getCurrentY(), 2) <
+                                pow(mouthRadius + foods_array[i].getCurrentRadius(), 2)) {
+                            isEatingRightNow = true;
+                            foods_array[i].setEaten();
+                            return;
+                        }//Съедена еда
+
+                        if (pow(currentX - foods_array[i].getCurrentX(), 2) + pow(currentY - foods_array[i].getCurrentY(), 2) < pow(agroRadius, 2)) {
+                            if (hasTarget) {
+                                if (pow(currentX - foods_array[i].getCurrentX(), 2) + pow(currentY - foods_array[i].getCurrentY(), 2) < pow(currentX - aimX, 2) + pow(currentY - aimY, 2)) {
+                                    aimX = foods_array[i].getCurrentX();
+                                    aimY = foods_array[i].getCurrentY();
+                                }//Проверка, что ближе: старая цель или новая
+                            } else {
+                                aimX = foods_array[i].getCurrentX();
+                                aimY = foods_array[i].getCurrentY();
+                                hasTarget = true;
+                            }
+                        }//Еда попала в агрорадиус
+                    }
+                }
+            }
+        }
+    }
+    else {
+        if (!isDivisionWrittenInFood){
+            //Log.wtf(LOG_TAG,"Разваливается на еду");
+            int k=0;
+            for (int i=0;i<Nsegm;i++){
+                if (segments[i].hasSaturationOrIsWeakPoint()){
+                    while (k<foods_array.size()){
+                        if (foods_array[k].isEatenAndNotInvisible()){
+                            foods_array[k].setInvisible((float)i*0.1f+0.1f,segments[i].getCurrentX(),segments[i].getCurrentY());
+                            k++;
+                            break;
+                        }
+                        k++;
+                    }
+                }
+                isDivisionWrittenInFood=true;
+            }
+        }
+    }
 }

@@ -26,8 +26,8 @@ Level::Level(int levelNum)
     switch (levelNum){
         case (0):
             color=0xFF009EE7;
-            //foods_arraySize=15;
-            snakeHunter_arraySize=2000;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
+            foods_arraySize=30;
+            snakeHunter_arraySize=1;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
             changeLevelFood_arraySize=1;//Переход только на уровень ниже
             break;
         case (1):
@@ -153,6 +153,9 @@ int Level::updateFoodMapPosition(float dt, Protagonist& protagonist, float camer
         t.updateMapPosition(dt);//Обновление местоположения змейки
 
     int changeLevel = protagonist.updateEat(changeLevelFood_array, food_array, snakeHunter_array);//Кушает гг
+
+    for (auto& t : snakeHunter_array)
+        t.findNearFood(food_array);//Кушают змейки
 
     return changeLevel;
 }

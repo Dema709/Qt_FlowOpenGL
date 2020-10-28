@@ -27,6 +27,7 @@ public:
     bool isSegmentWeakPointAndUndamaged();
     float getCurrentRadius();
     void setWeakPointDamaged();
+    bool hasSaturationOrIsWeakPoint();
 private:
     int type;
     float distance;

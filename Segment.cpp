@@ -195,3 +195,7 @@ void Segment::setWeakPointDamaged(){
     isWeakPointDamaged_=true;
     saturation=false;
 }
+
+bool Segment::hasSaturationOrIsWeakPoint(){
+    return saturation||isWeakPoint_;
+}
