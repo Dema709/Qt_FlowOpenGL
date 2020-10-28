@@ -1,5 +1,9 @@
 //#include "Segment.h"
 #include "Protagonist.h"
+#include "Segment.h"
+#include "Food.h"
+#include "ChangeLevelFood.h"
+#include "SnakeHunter.h"
 #include <cmath>//pow, atan2, sqrt
 #include "widget.h"/////////////////?Отрисовка
 #include <QDebug>//Временно
@@ -241,7 +245,7 @@ void Protagonist::evolveBig(){
     }
 }
 
-int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, std::vector<Food>& foods_array){
+int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, std::vector<Food>& foods_array, std::vector<SnakeHunter>& snakeHunter_array){
     //minus lvl ot damaga
     if (levelDownCosDamaged){
         segments[0].restoreWeakPoint();
@@ -276,6 +280,24 @@ int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, 
             }
         }
     }
+
+    //Поедание змейки
+    for (auto & t : snakeHunter_array){
+        if (!t.isEaten()){
+            for (int j = 0; j < t.getNsegm(); j++) {
+                if (t.isSegmentWeakPointAndUndamaged(j)) {
+                    if (pow(currentX + mouthDist * cos(orientation) - t.getCurrentSegX(j), 2) +
+                            pow(currentY + mouthDist * sin(orientation) - t.getCurrentSegY(j), 2) <
+                            pow(mouthRadius + t.getCurrentSegRadius(j), 2)) {//Радиус
+                        isEatingRightNow = true;
+                        t.setDamaged(j);
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+
 
     return 0;
 }

@@ -184,3 +184,14 @@ void Segment::drawDivision(Widget& widget, float dt){
         //widget.setColor(0);
     }
 }
+
+bool Segment::isSegmentWeakPointAndUndamaged(){
+    return isWeakPoint_&&!isWeakPointDamaged_;
+}
+
+float Segment::getCurrentRadius(){return currentRadius;}
+
+void Segment::setWeakPointDamaged(){
+    isWeakPointDamaged_=true;
+    saturation=false;
+}

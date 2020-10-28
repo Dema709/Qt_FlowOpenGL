@@ -2,9 +2,12 @@
 #define PROTAGONIST_H
 
 #include <vector>
-#include "Segment.h"
-#include "Food.h"
-#include "ChangeLevelFood.h"
+
+class Segment;
+class Food;
+class ChangeLevelFood;
+class SnakeHunter;
+
 
 class Widget;
 //class Segment;
@@ -20,7 +23,7 @@ public:
     void updateMapPosition(float dt, bool isPressed, float target_x, float target_y);
     void draw(Widget& widget);
     float getOrientationInDegrees();
-    int updateEat(std::vector<ChangeLevelFood>& changeLevel, std::vector<Food>& food);
+    int updateEat(std::vector<ChangeLevelFood>& changeLevel, std::vector<Food>& food, std::vector<SnakeHunter>& snakeHunter_array);
 private:
     float currentX = 200, currentY = 0;//Положение на карте
     float orientation = 90 * 3.1415 / 180;//Ориентация, в радианах

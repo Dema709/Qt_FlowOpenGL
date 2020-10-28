@@ -64,7 +64,7 @@ void SnakeHunter::draw(Widget& widget){
         }
     }
 
-    if (!isEaten) {
+    if (!isEaten_) {
         widget.setColor(1, 1, 1, 0.47);//Standart white
         widget.drawRing2(currentX,currentY,2*0.7f*5.3f);
         widget.drawMouth(currentX,currentY,this->getOrientationInDegrees(),1-abs(fmodf(canvasEat, 1)-0.5f)*2);
@@ -89,7 +89,7 @@ void SnakeHunter::updateMapPosition(float dt){
         divisionTimer=divisionTimer+dt;
     }
 
-    if (isEaten) return;
+    if (isEaten_) return;
 
     if (isPanic) {
         if (panicTimer > panicMaxTime) {
@@ -285,4 +285,40 @@ void SnakeHunter::evolveBig(){
             }
         }
     }
+}
+
+bool SnakeHunter::isEaten(){
+    return isEaten_;
+}
+
+int SnakeHunter::getNsegm(){
+    return Nsegm;
+}
+
+bool SnakeHunter::isSegmentWeakPointAndUndamaged(int nSegm){
+    return segments[nSegm].isSegmentWeakPointAndUndamaged();
+}
+
+float SnakeHunter::getCurrentSegX(int nSegm){return segments[nSegm].getCurrentX();}
+float SnakeHunter::getCurrentSegY(int nSegm){return segments[nSegm].getCurrentY();}
+float SnakeHunter::getCurrentSegRadius(int nSegm){return segments[nSegm].getCurrentRadius();}
+
+void SnakeHunter::setDamaged(int nSegm){
+    segments[nSegm].setWeakPointDamaged();///////////////////////////////////////////////Можно будет объединить
+
+    int weakUndamagedSum=0;
+    for (int k=0;k<Nsegm-1;k++) {
+        if (segments[k].isSegmentWeakPointAndUndamaged())///////////////////////////////Тут должна быть проверка на слабые точки аля weakpoints
+                weakUndamagedSum++;
+    }
+
+    if (weakUndamagedSum==0){
+        isInDivision=true;
+        divisionTimer=0;
+        isEaten_=true;/////////////////////////////////////////////////////////////////////////////И вызов ф-ии распада
+    }//Вас сожрали нафиг ;р
+    else{
+        isPanic=true;
+        panicTimer=0;
+    }//Больно! Надо ускориться! Паника!
 }

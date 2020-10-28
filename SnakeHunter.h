@@ -13,6 +13,13 @@ public:
     SnakeHunter(int Nsegm_, int NsegmEvolved_);
     void updateMapPosition(float dt);
     void draw(Widget& widget);
+    bool isEaten();
+    int getNsegm();
+    bool isSegmentWeakPointAndUndamaged(int nSegm);
+    float getCurrentSegX(int nSegm);
+    float getCurrentSegY(int nSegm);
+    float getCurrentSegRadius(int nSegm);
+    void setDamaged(int nSegm);
 private:
     float currentX,currentY;//Положение на карте
     float orientation;//Ориентация, в радианах
@@ -36,7 +43,7 @@ private:
     float panicTimer=0, panicMaxTime=2;
 
     bool hasTarget=false;
-    bool isEaten=false;
+    bool isEaten_=false;
     float aimX, aimY;
 
     float agroRadius=200;

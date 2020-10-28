@@ -24,6 +24,9 @@ public:
     void setSaturation(bool saturation_);
     int getType();
     void changeType(int type_);
+    bool isSegmentWeakPointAndUndamaged();
+    float getCurrentRadius();
+    void setWeakPointDamaged();
 private:
     int type;
     float distance;
