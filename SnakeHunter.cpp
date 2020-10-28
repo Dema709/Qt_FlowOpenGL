@@ -65,6 +65,7 @@ void SnakeHunter::draw(Widget& widget){
     }
 
     if (!isEaten) {
+        widget.setColor(1, 1, 1, 0.47);//Standart white
         widget.drawRing2(currentX,currentY,2*0.7f*5.3f);
         widget.drawMouth(currentX,currentY,this->getOrientationInDegrees(),1-abs(fmodf(canvasEat, 1)-0.5f)*2);
         widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),-21,0);

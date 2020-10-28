@@ -2,9 +2,11 @@
 #define LEVEL_H
 
 #include <vector>
-#include "ChangeLevelFood.h"
-#include "Protagonist.h"
-#include "Food.h"
+class Widget;
+class Protagonist;
+class ChangeLevelFood;
+class Food;
+class SnakeHunter;
 
 class Level
 {
@@ -17,6 +19,7 @@ private:
     std::vector<float> backgroundColor;
     std::vector<ChangeLevelFood> changeLevelFood_array;
     std::vector<Food> food_array;
+    std::vector<SnakeHunter> snakeHunter_array;
 };
 
 #endif // LEVEL_H

@@ -11,6 +11,7 @@
 #include "Protagonist.h"
 #include "Food.h"
 #include "Level.h"
+#include "SnakeHunter.h"
 
 #include <mutex>
 

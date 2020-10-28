@@ -11,7 +11,7 @@ class SnakeHunter
 {
 public:
     SnakeHunter(int Nsegm_, int NsegmEvolved_);
-
+    void updateMapPosition(float dt);
     void draw(Widget& widget);
 private:
     float currentX,currentY;//Положение на карте
@@ -48,7 +48,6 @@ private:
     float maxRange=1000;
 
     float getOrientationInDegrees();
-    void updateMapPosition(float dt);
     void goToRandomLocation();
     void evolveLittle();
     void evolveBig();
