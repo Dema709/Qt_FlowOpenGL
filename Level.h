@@ -11,7 +11,7 @@ class Level
 public:
     Level(int levelNum);
     std::vector<float> getColor();
-    int updateFoodMapPosition(float dt, Protagonist& protagonist);
+    int updateFoodMapPosition(float dt, Protagonist& protagonist, float cameraX, float cameraY, float half_widht, float half_height);
     void draw(Widget& widget);
 private:
     std::vector<float> backgroundColor;

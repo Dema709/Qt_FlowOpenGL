@@ -117,5 +117,6 @@ private:
     int currentLevel=0;
 
     std::vector<float> currentColor, oldColor, newColor;
+    float changeBackgroundColorTime=10;
 };
 #endif // WIDGET_H

@@ -171,6 +171,27 @@ void Widget::paintGL(){
         calculateFPS();
     #endif
 
+    if (changeBackgroundColorTime>=1){//Цвет уже сменился
+        currentColor = levelArray[currentLevel].getColor();
+        /*for (int i=0;i<3;i++){
+            curColor[i]=(float)((levelArray[currentLevel].getColor()>>(2-i)*8)&0xFF)/255f;
+        }*/
+    }
+    else {
+        if (shouldIChangeLevel!=0){//!changeBackgroundColorAccepted) {//Уровень только что сменился
+            oldColor = currentColor;
+            newColor = levelArray[currentLevel].getColor();
+            /*for (int i=0;i<3;i++){
+                oldColor[i] = curColor[i];
+                newColor[i]=(float)((levelArray[currentLevel].getColor()>>(2-i)*8)&0xFF)/255f;
+            }*/
+        } else {
+            for (int i=0; i<currentColor.size(); i++){
+                currentColor[i] = newColor[i]*changeBackgroundColorTime + oldColor[i]*(1-changeBackgroundColorTime);
+                //curColor[i] = newColor[i]*changeBackgroundColorTime+oldColor[i]*(1-changeBackgroundColorTime);
+            }
+        }
+    }
 
     glClearColor(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);//Цвет фона
     //glClearColor(0.9,0.9,1, 0);//Цвет фона
@@ -222,19 +243,17 @@ void Widget::paintGL(){
     drawSharkBody(-580, 250, 45, 1, 0.1f);
     }
 
-    //drawAxes();//Временно:
-    /*float x_to_draw = (mouse_pos_x-screen_widht /2) / screen_widht  * half_widht  * 2;
-    float y_to_draw = (mouse_pos_y-screen_height/2) / screen_height * half_height * 2;
-    drawPlus(x_to_draw, -y_to_draw, 10, 0);*/
+    drawAxes();//Временно:
+
     protagonist.draw(*this);
     particle.draw(*this);
     levelArray[currentLevel].draw(*this);
-    for (auto & f : food){
+    /*for (auto & f : food){
         f.draw(*this);
     }
     for (auto & f : test_food){
         f.draw(*this);
-    }
+    }*/
 };
 void Widget::resizeGL(int width, int height){
     //qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -295,7 +314,16 @@ void Widget::slotUpdatePosition()
         protagonist.updateMapPosition(dt, is_mouse_pressed_, target_x, target_y);
 
         particle.updatePosition(dt, protagonist);
-        shouldIChangeLevel = levelArray[currentLevel].updateFoodMapPosition(dt, protagonist);
+
+        //Изменение уровня и фонового цвета
+        shouldIChangeLevel = levelArray[currentLevel].updateFoodMapPosition(dt, protagonist, camera.getCurrentX(), camera.getCurrentY(), half_widht_, half_height_);
+        if (shouldIChangeLevel != 0) {
+            changeBackgroundColorTime = 0;
+            currentLevel = currentLevel + shouldIChangeLevel;
+            //qDebug()<<"Widget::slotUpdatePosition()"<<"Changing level"<<currentLevel;
+        } else {
+            changeBackgroundColorTime = changeBackgroundColorTime + dt;
+        }
 
         //for (auto & f : food){f.updateMapPosition(dt);}
         //protagonist.updateEat(food);

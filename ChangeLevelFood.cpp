@@ -21,8 +21,63 @@ void ChangeLevelFood::goToRandomLocation(){
     aimY = effolkronium::random_static::get<float>(-maxRange, maxRange);
 }
 
-void ChangeLevelFood::updateMapPosition(float dt){
-    lastPingTime=lastPingTime+dt;
+void ChangeLevelFood::updateMapPosition(float dt, float cameraX, float cameraY, float half_widht, float half_height){
+    lastPingTime += dt;
+
+    if (lastPingTime>pingPeriod+pingDuration){
+        lastPingTime -= pingPeriod+pingDuration;
+        shouldIPing = false;
+    }
+
+    //Если в момент начала пинга клетка вне экрана, она должна начать пинг
+    if (!shouldIPing && lastPingTime>=pingPeriod && lastPingTime-dt<=pingPeriod){//Момент начала пинга
+        if (abs(currentX-cameraX)>half_widht || abs(currentY-cameraY)>half_height){//Непопадание в экран
+            shouldIPing=true;
+        }
+    }
+
+    //Расчёт положения пинга
+    if (shouldIPing){
+        //qDebug()<<"Camera"<<(int) cameraX<<(int) cameraY;
+        if (abs(currentX-cameraX)<=half_widht && abs(currentY-cameraY)<=half_height){//Попадание в экран
+            pingX = currentX; pingY = currentY;
+        } else {
+            float pingSideCriticalAngle = atan2(half_height, half_widht);
+            float alpha = atan2(currentY-cameraY, currentX-cameraX);
+            if ((abs(alpha)<pingSideCriticalAngle) || (M_PI-abs(alpha)<pingSideCriticalAngle)){
+                //qDebug()<<"Stenka";
+                //Боковая стенка
+                if (currentX > cameraX) {//Правая стенка
+                    pingX = cameraX + half_widht;
+                    pingY = cameraY + half_height * tan(alpha);
+                    /*deltaX=camera.getCurrentX()+screenSizeX/2;
+                    deltaY=camera.getCurrentY() + screenSizeX/2*(float)Math.tan(alpha);*/
+                }
+                else {
+                    pingX = cameraX - half_widht;
+                    pingY = cameraY - half_height * tan(alpha);
+                    /*deltaX=camera.getCurrentX()-screenSizeX/2;
+                    deltaY=camera.getCurrentY() - screenSizeX/2*(float)Math.tan(alpha);*/
+                }
+            } else {
+                //qDebug()<<"Verh/niz";
+                //Верх или низ
+                if (currentY > cameraY) {//Низ
+                    pingX = cameraX + half_widht / tan(alpha);
+                    pingY = cameraY + half_height;
+                    /*deltaX=camera.getCurrentX() + screenSizeY/2/(float)Math.tan(alpha);
+                    deltaY=camera.getCurrentY()+screenSizeY/2;*/
+                }
+                else {//Верх
+                    pingX = cameraX - half_widht / tan(alpha);
+                    pingY = cameraY - half_height;
+                    /*deltaX=camera.getCurrentX() - screenSizeY/2/(float)Math.tan(alpha);
+                    deltaY=camera.getCurrentY()-screenSizeY/2;*/
+                }
+            }
+        }
+    }
+
     if (sqrt(pow((currentX - aimX), 2) + pow((currentX - aimX), 2)) < 5) {
         goToRandomLocation();
     }
@@ -112,5 +167,17 @@ void ChangeLevelFood::draw(Widget& widget){
         default:
             qDebug()<<"ChangeLevelFood::draw"<<"Тип еды задан неправильно. Обновление картинки"<<type;
             break;
+    }
+
+    if (shouldIPing){
+        //qDebug()<<"Ping"<<pingX<<pingY;
+        if (type==0){
+            widget.setColor(0, 1, 1, (1-(lastPingTime - pingPeriod) / pingDuration));//Cyan alpha
+        }
+        else{
+            widget.setColor(1, 0, 0, (1-(lastPingTime - pingPeriod) / pingDuration));//Red alpha
+        }
+        widget.drawRing3(pingX, pingY, (lastPingTime - pingPeriod) / pingDuration * 40);
+        //openGLRenderer.drawRing3(deltaX,deltaY,(lastPingTime - pingPeriod) / pingDuration * 40);
     }
 }

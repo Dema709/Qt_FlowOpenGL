@@ -127,15 +127,16 @@ std::vector<float> Level::getColor(){
     return backgroundColor;
 }
 
-int Level::updateFoodMapPosition(float dt, Protagonist& protagonist){
+int Level::updateFoodMapPosition(float dt, Protagonist& protagonist, float cameraX, float cameraY, float half_widht, float half_height){
     for (auto& t : changeLevelFood_array)
-        t.updateMapPosition(dt);//Обновление местоположения еды на смену уровня
+        t.updateMapPosition(dt, cameraX, cameraY, half_widht, half_height);//Обновление местоположения еды на смену уровня
 
     for (auto& t : food_array)
         t.updateMapPosition(dt);//Обновление местоположения еды (мелких)
 
     int changeLevel = protagonist.updateEat(changeLevelFood_array, food_array);//Кушает гг
 
+    return changeLevel;
 }
 
 void Level::draw(Widget& widget){
