@@ -52,7 +52,7 @@ void Segment::drawWithScale(Widget& widget, float segNum, float NsegmMax){
     switch (type){
     case 0://Сегменты
         widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),30*0.7f,0);
-        if (isWeakPoint){
+        if (isWeakPoint_){
             if (isWeakPointDamaged_)
                 widget.setColor(1, 1, 1, 0.23);//Ghostly white
             widget.drawRing2(currentX, currentY,12*0.7f);
@@ -85,7 +85,7 @@ void Segment::drawWithScale(Widget& widget, float segNum, float NsegmMax){
         break;
     case 2://Лапки
         widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),30*0.7f,0);
-        if (isWeakPoint){
+        if (isWeakPoint_){
             if (isWeakPointDamaged_)
                 widget.setColor(1, 1, 1, 0.23);//Ghostly white
             widget.drawRing2(currentX, currentY,12*0.7f);
@@ -130,7 +130,7 @@ void Segment::setFirst(){
 }
 
 void Segment::setWeakPoint(){
-    isWeakPoint=true;
+    isWeakPoint_ = true;
 }
 
 float Segment::getCurrentX(){
@@ -143,6 +143,10 @@ float Segment::getCurrentY(){
 
 float Segment::getOrientation(){
     return orientation;
+}
+
+bool Segment::isWeakPoint(){
+    return isWeakPoint_;
 }
 
 bool Segment::isWeakPointDamaged(){
@@ -170,5 +174,13 @@ void Segment::changeType(int type_){
     if (!isFirst)
     {
         this->setDistance();
+    }
+}
+
+void Segment::drawDivision(Widget& widget, float dt){
+    if (dt>0 && dt<1) {
+        widget.setColor(1, 1, 1, (1 - dt)*0.47);//AlphaWhite((1 - (dt) / 1f)*0.47f);
+        widget.drawRing(currentX,currentY,howMuchIsTheFish*dt*25);
+        //widget.setColor(0);
     }
 }

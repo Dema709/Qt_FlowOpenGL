@@ -35,22 +35,252 @@ SnakeHunter::SnakeHunter(int Nsegm_, int NsegmEvolved_)
         }
     }
 
-    //Random random = new Random();
     int currentRandom;
-    //int rand=(int)(Math.random() * Nsegm - 1);
     for (int k = 0; k < NsegmEvolved_-1; k++) {
         currentRandom = effolkronium::random_static::get<int>(0, Nsegm - 2);//random.nextInt(Nsegm-1);
         if (!segments[currentRandom].isWeakPoint()) {
             segments[currentRandom].setWeakPoint();
-            //segments[currentRandom].changeType(2);
         }
         else{
             for (int j = 1; j < Nsegm-1; j++) {//C 1, т.к. нулевой всегда weakpoint
                 if (!segments[j].isWeakPoint()){
                     segments[j].setWeakPoint();
-                    //segments[j].changeType(2);
                     break;
                 }
+            }
+        }
+    }
+}
+
+void SnakeHunter::draw(Widget& widget){
+    if (isInDivision){
+        for (int k = 0; k < Nsegm; k++) {
+            if (divisionTimer-k*0.1f<0){
+                segments[k].drawWithScale(widget,k,Nsegm);
+            }
+            else{
+                segments[k].drawDivision(widget,divisionTimer-k*0.1f);////////////Фуньк-пуньк с задержкой
+            }
+        }
+    }
+
+    if (!isEaten) {
+        widget.drawRing2(currentX,currentY,2*0.7f*5.3f);
+        widget.drawMouth(currentX,currentY,this->getOrientationInDegrees(),1-abs(fmodf(canvasEat, 1)-0.5f)*2);
+        widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),-21,0);
+
+        for (int k=0;k<Nsegm;k++){
+            segments[k].drawWithScale(widget,k,Nsegm);
+        }
+    }
+}
+
+float SnakeHunter::getOrientationInDegrees(){
+    return orientation * 180 / M_PI;
+}
+
+void SnakeHunter::updateMapPosition(float dt){
+
+
+    if (isInDivision){
+        if (divisionTimer>(NsegmMax+1)*0.1+1) isInDivision=false;//С запасом. А так NsegmMax*0.1+1
+        //Log.wtf(LOG_TAG, "Разделение на части в процессе! "+divisionTimer);
+        divisionTimer=divisionTimer+dt;
+    }
+
+    if (isEaten) return;
+
+    if (isPanic) {
+        if (panicTimer > panicMaxTime) {
+            isPanic = false;
+            this->goToRandomLocation();
+        }
+        panicTimer = panicTimer + dt;
+    }
+
+
+    if (!isPanic) {
+        if (!hasTarget) {
+            if ((abs(aimX - currentX) < (200)) & (abs(aimY - currentY) < (200))) {
+                this->goToRandomLocation();
+            }
+            //Если цель близко
+            //Рандомить цель (и при задании!)
+            //Если приближается к цели или время прошло - менять (время - постоянная неспокойного поиска))
+        } else {
+            //Уменьшать скорость при приближении?
+        }
+
+
+
+        //Угол
+        orientationAim = (float) atan2(aimY - currentY, aimX - currentX);
+
+        float orientationDelta = remainderf(orientationAim - orientation, M_PI * 2);//(orientationAim - orientation) % ((float) M_PI * 2);
+
+        if (abs(orientationDelta) > maxTurnSpeed * dt) {//Если изменение угла не слишком маленькое
+            if (orientationDelta>0){//if ((orientationDelta <= -M_PI) || ((orientationDelta > 0) && (orientationDelta <= M_PI))) {
+                orientation = orientation + maxTurnSpeed * dt;
+            } else {
+                orientation = orientation - maxTurnSpeed * dt;
+            }
+        } else {
+            orientation = orientationAim;
+        }
+
+    }
+    //Скорость
+
+    //if (isPressed) {
+    if (isPanic) {
+        currentSpeed = std::min(maxBoostSpeed, currentSpeed + dt * 400);//400 - прирост скорости?
+    } else {
+        if (currentSpeed > maxSpeed) {//Теряем скорость после ускорения
+            //currentSpeed = std::max(currentSpeed*0.98f*dt*30,maxSpeed);//FPS=30
+            currentSpeed = std::max(currentSpeed * powf(0.98, dt * 30), maxSpeed);//FPS=30//////////////////////////////////////////////////////Зависимость от фпс! (?)
+        } else {
+            currentSpeed = std::min(maxSpeed, currentSpeed + dt * 400 * 0.5f);
+        }
+    }
+
+
+
+
+    // currentSpeed=std::max(maxSpeed*0.1f,currentSpeed);Ненулевая минимальная скорость
+
+    //Позиция
+    currentX = currentX + currentSpeed * (float) cos(orientation) * dt;
+    currentY = currentY + currentSpeed * (float) sin(orientation) * dt;
+
+    //Log.wtf(LOG_TAG, "touch ("+touchX+","+touchY+") curX=("+currentX+","+currentY+")");
+    //Log.wtf(LOG_TAG, "addX="+currentSpeed * (float) cos(orientation) * dt+" addY="+currentSpeed * (float) sin(orientation) * dt);
+    //return "touchX="+(int)touchX+" touchY="+(int)touchY;
+
+
+    //Обновление для канвы - изменение размера
+    canvasSize = fmodf(canvasSize + dt * 0.8, 1);
+    canvasSnake = fmodf(canvasSnake + dt * currentSpeed / maxSpeed, 1);
+    if (isEatingRightNow) {
+        canvasEat = (canvasEat + dt * 0.8f * 2);
+        if (canvasEat >= 2) {
+            canvasEat = 0;
+            if (itWasVoidFood) {//Не насыщать клетки, если перешёл на другой уровень
+                itWasVoidFood = false;
+            } else {
+                this->evolveLittle();
+            }
+            isEatingRightNow = false;
+        }
+    }
+
+
+    for (int k = 0; k < Nsegm; k++) {
+        if (k == 0) {
+            segments[k].updateMapPosition(currentX, currentY, dt, currentSpeed);
+        } else {
+            segments[k].updateMapPosition(segments[k - 1].getCurrentX(), segments[k - 1].getCurrentY(), dt, currentSpeed);
+        }
+    }
+
+}
+
+void SnakeHunter::goToRandomLocation(){
+    aimX = effolkronium::random_static::get<float>(-maxRange,maxRange);
+    aimY = effolkronium::random_static::get<float>(-maxRange,maxRange);
+}
+
+void SnakeHunter::evolveLittle(){
+    int saturationSum=0;
+    for (int k=0;k<Nsegm-1;k++) {
+        if (segments[k].getSaturation())
+            saturationSum++;
+    }
+    if (saturationSum==Nsegm-1){
+        this->evolveBig();
+    }
+    else{
+        //Ищи наименьшую пустую и наполняй
+        int k=0;
+        while (k<Nsegm-1){
+            if (!segments[k].getSaturation()){
+                segments[k].setSaturation(true);
+                break;
+            }
+            k++;
+        }
+    }
+}
+
+void SnakeHunter::evolveBig(){
+    //А вот здесь пошла реальная эволюция xD
+
+    std::vector<int> k_types(3);//int [] k_types;
+    //k_types=new int[3];//Сколько сегментов какого типа, кроме хвостика(?)
+    int k2=0;//Счётчик перебора
+    while (k2<Nsegm-1){
+        k_types[segments[k2].getType()]++;
+        k2++;
+    }
+
+
+    if (Nsegm<NsegmMax){
+
+        if (Nsegm-k_types[2]>3){
+            //добавить лапку
+            int k0=0;
+            while (k0<Nsegm-1){
+                if (segments[k0].getType()==0){
+                    //segments[k0].setSaturation(false);
+                    segments[k0].changeType(2);//
+                    break;
+                }
+                k0++;
+            }
+
+            for (int k = 0; k < Nsegm - 1; k++) {//Убрать насыщение
+                //segments[k].changeType(0);//
+                segments[k].setSaturation(false);
+            }
+        }
+        else {
+
+            Nsegm++;
+            //segments[Nsegm - 1] = new Segment(currentX, currentY, segments[Nsegm - 2].getOrientation(), 1);//Хвост
+            //segments[Nsegm - 1] = new Segment(segments[Nsegm - 2].getCurrentX(), segments[Nsegm - 2].getCurrentY(), segments[Nsegm - 2].getOrientation(), 1);//Хвост
+            segments.push_back(Segment(segments[Nsegm - 2].getCurrentX(), segments[Nsegm - 2].getCurrentY(), segments[Nsegm - 2].getOrientation(), 1));
+            segments[Nsegm - 2].changeType(0);//
+/////////////////////////NET!
+            for (int k = 0; k < Nsegm - 1; k++) {
+                //segments[k].changeType(0);//
+                segments[k].setSaturation(false);
+            }
+
+        }
+    }
+
+
+    else{
+        int k0=0;
+        while (k0<Nsegm-1){
+            if (segments[k0].getType()==0){
+                //segments[k0].setSaturation(false);
+                segments[k0].changeType(2);//
+                break;
+            }
+            k0++;
+        }
+
+
+        int segmTypeSum=0;
+        for (int k=0;k<Nsegm-1;k++) {
+            if (segments[k].getType()==2)
+                segmTypeSum++;
+        }
+        if (segmTypeSum!=Nsegm-1) {
+
+            for (int k = 0; k < Nsegm - 1; k++) {
+                //segments[k].changeType(0);//
+                segments[k].setSaturation(false);
             }
         }
     }
