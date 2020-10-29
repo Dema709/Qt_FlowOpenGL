@@ -13,6 +13,7 @@ public:
     void updateMapPosition(float currentX_, float currentY_, float orientation_);//Сегмент акулы
     void drawWithScale(Widget& widget, float segNum, float NsegmMax);
     void drawDivision(Widget& widget, float dt);
+    void draw(Widget& widget);
     float getOrientationInDegrees();
     void setFirst();
     void setWeakPoint();

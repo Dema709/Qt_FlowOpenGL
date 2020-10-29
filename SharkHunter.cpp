@@ -183,5 +183,38 @@ void SharkHunter::evolve(bool firstTimeCall){
 }
 
 void SharkHunter::draw(Widget& widget){
+    if (isInDivision){
+        for (int k = 0; k < Nsegm; k++) {
+            if (divisionTimer-k*0.1f<0){
+                segments[k].draw(widget);
+            }
+            else{
+                segments[k].drawDivision(widget,divisionTimer-k*0.1f);
+            }
+        }
+    }
 
+    if (!isEaten_) {
+        //if ((Math.abs(currentX - camera.getCurrentX()) < camera.getGamefieldHalfX() + 560 * scaleForLittleOrBigFish) && (Math.abs(currentY - camera.getCurrentY()) < camera.getGamefieldHalfY() + 560 * scaleForLittleOrBigFish)){
+            if (isAgro){
+                widget.setColor(1, 0, 0, 1);//Red
+            }
+            widget.drawSharkBody(currentX,currentY,this->getOrientationInDegrees(),abs(canvasSnake - 0.5f) * 2,0.1f);
+            widget.drawRing3Transfered(currentX,currentY,103*0.1f,this->getOrientationInDegrees(),774*0.1f,0);
+            widget.drawRing3Transfered(currentX,currentY,153*0.1f,this->getOrientationInDegrees(),724*0.1f,0);
+            widget.drawSharkmouthTransfered(currentX,currentY,0.1f,this->getOrientationInDegrees(),774*0.1f,0,(canvasSize+canvasEat)*360+this->getOrientationInDegrees());
+            if (isAgro){
+                widget.setColor(1, 1, 1, 0.47);//Standart white
+            }
+
+            for (int k = 0; k < Nsegm; k++) {
+                segments[k].draw(widget);
+            }
+
+        //}
+    }
+}
+
+float SharkHunter::getOrientationInDegrees(){
+    return orientation * 180 / M_PI;
 }

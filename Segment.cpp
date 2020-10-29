@@ -226,3 +226,118 @@ void Segment::updateMapPosition(float currentX_, float currentY_, float orientat
     currentX = currentX_;
     currentY = currentY_;
 }//Сегмент акулы
+
+void Segment::draw(Widget& widget){
+    switch (type){
+        case 0://Сегменты
+            widget.drawSquareTransfered(currentX,currentY,3.36f*howMuchIsTheFish,this->getOrientationInDegrees(),30*0.7f*howMuchIsTheFish,0);
+            if (isWeakPoint_){
+                if (isWeakPointDamaged_){
+                    widget.setColor(1, 1, 1, 0.23);//Ghostly white
+                }
+                widget.drawRing2(currentX, currentY,12*0.7*howMuchIsTheFish);
+                if (saturation){
+                    //saturated
+                    widget.drawRound(currentX, currentY,5.5f*0.7f*(1+0.3773584905660377f/2)*howMuchIsTheFish);
+                }
+                else{
+                    //notSaturated
+                    widget.drawRing2(currentX, currentY,5.5f*0.7f*howMuchIsTheFish);
+                }
+                if (isWeakPointDamaged_){
+                    widget.setColor(1, 1, 1, 0.47);//Standart white
+                    //widget.setColor(0);//Вернуть цвет обратно на стандартный белый
+                }
+            }
+            else{
+                widget.drawRing(currentX, currentY,12*0.7f*howMuchIsTheFish);
+                if (saturation){
+                    //saturated
+                    widget.drawRound(currentX, currentY,5.5f*0.7f*(1+0.3773584905660377f/2)*howMuchIsTheFish);
+                }
+                else{
+                    //notSaturated
+                    widget.drawRing2(currentX, currentY,5.5f*0.7f*howMuchIsTheFish);
+                }
+            }
+            break;
+        /*case 1://Хвостик
+            widget.drawRing2(currentX, currentY,5f*0.7f);
+            widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),15*0.7f,0);
+            break;
+        case 2://Лапки
+            widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),30*0.7f,0);
+            if (isWeakPoint){
+                if (isWeakPointDamaged) widget.setColor(1);//Прозрачный цвет
+                widget.drawRing2(currentX, currentY,12f*0.7f);
+                if (saturation){
+                    //saturated
+                    widget.drawRound(currentX, currentY,5.5f*0.7f*(1+0.3773584905660377f/2));
+                }
+                else{
+                    //notSaturated
+                    widget.drawRing2(currentX, currentY,5.5f*0.7f);
+                }
+                if (isWeakPointDamaged) widget.setColor(0);//Вернуть цвет обратно на стандартный белый
+            }
+            else{
+                widget.drawRing(currentX, currentY,12*0.7f);
+                if (saturation){
+                    //saturated
+                    widget.drawRound(currentX, currentY,5.5f*0.7f*(1+0.3773584905660377f/2));
+                }
+                else{
+                    //notSaturated
+                    widget.drawRing2(currentX, currentY,5.5f*0.7f);
+                }
+            }
+            widget.drawSquaresTransfered(currentX,currentY,this->getOrientationInDegrees(),(Math.abs(canvasSnake-0.5f)*2f*0.3f+0.7f)*30*2);
+            //Log.wtf(LOG_TAG,"canvasSnake = "+canvasSnake);
+            //Log.wtf(LOG_TAG,"angle = "+(Math.abs(canvasSnake-0.5f)*2f*0.3f+0.7f)*30*2);
+            break;*/
+        case 3://Сегменты
+            /*widget.drawRing2(currentX, currentY,12*0.7f);
+            widget.drawLowpolyRound(currentX, currentY,5.5f*0.7f);*/
+
+
+
+            if (isWeakPoint_){
+                if (isWeakPointDamaged_){
+                    widget.setColor(1, 1, 1, 0.23);//Ghostly white
+                }
+                widget.drawRing2(currentX, currentY,12*0.7*howMuchIsTheFish*2);
+                if (saturation){
+                    //saturated
+                    widget.drawRound(currentX, currentY,5.5f*0.7f*(1+0.3773584905660377f/2)*howMuchIsTheFish*2);
+                }
+                else{
+                    //notSaturated
+                    widget.drawRing2(currentX, currentY,5.5f*0.7f*howMuchIsTheFish*2);
+                }
+                if (isWeakPointDamaged_){
+                    widget.setColor(1, 1, 1, 0.47);//Standart white
+                    //widget.setColor(0);//Вернуть цвет обратно на стандартный белый
+                }
+            }
+            else{
+                widget.drawRing(currentX, currentY,12*0.7f*howMuchIsTheFish*2);
+                if (saturation){
+                    //saturated
+                    widget.drawRound(currentX, currentY,5.5f*0.7f*(1+0.3773584905660377f/2)*howMuchIsTheFish*2);
+                }
+                else{
+                    //notSaturated
+                    widget.drawRing2(currentX, currentY,5.5f*0.7f*howMuchIsTheFish*2);
+                }
+            }
+            break;
+        case 4://Кружок и точка для босса
+            widget.drawRing2(currentX, currentY,5.5f);
+            widget.drawSquareTransfered(currentX,currentY,3.36f,this->getOrientationInDegrees(),14,0);
+            break;
+        default:
+            qDebug()<<"Segment::draw"<<"Тип еды задан неправильно. Обновление картинки draw "<<type;
+            //Log.wtf(LOG_TAG,"Тип еды задан неправильно. Обновление картинки draw " + type);
+            break;
+    }
+}

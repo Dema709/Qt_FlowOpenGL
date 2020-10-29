@@ -50,6 +50,7 @@ private:
 
     void goToRandomLocation();
     void evolve(bool firstTimeCall);
+    float getOrientationInDegrees();
 };
 
 #endif // SHARKHUNTER_H
