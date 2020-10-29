@@ -769,3 +769,14 @@ void Widget::drawBezier5(float centerX, float centerY, float sizeScale, float or
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW_A(BEZIER, frame);
 }
+
+void Widget::drawSharkmouthTransfered(float centerX, float centerY, float sizeScale, float orientation, float offsetX, float offsetY, float rotationForEating){
+    QMatrix4x4 tempMatrix(mMatrix);
+    tempMatrix.translate(centerX,centerY);
+    tempMatrix.scale(sizeScale);
+    tempMatrix.rotate(orientation,rotating_about);
+    tempMatrix.translate(offsetX/sizeScale, offsetY/sizeScale);
+    tempMatrix.rotate(rotationForEating,rotating_about);
+    glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
+    DRAW(SHARKMOUTH);
+}

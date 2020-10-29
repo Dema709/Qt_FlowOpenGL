@@ -36,6 +36,7 @@ struct Vertex{
     VertexPair HALFRING;//Полукольцо с средним радиусом 1 и толщиной 0,1886792452830189. Верхняя часть
     VertexPair MOUTH;//Рот у ГГ - через кривые безье
     VertexPair SHARKBODY;//Тело акулки //4 части * 3 точки у треугольника
+    VertexPair SHARKMOUTH;//Три "буквы Л"
 };
 
 class VertexLoader

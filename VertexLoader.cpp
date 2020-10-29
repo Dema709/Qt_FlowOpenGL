@@ -256,7 +256,7 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
                 outer_x=(float)((radius-ringwidth)*cos(rad));
                 outer_y=(float)((radius-ringwidth)*sin(rad));
             }
-            //Log.wtf(LOG_TAG,"alpha "+i+" " +rad/Math.PI*180+" radius="+Math.sqrt(outer_x*outer_x+outer_y*outer_y));
+            //Log.wtf(LOG_TAG,"alpha "+i+" " +rad/Math.PI*180+" radius="+sqrt(outer_x*outer_x+outer_y*outer_y));
             current_vertices.push_back(outer_x);
             current_vertices.push_back(outer_y);
         }//Верхушка
@@ -631,6 +631,83 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         V.SHARKBODY = {vertices.size()/2, current_vertices.size()/2/ANIMATION_FRAMES,GL_TRIANGLES};
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
+
+
+    {
+        //Три "буквы Л"
+        std::vector<GLfloat> current_vertices;
+        //int VERTEX_COUNT = 12*3;//VERTEX_SHARKMOUTH_COUNT = 12*3;
+
+        float radius = 103*0.94f;
+        float dAngle = 4. / 180. * M_PI;
+        float timeyWimeyX, timeyWimeyY;
+        float x0, x1, x2, y0, y1, y2;
+        for (int i=0;i<3;i++){
+            switch (i){
+                case 0:
+                    x0=-92;y0=-40;x1=-28;y1=7;x2=-92;y2=40;
+                    break;
+                case 1:
+                    x0=92;y0=-40;x1=23;y1=-15;x2=40;y2=-92;
+                    break;
+                case 2:
+                    x0=21.7f;y0=97.9f;x1=16;y1=30;x2=79.7f;y2=60;
+                    break;
+                default:
+                qDebug()<<"ERROR::VertexLoader"<<"Ошибка в цикле для акульего рта";
+                    //Log.wtf(LOG_TAG,"Ошибка в цикле для акульего рта");
+                    break;
+            }
+            timeyWimeyX=(x0+x2)*0.5f-x1;
+            timeyWimeyY=(y0+y2)*0.5f-y1;
+            float deltaX=(float)(sqrt(pow(timeyWimeyX,2)+pow(timeyWimeyY,2)))/10.;//Нормируем к единице и умножаем на некое число (ну, делим, на самом деле) - расст. до точек
+            timeyWimeyX=timeyWimeyX/deltaX;
+            timeyWimeyY=timeyWimeyY/deltaX;
+
+            current_vertices.push_back(radius*cos(atan2(y0,x0)+dAngle));
+            current_vertices.push_back(radius*sin(atan2(y0,x0)+dAngle));
+
+            current_vertices.push_back(radius*cos(atan2(y0,x0)-dAngle));
+            current_vertices.push_back(radius*sin(atan2(y0,x0)-dAngle));
+
+            current_vertices.push_back(x1-timeyWimeyX);
+            current_vertices.push_back(y1-timeyWimeyY);
+
+            //
+            current_vertices.push_back(radius*cos(atan2(y0,x0)-dAngle));
+            current_vertices.push_back(radius*sin(atan2(y0,x0)-dAngle));
+
+            current_vertices.push_back(x1-timeyWimeyX);
+            current_vertices.push_back(y1-timeyWimeyY);
+
+            current_vertices.push_back(x1+timeyWimeyX);
+            current_vertices.push_back(y1+timeyWimeyY);
+
+            //
+            current_vertices.push_back(x1-timeyWimeyX);
+            current_vertices.push_back(y1-timeyWimeyY);
+
+            current_vertices.push_back(x1+timeyWimeyX);
+            current_vertices.push_back(y1+timeyWimeyY);
+
+            current_vertices.push_back(radius*cos(atan2(y2,x2)+dAngle));
+            current_vertices.push_back(radius*sin(atan2(y2,x2)+dAngle));
+
+            //
+            current_vertices.push_back(x1-timeyWimeyX);
+            current_vertices.push_back(y1-timeyWimeyY);
+
+            current_vertices.push_back(radius*cos(atan2(y2,x2)+dAngle));
+            current_vertices.push_back(radius*sin(atan2(y2,x2)+dAngle));
+
+            current_vertices.push_back(radius*cos(atan2(y2,x2)-dAngle));
+            current_vertices.push_back(radius*sin(atan2(y2,x2)-dAngle));
+        }
+
+        V.SHARKMOUTH = {vertices.size()/2, current_vertices.size()/2,GL_TRIANGLES};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
+
 
     if (vertices.size()%2){
         qDebug()<<"ERROR::VertexLoader. Vertices init size:"<<vertices.size();
