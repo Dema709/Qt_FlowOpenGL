@@ -21,6 +21,21 @@ Food::Food()
     this->setRadius();
 }
 
+Food::Food(float curX_, float curY_, int birdType){
+    currentX = curX_ + effolkronium::random_static::get<float>(-flockieBirdRadius,flockieBirdRadius);
+    currentY = curY_ + effolkronium::random_static::get<float>(-flockieBirdRadius,flockieBirdRadius);
+    orientation = effolkronium::random_static::get<float>(0.,2*M_PI);
+    maxSpeed = effolkronium::random_static::get<float>(245, 255);//45+(float)random()*10f+200;
+    currentSpeed = effolkronium::random_static::get<float>(0, maxSpeed);
+    turnSpeed = (50. / 180. * M_PI)+1;
+    this->goToRandomLocation();
+    canvasSize = effolkronium::random_static::get<float>(0, 1);
+    canvasSnake = effolkronium::random_static::get<float>(0, 1);
+    type=birdType;
+    this->setRadius();
+    isEaten_=false;
+}//Для стайки
+
 void Food::goToRandomLocation(){
     aimX = effolkronium::random_static::get<float>(-maxRange,maxRange);
     aimY = effolkronium::random_static::get<float>(-maxRange,maxRange);
@@ -155,7 +170,7 @@ void Food::updateMapPosition(float dt){
 void Food::draw(Widget& widget){
     if (isEaten_) return;
 
-    //if (abs(currentX-camera.getCurrentX())<camera.getGamefieldHalfX()&&Math.abs(currentY-camera.getCurrentY())<camera.getGamefieldHalfY())
+    //if (abs(currentX-camera.getCurrentX())<camera.getGamefieldHalfX()&&abs(currentY-camera.getCurrentY())<camera.getGamefieldHalfY())
 
     widget.setColor(1, 1, 1, 0.47);//Standart white
     switch (type){
@@ -280,9 +295,9 @@ void Food::updateMapPositionTest(float dt){
 }
 
 Food::Food(int testType){
-    currentX=testType*50-300;// (float) (Math.random()-0.5)*2*1000;
-    currentY=400;// (float) (Math.random()-0.5)*2*1000;
-    orientation= (float) (M_PI/2);//(float) (Math.random()*Math.PI*2f);
+    currentX=testType*50-300;// (float) (random()-0.5)*2*1000;
+    currentY=400;// (float) (random()-0.5)*2*1000;
+    orientation= (float) (M_PI/2);//(float) (random()*PI*2f);
     maxSpeed=45+effolkronium::random_static::get<float>(0, 10);
     currentSpeed = maxSpeed;
     turnSpeed=0;
@@ -329,4 +344,102 @@ void Food::setInvisible(float timer,float segCurrentX, float segCurrentY){
     type = effolkronium::random_static::get<int>(0,6);//this->randomizeType();
 
     isEaten_=false;
+}
+
+void Food::setOrientationAim(float orientationAim_){
+    orientationAim=orientationAim_;
+}
+
+void Food::updateMapPositionBird(float dt, bool isFlockieBirdInPanic,float curFlockieBirdX, float curFlockieBirdY){
+    if (isEaten_) return;
+
+    if (!isFlockieBirdInPanic){
+        if (sqrt(pow((currentX - curFlockieBirdX), 2) + pow((currentY - curFlockieBirdY), 2)) > 300) {
+            aimX = curFlockieBirdX + effolkronium::random_static::get<float>(-flockieBirdRadius, flockieBirdRadius);
+            aimY = curFlockieBirdY + effolkronium::random_static::get<float>(-flockieBirdRadius, flockieBirdRadius);
+            /*aimX = (float) (random()-0.5)*2*flockieBirdRadius+curFlockieBirdX;
+            aimY = (float) (random()-0.5)*2*flockieBirdRadius+curFlockieBirdY;*/
+        }//Если улетел далеко от стайки
+        else if((abs(aimX - currentX) < 5) && (abs(aimY - currentY) < 5)){
+            aimX = curFlockieBirdX + effolkronium::random_static::get<float>(-flockieBirdRadius, flockieBirdRadius);
+            aimY = curFlockieBirdY + effolkronium::random_static::get<float>(-flockieBirdRadius, flockieBirdRadius);
+            /*aimX = (float) (random()-0.5)*2*flockieBirdRadius+curFlockieBirdX;
+            aimY = (float) (random()-0.5)*2*flockieBirdRadius+curFlockieBirdY;*/
+        }//Если достиг текущей цели
+        orientationAim = (float) atan2(aimY - currentY, aimX - currentX);
+    }
+
+    float orientationDelta = remainderf(orientationAim - orientation, 2 * M_PI);
+
+    if (abs(orientationDelta) > turnSpeed * dt) {//Если изменение угла не слишком маленькое
+        if (orientationDelta>0){//if ((orientationDelta <= -PI) || ((orientationDelta > 0) && (orientationDelta <= PI))) {
+            orientation = orientation + turnSpeed * dt;
+        } else {
+            orientation = orientation - turnSpeed * dt;
+        }
+    } else {
+        orientation = orientationAim;
+    }
+
+    //Скорость
+
+
+    currentSpeed = std::min(maxSpeed, currentSpeed + dt * 50);
+
+
+
+    //Позиция
+    currentX = currentX + currentSpeed * (float) cos(orientation) * dt;
+    currentY = currentY + currentSpeed * (float) sin(orientation) * dt;
+
+    switch (type) {
+        case 0:
+            canvasSize = fmodf(canvasSize + dt * 0.8f, 1);
+            canvasSnake = fmodf(canvasSnake + dt * currentSpeed / 100., 1);
+            multiplSize = abs(canvasSize - 0.5f) * 2;
+            multiplSnake = abs(canvasSnake - 0.5f) * 2;
+            break;
+        case 1:
+            canvasSize = fmodf(canvasSize + dt * 0.8f, 1);
+            multiplSize = (abs(canvasSize - 0.5f) * 2 * 0.3f + 0.7f)*20;
+            break;
+        case 2:
+            canvasSize = fmodf(canvasSize + dt * 0.8f, 1);
+            canvasSnake = fmodf(canvasSnake + 1.8f * dt * currentSpeed / 100., 1);//Хвостик у головастика должен двигаться быстрее
+            multiplSize = 1 - (float) pow(abs(abs(canvasSize - 0.5f) * 2 - 0.5f) * 2, 2);//Вся эта конструкция для увеличения частоты вдвое и быстрого захлопывания пасти
+            multiplSnake = abs(canvasSnake - 0.5f) * 2;
+            break;
+        case 3:
+            canvasSnake = fmodf(canvasSnake + dt * currentSpeed / 100., 1);
+            multiplSnake = abs(canvasSnake - 0.5f) * 2;
+            break;
+        case 4:
+            canvasSnake = fmodf(canvasSnake + 1.5f * dt * currentSpeed / 100., 1);//Хвостик у однохвостого должен двигаться быстрее
+            multiplSnake = abs(canvasSnake - 0.5f) * 2;
+            break;
+        case 5:
+            canvasSnake = fmodf(canvasSnake + dt * currentSpeed / 100., 1);
+            multiplSnake = abs(canvasSnake - 0.5f) * 2;
+            break;
+        case 6:
+            canvasSnake = fmodf(canvasSnake + dt * currentSpeed / 100., 1);
+            multiplSnake = abs(canvasSnake - 0.5f) * 2;
+            break;
+        case 7://Переход
+            canvasSize = fmodf(canvasSize + dt * 0.8f, 1);
+            //canvasSnake = (canvasSnake + dt * currentSpeed / 100f) % 1;
+            multiplSize=abs(canvasSize-0.5f)*2*0.3f+0.7f;
+            multiplSnake=(abs(canvasSize-0.5f)*(-2)*0.3f+0.7f)*40;//вместо мулт сайз 2
+            break;
+        case 8://Переход
+            canvasSize = fmodf(canvasSize + dt * 0.8f, 1);
+            //canvasSnake = (canvasSnake + dt * currentSpeed / 100f) % 1;
+            multiplSize=abs(canvasSize-0.5f)*2*0.3f+0.7f;
+            multiplSnake=(abs(canvasSize-0.5f)*(-2)*0.3f+0.7f)*33;//вместо мулт сайз 2
+            break;
+        default:
+            qDebug()<<"Food::updateMapPositionBird"<<"Тип еды задан неправильно. Обновление размеров"<<type;
+            //Log.wtf(LOG_TAG,"Тип еды задан неправильно. Обновление размеров "+type);
+            break;
+    }
 }

@@ -7,6 +7,7 @@ class Food
 {
 public:
     Food();
+    Food(float curX_, float curY_, int birdType);//Для стайки
     Food(int testType);//Для тестового отображения
     void updateMapPosition(float dt);
     void updateMapPositionTest(float dt);//Для тестового отображения, без перемещения
@@ -18,6 +19,9 @@ public:
     void setEaten();
     bool isEatenAndNotInvisible();
     void setInvisible(float timer,float segCurrentX, float segCurrentY);
+
+    void setOrientationAim(float orientationAim_);
+    void updateMapPositionBird(float dt, bool isFlockieBirdInPanic,float curFlockieBirdX, float curFlockieBirdY);
 private:
     float currentX,currentY;//Положение на карте
     float orientation;//Ориентация, в радианах

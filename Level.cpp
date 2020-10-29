@@ -4,6 +4,7 @@
 #include "Food.h"
 #include "SnakeHunter.h"
 #include "SharkHunter.h"
+#include "FlockieBird.h"
 #include "widget.h"/////////////////?Отрисовка
 
 #include <QDebug>
@@ -21,15 +22,17 @@ Level::Level(int levelNum)
     int snakeHunter_numSegments = 0, snakeHunter_numSegmEvolved = 0;
 
     int sharkHunter_arraySize = 0;
-    /*int boss_arraySize, bossType;
-    int flockieBird_arraySize;*/
+
+    int flockieBird_arraySize = 0, Nbirds = 0;
+    //int boss_arraySize, bossType;
 
     changeLevelFood_arraySize=2;
     switch (levelNum){
         case (0):
             color=0xFF009EE7;
-            sharkHunter_arraySize = 15;
-            foods_arraySize=30;
+            flockieBird_arraySize = 1; Nbirds = 10;
+            //sharkHunter_arraySize = 15;
+            //foods_arraySize=5;
             //snakeHunter_arraySize=1;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
             changeLevelFood_arraySize=1;//Переход только на уровень ниже
             break;
@@ -54,17 +57,17 @@ Level::Level(int levelNum)
             break;
         case (5):
             color=0xFF00619E;
-            //flockieBird_arraySize=1;//                birdType1=0;                Nbirds1=15;
+            flockieBird_arraySize=1; Nbirds = 7;
             break;
         case (6)://Boss
             color=0xFF005C8F;
             foods_arraySize=10;
-            //flockieBird_arraySize=2;
+            flockieBird_arraySize=2; Nbirds = 10;
             break;
         case (7):
             color=0xFF005780;
             foods_arraySize=30;
-            //flockieBird_arraySize=3;
+            flockieBird_arraySize=3; Nbirds = 15;
             sharkHunter_arraySize=3;//3;//Акула
             //snakeHunter_arraySize=4;                snakeHunter_numSegments=8;                snakeHunter_numSegmEvolved=4;
 
@@ -108,8 +111,13 @@ Level::Level(int levelNum)
         snakeHunter_array.push_back(SnakeHunter(snakeHunter_numSegments, snakeHunter_numSegmEvolved));
     }
 
-    for (int i = 0; i<sharkHunter_arraySize; i++){
+    for (int i=0; i<sharkHunter_arraySize; i++){
         sharkHunter_array.push_back(SharkHunter());
+    }
+
+    for (int i=0; i<flockieBird_arraySize; i++){
+        if (Nbirds <= 0) qDebug()<<"Level::Level"<<"Nbirds"<<Nbirds;
+        flockieBird_array.push_back(FlockieBird(Nbirds));
     }
 /*
     maxFoodArraySize = Math.min(foods_arraySize + (snakeHunter_arraySize) * snakeHunter_numSegments + sharkHunter_arraySize * 5 + boss_arraySize*12, 30);//30
@@ -162,7 +170,11 @@ int Level::updateFoodMapPosition(float dt, Protagonist& protagonist, float camer
     for (auto& t : sharkHunter_array)
         t.updateMapPosition(dt);//Обновление местоположения акулы
 
-    int changeLevel = protagonist.updateEat(changeLevelFood_array, food_array, snakeHunter_array, sharkHunter_array);//Кушает гг
+    for (auto& t : flockieBird_array)
+        t.updateMapPosition(dt);//Обновление местоположения стайки клеток
+
+    int changeLevel = protagonist.updateEat(changeLevelFood_array, food_array, snakeHunter_array,
+                                            sharkHunter_array, flockieBird_array);//Кушает гг
 
     for (auto& t : snakeHunter_array)
         t.findNearFood(food_array);//Кушают змейки
@@ -185,4 +197,7 @@ void Level::draw(Widget& widget){
 
     for (auto& t : sharkHunter_array)
         t.draw(widget);//Обновление местоположения акулы
+
+    for (auto& t : flockieBird_array)
+        t.draw(widget);//Обновление местоположения стайки клеток
 }

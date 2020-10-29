@@ -9,6 +9,7 @@
 #include <QDebug>//Временно
 #include <algorithm>//max
 #include "SharkHunter.h"
+#include "FlockieBird.h"
 
 Protagonist::Protagonist()
 {
@@ -46,7 +47,6 @@ void Protagonist::updateMapPosition(float dt, bool isPressed, float target_x, fl
     float orientationDelta = remainderf(orientationAim - orientation, M_PI * 2);
     if (abs(orientationDelta) > turnSpeed * dt) {//Если изменение угла не слишком маленькое
         if (orientationDelta>0){
-        //if ((orientationDelta <= -M_PI) || ((orientationDelta > 0) && (orientationDelta <= M_PI))) {
             orientation += turnSpeed * dt;
         } else {
             orientation -= turnSpeed * dt;
@@ -247,7 +247,7 @@ void Protagonist::evolveBig(){
 }
 
 int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, std::vector<Food>& foods_array, std::vector<SnakeHunter>& snakeHunter_array,
-                           std::vector<SharkHunter>& sharkHunter_array){
+                           std::vector<SharkHunter>& sharkHunter_array, std::vector<FlockieBird>& flockieBird_array){
     //minus lvl ot damaga
     if (levelDownCosDamaged){
         segments[0].restoreWeakPoint();
@@ -308,6 +308,23 @@ int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, 
                     if (pow(currentX + mouthDist * cos(orientation) - t.getCurrentSegX(j), 2) +
                             pow(currentY + mouthDist * sin(orientation) - t.getCurrentSegY(j), 2) <
                             pow(mouthRadius + t.getCurrentSegRadius(j), 2)) {//Радиус
+                        isEatingRightNow = true;
+                        t.setDamaged(j);
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+
+    //Поедание стайки
+    for (auto & t : flockieBird_array){
+        if (!t.areEaten()){
+            for (int j=0;j<t.getNbirds();j++){
+                if (!t.isEaten(j)){
+                    if (pow(currentX + mouthDist * cos(orientation) - t.getCurrentX(j), 2) +
+                            pow(currentY + mouthDist * sin(orientation) - t.getCurrentY(j), 2) <
+                            pow(mouthRadius + t.getCurrentRadius(j), 2)) {
                         isEatingRightNow = true;
                         t.setDamaged(j);
                         return 0;

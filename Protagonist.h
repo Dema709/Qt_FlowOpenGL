@@ -8,7 +8,7 @@ class Food;
 class ChangeLevelFood;
 class SnakeHunter;
 class SharkHunter;
-
+class FlockieBird;
 
 class Widget;
 //class Segment;
@@ -25,7 +25,7 @@ public:
     void draw(Widget& widget);
     float getOrientationInDegrees();
     int updateEat(std::vector<ChangeLevelFood>& changeLevel, std::vector<Food>& food, std::vector<SnakeHunter>& snakeHunter_array,
-                  std::vector<SharkHunter>& sharkHunter_array);
+                  std::vector<SharkHunter>& sharkHunter_array, std::vector<FlockieBird>& flockieBird_array);
 
     int getNsegm();
     bool isSegmentWeakPointAndUndamaged(int nSegm);
