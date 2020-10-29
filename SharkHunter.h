@@ -12,6 +12,14 @@ public:
     SharkHunter();
     void updateMapPosition(float dt);
     void draw(Widget& widget);
+
+    bool isEaten();
+    int getNsegm();
+    bool isSegmentWeakPointAndUndamaged(int nSegm);
+    float getCurrentSegX(int nSegm);
+    float getCurrentSegY(int nSegm);
+    float getCurrentSegRadius(int nSegm);
+    void setDamaged(int nSegm);
 private:
     float currentX, currentY;//Положение на карте
     float orientation;//Ориентация, в радианах

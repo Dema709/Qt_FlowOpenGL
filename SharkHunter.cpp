@@ -183,6 +183,7 @@ void SharkHunter::evolve(bool firstTimeCall){
 }
 
 void SharkHunter::draw(Widget& widget){
+    widget.setColor(1, 1, 1, 0.47);//Standart white
     if (isInDivision){
         for (int k = 0; k < Nsegm; k++) {
             if (divisionTimer-k*0.1f<0){
@@ -217,4 +218,43 @@ void SharkHunter::draw(Widget& widget){
 
 float SharkHunter::getOrientationInDegrees(){
     return orientation * 180 / M_PI;
+}
+
+bool SharkHunter::isEaten(){
+    return isEaten_;
+}
+
+int SharkHunter::getNsegm(){
+    return Nsegm;
+}
+
+bool SharkHunter::isSegmentWeakPointAndUndamaged(int nSegm){
+    return segments[nSegm].isSegmentWeakPointAndUndamaged();
+}
+
+float SharkHunter::getCurrentSegX(int nSegm){return segments[nSegm].getCurrentX();}
+float SharkHunter::getCurrentSegY(int nSegm){return segments[nSegm].getCurrentY();}
+float SharkHunter::getCurrentSegRadius(int nSegm){return segments[nSegm].getCurrentRadius();}
+
+void SharkHunter::setDamaged(int nSegm){
+    segments[nSegm].setWeakPointDamaged();///////////////////////////////////////////////Можно будет объединить
+
+
+    int weakUndamagedSum=0;
+    for (int k=0;k<Nsegm-1;k++) {
+        if (segments[k].isSegmentWeakPointAndUndamaged())///////////////////////////////Тут должна быть проверка на слабые точки аля weakpoints
+            weakUndamagedSum++;
+    }
+
+    if (weakUndamagedSum==0){
+        isInDivision=true;
+        divisionTimer=0;
+        isEaten_=true;/////////////////////////////////////////////////////////////////////////////И вызов ф-ии распада
+    }//Вас сожрали нафиг ;р
+    else{
+        isPanic=true;
+        isAgro=false;
+        panicTimer=0;
+        //Log.wtf(LOG_TAG, "Паника!");
+    }//Больно! Надо ускориться! Паника!
 }

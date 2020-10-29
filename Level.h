@@ -7,6 +7,7 @@ class Protagonist;
 class ChangeLevelFood;
 class Food;
 class SnakeHunter;
+class SharkHunter;
 
 class Level
 {
@@ -20,6 +21,7 @@ private:
     std::vector<ChangeLevelFood> changeLevelFood_array;
     std::vector<Food> food_array;
     std::vector<SnakeHunter> snakeHunter_array;
+    std::vector<SharkHunter> sharkHunter_array;
 };
 
 #endif // LEVEL_H

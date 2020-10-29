@@ -7,6 +7,7 @@ class Segment;
 class Food;
 class ChangeLevelFood;
 class SnakeHunter;
+class SharkHunter;
 
 
 class Widget;
@@ -23,7 +24,8 @@ public:
     void updateMapPosition(float dt, bool isPressed, float target_x, float target_y);
     void draw(Widget& widget);
     float getOrientationInDegrees();
-    int updateEat(std::vector<ChangeLevelFood>& changeLevel, std::vector<Food>& food, std::vector<SnakeHunter>& snakeHunter_array);
+    int updateEat(std::vector<ChangeLevelFood>& changeLevel, std::vector<Food>& food, std::vector<SnakeHunter>& snakeHunter_array,
+                  std::vector<SharkHunter>& sharkHunter_array);
 private:
     float currentX = 200, currentY = 0;//Положение на карте
     float orientation = 90 * 3.1415 / 180;//Ориентация, в радианах

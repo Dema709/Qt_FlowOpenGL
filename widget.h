@@ -13,6 +13,7 @@
 #include "Level.h"
 #include "SnakeHunter.h"
 #include "ChangeLevelFood.h"
+#include "SharkHunter.h"
 
 #include <mutex>
 
