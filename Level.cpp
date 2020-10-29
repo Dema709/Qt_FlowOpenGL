@@ -29,7 +29,7 @@ Level::Level(int levelNum)
         case (0):
             color=0xFF009EE7;
             sharkHunter_arraySize = 15;
-            //foods_arraySize=30;
+            foods_arraySize=30;
             //snakeHunter_arraySize=1;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
             changeLevelFood_arraySize=1;//Переход только на уровень ниже
             break;
@@ -95,7 +95,7 @@ Level::Level(int levelNum)
             break;
     }
 
-    int maxFoodArraySize = std::min(foods_arraySize + (snakeHunter_arraySize) * snakeHunter_numSegments /*+ sharkHunter_arraySize * 5 + boss_arraySize*12*/, 30);//30
+    int maxFoodArraySize = std::min(foods_arraySize + (snakeHunter_arraySize) * snakeHunter_numSegments + sharkHunter_arraySize * 5 /*+ boss_arraySize*12*/, 30);//30
     for (int i=0; i<maxFoodArraySize; i++){
         food_array.push_back(Food());
         if (i>=foods_arraySize){
@@ -166,6 +166,9 @@ int Level::updateFoodMapPosition(float dt, Protagonist& protagonist, float camer
 
     for (auto& t : snakeHunter_array)
         t.findNearFood(food_array);//Кушают змейки
+
+    for (auto& t : sharkHunter_array)
+        t.findNearFood(food_array, protagonist);//Кушают акулы
 
     return changeLevel;
 }

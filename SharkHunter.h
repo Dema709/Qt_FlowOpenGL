@@ -5,6 +5,8 @@
 #include "Segment.h"
 
 class Widget;
+class Food;
+class Protagonist;
 
 class SharkHunter
 {
@@ -12,6 +14,7 @@ public:
     SharkHunter();
     void updateMapPosition(float dt);
     void draw(Widget& widget);
+    void findNearFood(std::vector<Food>& foods_array, Protagonist& protagonist);
 
     bool isEaten();
     int getNsegm();

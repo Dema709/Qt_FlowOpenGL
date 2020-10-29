@@ -319,3 +319,31 @@ int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, 
 
     return 0;
 }
+
+int Protagonist::getNsegm(){
+    return Nsegm;
+}
+bool Protagonist::isSegmentWeakPointAndUndamaged(int nSegm){
+    return segments[nSegm].isSegmentWeakPointAndUndamaged();
+}
+float Protagonist::getCurrentSegX(int nSegm){
+    return segments[nSegm].getCurrentX();
+}
+float Protagonist::getCurrentSegY(int nSegm){
+    return segments[nSegm].getCurrentY();
+}
+float Protagonist::getCurrentSegRadius(int nSegm){
+    return segments[nSegm].getCurrentRadius();
+}
+void Protagonist::setDamaged(int nSegm){
+    segments[nSegm].setWeakPointDamaged();
+    int healthRemain=0;
+    for (int i=0;i<Nsegm;i++){
+        if (segments[i].isSegmentWeakPointAndUndamaged()){
+            healthRemain++;
+        }
+    }
+    if (healthRemain==0){
+        levelDownCosDamaged=true;
+    }
+}

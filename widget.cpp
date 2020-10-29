@@ -320,6 +320,7 @@ void Widget::slotUpdatePosition()
         if (shouldIChangeLevel != 0) {
             changeBackgroundColorTime = 0;
             currentLevel = currentLevel + shouldIChangeLevel;
+            if (currentLevel < 0) currentLevel=0;//Для предотвращения вылета на -1 несуществующий уровень
             //qDebug()<<"Widget::slotUpdatePosition()"<<"Changing level"<<currentLevel;
         } else {
             changeBackgroundColorTime = changeBackgroundColorTime + dt;

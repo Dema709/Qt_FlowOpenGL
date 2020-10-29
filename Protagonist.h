@@ -26,6 +26,13 @@ public:
     float getOrientationInDegrees();
     int updateEat(std::vector<ChangeLevelFood>& changeLevel, std::vector<Food>& food, std::vector<SnakeHunter>& snakeHunter_array,
                   std::vector<SharkHunter>& sharkHunter_array);
+
+    int getNsegm();
+    bool isSegmentWeakPointAndUndamaged(int nSegm);
+    float getCurrentSegX(int nSegm);
+    float getCurrentSegY(int nSegm);
+    float getCurrentSegRadius(int nSegm);
+    void setDamaged(int nSegm);
 private:
     float currentX = 200, currentY = 0;//Положение на карте
     float orientation = 90 * 3.1415 / 180;//Ориентация, в радианах

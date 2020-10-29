@@ -1,6 +1,8 @@
 #include "SharkHunter.h"
 #include "random.hpp"
 #include "widget.h"/////////////////?Отрисовка
+#include "Food.h"
+#include "Protagonist.h"
 
 SharkHunter::SharkHunter()
 {
@@ -257,4 +259,140 @@ void SharkHunter::setDamaged(int nSegm){
         panicTimer=0;
         //Log.wtf(LOG_TAG, "Паника!");
     }//Больно! Надо ускориться! Паника!
+}
+
+void SharkHunter::findNearFood(std::vector<Food>& foods_array, Protagonist& protagonist){
+
+
+
+    if (!isEaten_) {
+        hasPlayerInTarget=false;
+        hasTarget=false;
+        if (!isPanic) {
+            if (!isEatingRightNow) {
+                float mouthDist = 774 * scaleForLittleOrBigFish;
+                float curCheckX, curCheckY;//Положение текущей цели
+
+                //Попытка съесть протагониста или сагриться на него
+                for (int i = 0; i < protagonist.getNsegm(); i++) {
+                    if (protagonist.isSegmentWeakPointAndUndamaged(i)) {
+                        curCheckX=protagonist.getCurrentSegX(i);
+                        curCheckY=protagonist.getCurrentSegY(i);
+
+
+                        if (pow(currentX + mouthDist * cos(orientation) - curCheckX, 2) +
+                                pow(currentY + mouthDist * sin(orientation) - curCheckY, 2) <
+                                pow(103 * scaleForLittleOrBigFish + protagonist.getCurrentSegRadius(i), 2)) {
+                            protagonist.setDamaged(i);
+                            isEatingRightNow = true;this->evolve(true);
+                            return;
+                        }//Если попало в рот
+
+                        if (!isAgro){
+                            if (!hasTarget) {//Первый раз за цикл
+                                if (pow(currentX - curCheckX, 2) + pow(currentY - curCheckY, 2) < pow(agroQuietRadius, 2)) {
+                                    //Если в большом агрорадиусе
+                                    aimX = curCheckX;
+                                    aimY = curCheckY;
+                                    hasTarget = true;
+                                }
+                            } else {
+                                if (pow(currentX - curCheckX, 2) + pow(currentY - curCheckY, 2) <
+                                        pow(currentX - aimX, 2) + pow(currentY - aimY, 2)) {
+                                    //Новое расстояние меньше
+                                    aimX = curCheckX;
+                                    aimY = curCheckY;
+                                }
+                            }
+                        }//Если не в агре - проверка на ближайшую цель в большом агрорадиусе
+
+
+                        if (pow(currentX - curCheckX, 2) + pow(currentY - curCheckY, 2) < pow(agroRadius, 2)){
+                            //Если попало в малый агрорадиус
+                            if (abs(remainderf(atan2(curCheckY - currentY, curCheckX - currentX) - orientation, M_PI * 2)) < agroAngle){
+                            //if (abs(((float) atan2(curCheckY - currentY, curCheckX - currentX) - orientation) % ((float) M_PI * 2)) < agroAngle){
+                                //Если попало в агроугол
+                                if (!hasPlayerInTarget) {//Первый раз за цикл
+                                    aimX = curCheckX;
+                                    aimY = curCheckY;
+                                    isAgro = true;
+                                    hasPlayerInTarget = true;
+                                    agroTimer = 0;
+                                } else {
+                                    if (pow(currentX - curCheckX, 2) + pow(currentY - curCheckY, 2) < pow(currentX - aimX, 2) + pow(currentY - aimY, 2)) {
+                                        //Новое расстояние меньше
+                                        aimX = curCheckX;
+                                        aimY = curCheckY;
+                                    }
+                                }
+                            }
+                        }
+
+
+
+
+
+
+
+
+                    }
+                }
+
+                if (isAgro){
+                    return;
+                }//Если агры, нет смысла проверять еду
+
+                for (int i = 0; i < foods_array.size(); i++){
+                    if (!foods_array[i].isEaten()){
+                        curCheckX=foods_array[i].getCurrentX();
+                        curCheckY=foods_array[i].getCurrentY();
+
+                        if (pow(currentX + mouthDist * cos(orientation) - curCheckX, 2) +
+                                pow(currentY + mouthDist * sin(orientation) - curCheckY, 2) <
+                                pow(103 * scaleForLittleOrBigFish + foods_array[i].getCurrentRadius(), 2)) {
+                            foods_array[i].setEaten();
+                            isEatingRightNow = true;this->evolve(true);
+                            return;
+                        }//Если попало в рот
+
+                        if ((pow(currentX - curCheckX, 2) + pow(currentY - curCheckY, 2) < pow(agroRadius, 2)) &&
+                                (abs(remainderf(atan2(curCheckY - currentY, curCheckX - currentX) - orientation, M_PI * 2)) < agroAngle)){
+                                //(abs(((float) atan2(curCheckY - currentY, curCheckX - currentX) - orientation) % ((float) M_PI * 2)) < agroAngle)) {
+                            //Если попало в агрорадиус и агроугол
+                            if (!hasTarget) {//Первый раз за цикл
+                                aimX = curCheckX;
+                                aimY = curCheckY;
+                                hasTarget = true;
+                            } else {
+                                if (pow(currentX - curCheckX, 2) + pow(currentY - curCheckY, 2) < pow(currentX - aimX, 2) + pow(currentY - aimY, 2)) {
+                                    //Новое расстояние меньше
+                                    aimX = curCheckX;
+                                    aimY = curCheckY;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else{
+        if (!isDivisionWrittenInFood){
+            //Log.wtf(LOG_TAG,"Разваливается на еду");
+            int k=0;
+            for (int i=0;i<Nsegm;i++){
+                if (segments[i].hasSaturationOrIsWeakPoint()){
+                    while (k+1<foods_array.size()){//-1 справа
+                        if (foods_array[k].isEatenAndNotInvisible()){
+                            foods_array[k].setInvisible((float)i*0.1f+0.1f,segments[i].getCurrentX(),segments[i].getCurrentY());
+                            k++;
+                            break;
+                        }
+                        k++;
+                    }
+                }
+                isDivisionWrittenInFood=true;
+            }
+        }
+    }
 }
