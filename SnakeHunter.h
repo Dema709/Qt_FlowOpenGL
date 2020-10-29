@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Segment.h"
-#include "widget.h"/////////////////?Отрисовка
+
 
 class Widget;
 class Food;

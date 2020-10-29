@@ -1,6 +1,7 @@
 #include "SnakeHunter.h"
 #include "random.hpp"
 #include "Food.h"
+#include "widget.h"/////////////////?Отрисовка
 
 SnakeHunter::SnakeHunter(int Nsegm_, int NsegmEvolved_)
 {

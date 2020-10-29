@@ -18,16 +18,15 @@ Level::Level(int levelNum)
 
     int snakeHunter_arraySize = 0;
     int snakeHunter_numSegments = 0, snakeHunter_numSegmEvolved = 0;
-    /*int foods_arraySize, boss_arraySize, bossType;
-    int snakeHunter_arraySize, snakeHunter_numSegments, snakeHunter_numSegmEvolved;
+    /*int boss_arraySize, bossType;
     int sharkHunter_arraySize, flockieBird_arraySize;*/
 
     changeLevelFood_arraySize=2;
     switch (levelNum){
         case (0):
             color=0xFF009EE7;
-            foods_arraySize=30;
-            snakeHunter_arraySize=1;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
+            //foods_arraySize=30;
+            //snakeHunter_arraySize=1;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
             changeLevelFood_arraySize=1;//Переход только на уровень ниже
             break;
         case (1):
@@ -37,12 +36,12 @@ Level::Level(int levelNum)
         case (2):
             color=0xFF007CC9;
             foods_arraySize=15;
-            //snakeHunter_arraySize=2;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
+            snakeHunter_arraySize=2;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
             break;
         case (3):
             color=0xFF006DBB;
             foods_arraySize=10;
-            //snakeHunter_arraySize=1;                snakeHunter_numSegments=8;                snakeHunter_numSegmEvolved=2;
+            snakeHunter_arraySize=1;                snakeHunter_numSegments=8;                snakeHunter_numSegmEvolved=2;
             break;
         case (4):
             color=0xFF0066AD;

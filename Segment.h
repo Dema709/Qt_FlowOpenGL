@@ -8,7 +8,9 @@ class Segment
 public:
     Segment();
     Segment(float headCurrentX, float headCurrentY, float headOrientation, int type_);//Сегмент змейки
+    Segment(int type_, float howMuchIsTheFish_);//Сегмент акулы
     void updateMapPosition(float headCurrentX, float headCurrentY, float dt, float headCurrentSpeed);
+    void updateMapPosition(float currentX_, float currentY_, float orientation_);//Сегмент акулы
     void drawWithScale(Widget& widget, float segNum, float NsegmMax);
     void drawDivision(Widget& widget, float dt);
     float getOrientationInDegrees();

@@ -199,3 +199,30 @@ void Segment::setWeakPointDamaged(){
 bool Segment::hasSaturationOrIsWeakPoint(){
     return saturation||isWeakPoint_;
 }
+
+Segment::Segment(int type_, float howMuchIsTheFish_){
+    type = type_;
+    /////////////////////////////////////////////////////////////////////////////////добавить ещё curx, cury
+            howMuchIsTheFish=howMuchIsTheFish_;
+            saturation=false;
+            if (type==0) {
+                //currentRadius=8.4f;
+
+                //saturation=true;
+                //distance=33;
+            }//Центральные три точки. Стандартные
+            if (type==3){
+                saturation=true;
+                currentRadius=16.8f;
+                isWeakPoint_=true;
+                //distance=21;
+            }//Глаза. Кружок с ободом
+
+            currentRadius=currentRadius*howMuchIsTheFish;///////////////////////////////////////////////////////////////////////////////////
+}//Сегмент акулы
+
+void Segment::updateMapPosition(float currentX_, float currentY_, float orientation_){
+    orientation = orientation_;
+    currentX = currentX_;
+    currentY = currentY_;
+}//Сегмент акулы
