@@ -2,16 +2,20 @@
 #define FOOD_H
 
 class Widget;
+class Protagonist;
 
 class Food
 {
 public:
     Food();
     Food(float curX_, float curY_, int birdType);//Для стайки
-    Food(int testType);//Для тестового отображения
+    Food(int testType);//Для тестового отображения [0+] и для босса (вместо Food(String s)) [100+]
+
     void updateMapPosition(float dt);
     void updateMapPositionTest(float dt);//Для тестового отображения, без перемещения
+    void updateMapPositionAngryBoss(float dt, Protagonist& protagonist);
     void draw(Widget& widget);
+    void drawAngryBossFood(Widget& widget);
     bool isEaten();
     float getCurrentX();
     float getCurrentY();

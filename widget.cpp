@@ -781,3 +781,12 @@ void Widget::drawSharkmouthTransfered(float centerX, float centerY, float sizeSc
     glUniformMatrix4fv(uMatrixLocation, 1, false, tempMatrix.constData());
     DRAW(SHARKMOUTH);
 }
+
+void Widget::drawBossBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish){
+//Matrix.setIdentityM(mModelMatrix, 0);
+//Matrix.translateM(mModelMatrix,0,centerX,centerY,0);
+//Matrix.rotateM(mModelMatrix,0,orientation,0,0,1);
+//Matrix.scaleM(mModelMatrix,0,-scaleForLittleOrBigFish,scaleForLittleOrBigFish,1);//bigfishornot
+//bindMatrix();
+//glDrawArrays(GL_TRIANGLES,VERTEX_SUM_BOSS1_COUNT+VERTEX_BOSS1_COUNT*Math.round(multiplSnake*(ANIMATION_FRAMES-1)),VERTEX_BOSS1_COUNT);//16+3
+}

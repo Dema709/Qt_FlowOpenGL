@@ -37,6 +37,7 @@ struct Vertex{
     VertexPair MOUTH;//Рот у ГГ - через кривые безье
     VertexPair SHARKBODY;//Тело акулки //4 части * 3 точки у треугольника
     VertexPair SHARKMOUTH;//Три "буквы Л"
+    VertexPair BOSS1;//Большая акулка с треугольниками  //4 части * 3 точки у треугольника
 };
 
 class VertexLoader
@@ -53,6 +54,8 @@ private:
     //Убрать!
     void sharkBodyBezier1(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX);
     void sharkBodyBezier2(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX);
+    void boss1BodyBezier1(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX);
+    void boss1BodyBezier2(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX);
 };
 
 #endif // VERTEX_INITIALIZATION

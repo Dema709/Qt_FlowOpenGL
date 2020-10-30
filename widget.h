@@ -108,6 +108,7 @@ public:
     void drawRoundedTriangleOutCenterTransfered(float centerX, float centerY, float sizeScale, float orientation);
     void drawSquaresTransferedWithScale(float centerX, float centerY, float orientation, float deltaAngle, float scale);
     void drawSharkmouthTransfered(float centerX, float centerY, float sizeScale, float orientation, float offsetX, float offsetY, float rotationForEating);
+    void drawBossBody(float centerX, float centerY, float orientation, float multiplSnake, float scaleForLittleOrBigFish);
     void setColor(float r, float g, float b, float a);
 private:
     ChakaPon::Camera camera;

@@ -632,7 +632,6 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
-
     {
         //Три "буквы Л"
         std::vector<GLfloat> current_vertices;
@@ -708,6 +707,139 @@ VertexLoader::VertexLoader(int ANIMATION_FRAMES_)// : ANIMATION_FRAMES(ANIMATION
         vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
     }
 
+    {
+        std::vector<GLfloat> current_vertices;
+        int VERTEX_COUNT = 16;
+
+        float deltaX=2;//Толщина линий
+        std::vector<float> vertexVector(2);
+        float x0, y0, x1, y1, x2, y2;
+        float percent;
+        int outerVertexCount = VERTEX_COUNT;        //Log.wtf(LOG_TAG,""+outerVertexCount);
+        for (int j=0;j<ANIMATION_FRAMES;++j) {
+            float animationStatus = (j / (float) (ANIMATION_FRAMES - 1));
+
+            x0 = 50; y0 = -297;
+            x1 = 202; y1 = -175;//1.4f - масштабный множитель
+            x2 = 348; y2 = 0;
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                boss1BodyBezier1(vertexVector,i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+            }
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                boss1BodyBezier1(vertexVector,i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier1(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+            }
+
+            x0 = 50; y0 = -297;
+            x1 = -60; y1 = -60;
+            x2 = -266 - 119 * animationStatus; y2 = 0;
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                boss1BodyBezier2(vertexVector,i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(vertexVector[1]);
+                }
+            }
+            for (int i=0;i<outerVertexCount;++i){
+                percent=(i/(float)(outerVertexCount-1));
+                //Log.wtf(LOG_TAG,""+percent);
+                boss1BodyBezier2(vertexVector,i%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                if (i==0) {//первый треугольник
+                    //percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i-1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+                if (i==outerVertexCount-1){//Последний треугольник
+                    percent=(i/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+                else{
+                    percent=((i+1)/(float)(outerVertexCount-1));
+                    boss1BodyBezier2(vertexVector,(i+1)%2,percent,animationStatus,x0,y0,x1,y1,x2,y2,deltaX);
+                    current_vertices.push_back(vertexVector[0]);    current_vertices.push_back(-vertexVector[1]);
+                }
+            }
+
+        }
+
+
+
+
+
+        V.BOSS1 = {vertices.size()/2, current_vertices.size()/2/ANIMATION_FRAMES, GL_TRIANGLES};
+        vertices.insert(vertices.end(),current_vertices.begin(),current_vertices.end());
+    }
 
     if (vertices.size()%2){
         qDebug()<<"ERROR::VertexLoader. Vertices init size:"<<vertices.size();
@@ -751,3 +883,27 @@ void VertexLoader::sharkBodyBezier2(std::vector<float>& whatIshouldReturn, int s
     }
     //return whatIshouldReturn;
 }//Убрать!
+
+void VertexLoader::boss1BodyBezier1(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX){
+    if (side%2==0)
+    {
+        whatIshouldReturn[0]= (x0*(1-percent)*(1-percent)+2*percent*(1-percent)*x1+percent*percent*x2);
+        whatIshouldReturn[1]=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*y1+percent*percent*y2);
+    }
+    else{//Дополнительная кривая Безье для толщины
+        whatIshouldReturn[0]= ((x0+3*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(x1-4*deltaX)+percent*percent*(x2-10*deltaX));
+        whatIshouldReturn[1]=((y0+10*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(y1+8*deltaX)+percent*percent*(y2));
+    }
+}//Передняя часть акулки
+
+void VertexLoader::boss1BodyBezier2(std::vector<float>& whatIshouldReturn, int side, float percent, float animationStatus, float x0, float y0, float x1, float y1, float x2, float y2, float deltaX){
+    if (side%2==0)//Чётные числа для внешего радиуса
+    {
+        whatIshouldReturn[0]=(x0*(1-percent)*(1-percent)+2*percent*(1-percent)*x1+percent*percent*x2);
+        whatIshouldReturn[1]=(y0*(1-percent)*(1-percent)+2*percent*(1-percent)*y1+percent*percent*y2);
+    }
+    else{//Дополнительная кривая Безье для толщины
+        whatIshouldReturn[0]=((x0+3*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(x1)+percent*percent*(x2+13*deltaX*(1.5f+animationStatus*0.5f)));
+        whatIshouldReturn[1]=((y0+10*deltaX)*(1-percent)*(1-percent)+2*percent*(1-percent)*(y1+4*deltaX)+percent*percent*(y2));
+    }
+}//Хвост акулки
