@@ -15,6 +15,7 @@
 #include "ChangeLevelFood.h"
 #include "SharkHunter.h"
 #include "FlockieBird.h"
+#include "Boss.h"
 
 #include <mutex>
 

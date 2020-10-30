@@ -309,7 +309,7 @@ Food::Food(int testType){
         type=testType;
         isEaten_=false;//Для отображения
     } else {
-        switch (type) {
+        switch (testType) {
             case 100://Первый тип босса, акула с злой "едой"
                 maxSpeed = effolkronium::random_static::get<float>(95, 105);
                 turnSpeed = (50. / 180. * M_PI) * 2;

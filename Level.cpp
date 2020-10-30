@@ -5,6 +5,7 @@
 #include "SnakeHunter.h"
 #include "SharkHunter.h"
 #include "FlockieBird.h"
+#include "Boss.h"
 #include "widget.h"/////////////////?Отрисовка
 
 #include <QDebug>
@@ -24,13 +25,15 @@ Level::Level(int levelNum)
     int sharkHunter_arraySize = 0;
 
     int flockieBird_arraySize = 0, Nbirds = 0;
-    //int boss_arraySize, bossType;
+
+    int boss_arraySize = 0, bossType = -1;
 
     changeLevelFood_arraySize=2;
     switch (levelNum){
         case (0):
             color=0xFF009EE7;
-            flockieBird_arraySize = 1; Nbirds = 10;
+            boss_arraySize = 1, bossType = 100;
+            //flockieBird_arraySize = 1; Nbirds = 10;
             //sharkHunter_arraySize = 15;
             //foods_arraySize=5;
             //snakeHunter_arraySize=1;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
