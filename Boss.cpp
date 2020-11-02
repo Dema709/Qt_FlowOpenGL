@@ -7,7 +7,7 @@
 
 Boss::Boss(int bossType_)
 {
-    bossType=bossType_;
+    bossType=bossType_;//Пока нигде не используется
     //Log.wtf(LOG_TAG,"Bosstype="+this.bossType);
 
     currentX = effolkronium::random_static::get<float>(-maxRange,maxRange);
@@ -62,6 +62,8 @@ float Boss::getOrientationInDegrees(){
 }
 
 void Boss::draw(Widget& widget){
+    widget.setColor(1, 1, 1, 0.47);//Standart white
+
     if (isInDivision){
         //Log.wtf(LOG_TAG,"inDivision Nsegm="+Nsegm+" divTimer"+divisionTimer);
         for (int k = 0; k < Nsegm; k++) {
@@ -74,7 +76,7 @@ void Boss::draw(Widget& widget){
         }
     }
 
-    if (!isEaten) {
+    if (!isEaten_) {
 
         if (isAgro){
             widget.setColor(1, 0, 0, 1);//Red
@@ -103,8 +105,7 @@ void Boss::draw(Widget& widget){
     }
 }
 
-void Boss::updateMapPosition(float dt, Protagonist protagonist){
-
+void Boss::updateMapPosition(float dt, Protagonist& protagonist){
 
     if (isInDivision){
         if (divisionTimer>(Nsegm+1)*0.1+1) isInDivision=false;//С запасом. А так NsegmMax*0.1+1
@@ -116,7 +117,7 @@ void Boss::updateMapPosition(float dt, Protagonist protagonist){
 
 
 
-    if (!isEaten) {
+    if (!isEaten_) {
         if (isPanic) {
             if (panicTimer > panicMaxTime) {
                 isPanic = false;
@@ -276,5 +277,169 @@ void Boss::updateMapPosition(float dt, Protagonist protagonist){
 
     for (int i=0;i<Nsegm-3;i++){
         angryFood[i].updateMapPositionAngryBoss(dt,protagonist);
+    }
+}
+
+bool Boss::isEaten(){
+    return isEaten_;
+}
+
+int Boss::getNsegm(){
+    if (bossType==100) return 3;
+    qDebug()<<"Boss::getNsegm"<<"error bossType: Nsegm to eat"<<bossType;
+    return 0;
+}
+
+bool Boss::isSegmentWeakPointAndUndamaged(int nSegm){
+    return segments[nSegm].isSegmentWeakPointAndUndamaged();
+}
+
+float Boss::getCurrentSegX(int nSegm){
+    return segments[nSegm].getCurrentX();
+}
+
+float Boss::getCurrentSegY(int nSegm){
+    return segments[nSegm].getCurrentY();
+}
+
+float Boss::getCurrentSegRadius(int nSegm){
+    return segments[nSegm].getCurrentRadius();
+}
+
+void Boss::setDamaged(int nSegm){
+    segments[nSegm].setWeakPointDamaged();///////////////////////////////////////////////Можно будет объединить
+
+
+    int weakUndamagedSum=0;
+    if (bossType==100){
+        for (int k=0;k<3;k++) {//Здесь должно быть 3 для этого типа, а не Nsegm-1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //Может быть, ввести новую переменную - количество съедобных сегментов для каждого типа босса???????????????????????????????????????????????????????????????????????????????????
+            if (segments[k].isSegmentWeakPointAndUndamaged())///////////////////////////////Тут должна быть проверка на слабые точки аля weakpoints
+                weakUndamagedSum++;
+        }
+    } else {
+        qDebug()<<"Boss::setDamaged"<<"Error bosstype: setdamaged undefined type";
+    }
+
+    if (weakUndamagedSum==0){
+        isInDivision=true;
+        divisionTimer=0;
+        isEaten_=true;/////////////////////////////////////////////////////////////////////////////И вызов ф-ии распада
+    }//Вас сожрали нафиг ;р
+    else{
+        isPanic=true;
+        isAgro=false;
+        panicTimer=0;
+
+        for (int i=0;i<Nsegm-3;i++){//Столько точечных сегментов //Тоже зависит от типа босса!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //effolkronium::random_static::get<float>(5, 8);
+            angryFood[i].setInvisibleAngryBossfood(effolkronium::random_static::get<float>(5, 8),
+                                                   segments[i+3].getCurrentX(),segments[i+3].getCurrentY(),currentSpeed,orientation);
+        }
+
+
+
+        //Log.wtf(LOG_TAG, "Паника!");
+    }//Больно! Надо ускориться! Паника!
+}
+
+void Boss::findNearFood(std::vector<Food>& foods_array, Protagonist& protagonist){
+
+
+
+    if (!isEaten_) {
+        hasPlayerInTarget=false;
+        hasTarget=false;
+        if (!isPanic) {
+            if (!isEatingRightNow) {
+                float mouthDist = 294*0.97f;
+                float curCheckX, curCheckY;//Положение текущей цели
+
+                //Попытка съесть протагониста или сагриться на него
+                for (int i = 0; i < protagonist.getNsegm(); i++) {
+                    if (protagonist.isSegmentWeakPointAndUndamaged(i)) {
+                        curCheckX=protagonist.getCurrentSegX(i);
+                        curCheckY=protagonist.getCurrentSegY(i);
+
+
+                        if (powf(currentX + mouthDist * cos(orientation) - curCheckX, 2) +
+                                powf(currentY + mouthDist * sin(orientation) - curCheckY, 2) <
+                                powf(38 + protagonist.getCurrentSegRadius(i), 2)) {
+                            protagonist.setDamaged(i);
+                            isEatingRightNow = true;
+                            return;
+                        }//Если попало в рот
+
+                        if (!isAgro){
+                            if (!hasTarget) {//Первый раз за цикл
+                                if (powf(currentX - curCheckX, 2) + powf(currentY - curCheckY, 2) < powf(agroQuietRadius, 2)) {
+                                    //Если в большом агрорадиусе
+                                    aimX = curCheckX;
+                                    aimY = curCheckY;
+                                    hasTarget = true;
+                                }
+                            } else {
+                                if (powf(currentX - curCheckX, 2) + powf(currentY - curCheckY, 2) <
+                                        powf(currentX - aimX, 2) + powf(currentY - aimY, 2)) {
+                                    //Новое расстояние меньше
+                                    aimX = curCheckX;
+                                    aimY = curCheckY;
+                                }
+                            }
+                        }//Если не в агре - проверка на ближайшую цель в большом агрорадиусе
+
+
+                        if (powf(currentX - curCheckX, 2) + powf(currentY - curCheckY, 2) < powf(agroRadius, 2)){
+                            //Если попало в малый агрорадиус
+                            if (abs(
+                                    remainderf(atan2(curCheckY - currentY, curCheckX - currentX) - orientation, 2 * M_PI)
+                                        //(atan2(curCheckY - currentY, curCheckX - currentX) - orientation) % ((float) M_PI * 2)
+                                    ) < agroAngle){
+                                //Если попало в агроугол
+                                if (!hasPlayerInTarget) {//Первый раз за цикл
+                                    aimX = curCheckX;
+                                    aimY = curCheckY;
+                                    isAgro = true;
+                                    hasPlayerInTarget = true;
+                                    agroTimer = 0;
+                                } else {
+                                    if (powf(currentX - curCheckX, 2) + powf(currentY - curCheckY, 2) < powf(currentX - aimX, 2) + powf(currentY - aimY, 2)) {
+                                        //Новое расстояние меньше
+                                        aimX = curCheckX;
+                                        aimY = curCheckY;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (isAgro){
+                    return;
+                }//Если агры, нет смысла проверять еду
+
+            }
+        }
+    }
+    else{
+
+        if (!isDivisionWrittenInFood){
+            qDebug()<<"Temporary Boss::findNearFood"<<"Разваливается на еду";
+            //Log.wtf(LOG_TAG,"Разваливается на еду");
+            int k=0;
+            for (int i=0;i<Nsegm;i++){
+                //if (segments[i].hasSaturationOrIsWeakPoint()){
+                    while (k<foods_array.size()){
+                        if (foods_array[k].isEatenAndNotInvisible()){
+                            foods_array[k].setInvisible((float)i*0.1f+0.1f,segments[i].getCurrentX(),segments[i].getCurrentY());
+                            k++;
+                            break;
+                        }
+                        k++;
+                    }
+                //}
+                isDivisionWrittenInFood=true;
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@
 #include <algorithm>//max
 #include "SharkHunter.h"
 #include "FlockieBird.h"
+#include "Boss.h"
 
 Protagonist::Protagonist()
 {
@@ -246,7 +247,7 @@ void Protagonist::evolveBig(){
 }
 
 int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, std::vector<Food>& foods_array, std::vector<SnakeHunter>& snakeHunter_array,
-                           std::vector<SharkHunter>& sharkHunter_array, std::vector<FlockieBird>& flockieBird_array){
+                           std::vector<SharkHunter>& sharkHunter_array, std::vector<FlockieBird>& flockieBird_array, std::vector<Boss>& boss_array){
     //minus lvl ot damaga
     if (levelDownCosDamaged){
         segments[0].restoreWeakPoint();
@@ -332,6 +333,44 @@ int Protagonist::updateEat(std::vector<ChangeLevelFood>& changeLevelFood_array, 
             }
         }
     }
+
+
+    //Поедание босса
+    for (auto & t : boss_array){
+        if (!t.isEaten()) {
+            for (int j = 0; j < t.getNsegm(); j++) {
+                if (t.isSegmentWeakPointAndUndamaged(j)) {
+                    if (pow(currentX + mouthDist * cos(orientation) - t.getCurrentSegX(j), 2) +
+                            pow(currentY + mouthDist * sin(orientation) - t.getCurrentSegY(j), 2) <
+                            pow(mouthRadius + t.getCurrentSegRadius(j), 2)) {//Радиус
+                        isEatingRightNow = true;
+                        t.setDamaged(j);
+                        return 0;
+                    }
+                }
+            }
+        }
+    }/*
+    for (int i = 0; i < boss_array.length; i++) {
+        if (!t.isEaten()) {
+
+
+            for (int j = 0; j < t.getNsegm(); j++) {
+                if (t.isSegmentWeakPointAndUndamaged(j)) {
+                    if (pow(currentX + mouthDist * Math.cos(orientation) - t.getCurrentSegX(j), 2) +
+                            pow(currentY + mouthDist * Math.sin(orientation) - t.getCurrentSegY(j), 2) <
+                            pow(mouthRadius + t.getCurrentSegRadius(j), 2)) {//Радиус
+                        isEatingRightNow = true;
+                        t.setDamaged(j);
+                        return 0;
+                    }
+                }
+            }
+
+        }
+    }*/
+
+
 
     return 0;
 }

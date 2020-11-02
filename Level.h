@@ -20,12 +20,12 @@ public:
     void draw(Widget& widget);
 private:
     std::vector<float> backgroundColor;
-    std::vector<ChangeLevelFood> changeLevelFood_array;
-    std::vector<Food> food_array;
-    std::vector<SnakeHunter> snakeHunter_array;
-    std::vector<SharkHunter> sharkHunter_array;
-    std::vector<FlockieBird> flockieBird_array;
-    std::vector<Boss> boss_arraySize;
+    std::vector<ChangeLevelFood>    changeLevelFood_array;
+    std::vector<Food>               food_array;
+    std::vector<SnakeHunter>        snakeHunter_array;
+    std::vector<SharkHunter>        sharkHunter_array;
+    std::vector<FlockieBird>        flockieBird_array;
+    std::vector<Boss>               boss_array;
 };
 
 #endif // LEVEL_H

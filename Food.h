@@ -26,6 +26,8 @@ public:
 
     void setOrientationAim(float orientationAim_);
     void updateMapPositionBird(float dt, bool isFlockieBirdInPanic,float curFlockieBirdX, float curFlockieBirdY);
+
+    void setInvisibleAngryBossfood(float timer,float segCurrentX, float segCurrentY, float currentSpeed, float orientation);//boss
 private:
     float currentX,currentY;//Положение на карте
     float orientation;//Ориентация, в радианах

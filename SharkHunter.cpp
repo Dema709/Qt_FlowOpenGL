@@ -382,7 +382,7 @@ void SharkHunter::findNearFood(std::vector<Food>& foods_array, Protagonist& prot
             int k=0;
             for (int i=0;i<Nsegm;i++){
                 if (segments[i].hasSaturationOrIsWeakPoint()){
-                    while (k+1<foods_array.size()){//-1 справа
+                    while (k<foods_array.size()){//-1 справа лишнее
                         if (foods_array[k].isEatenAndNotInvisible()){
                             foods_array[k].setInvisible((float)i*0.1f+0.1f,segments[i].getCurrentX(),segments[i].getCurrentY());
                             k++;

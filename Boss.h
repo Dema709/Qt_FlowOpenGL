@@ -13,10 +13,19 @@ class Boss
 {
 public:
     Boss(int bossType_);
-    void updateMapPosition(float dt, Protagonist protagonist);
+    void updateMapPosition(float dt, Protagonist&);
     void draw(Widget& widget);
+    void findNearFood(std::vector<Food>&, Protagonist&);
+
+    bool isEaten();
+    int getNsegm();//Здесь - вернуть количество съедобных сегментов (съедобны не все)
+    bool isSegmentWeakPointAndUndamaged(int nSegm);
+    float getCurrentSegX(int nSegm);
+    float getCurrentSegY(int nSegm);
+    float getCurrentSegRadius(int nSegm);
+    void setDamaged(int nSegm);
 private:
-    int bossType;
+    int bossType;//Пока нигде не используется
 
     float currentX, currentY;//Положение на карте
     float orientation;//Ориентация, в радианах
@@ -39,7 +48,7 @@ private:
 
     bool hasTarget = false;
     bool hasPlayerInTarget=false;
-    bool isEaten = false;
+    bool isEaten_ = false;
     float aimX, aimY;
 
 

@@ -32,10 +32,9 @@ Level::Level(int levelNum)
     switch (levelNum){
         case (0):
             color=0xFF009EE7;
-            boss_arraySize = 1, bossType = 100;
             //flockieBird_arraySize = 1; Nbirds = 10;
             //sharkHunter_arraySize = 15;
-            //foods_arraySize=5;
+            foods_arraySize=5;
             //snakeHunter_arraySize=1;                snakeHunter_numSegments=3;                snakeHunter_numSegmEvolved=1;
             changeLevelFood_arraySize=1;//Переход только на уровень ниже
             break;
@@ -56,11 +55,13 @@ Level::Level(int levelNum)
         case (4):
             color=0xFF0066AD;
             foods_arraySize=10;
-            sharkHunter_arraySize=3;//3;//Акула
+            sharkHunter_arraySize=3;//Акула
             break;
         case (5):
             color=0xFF00619E;
-            flockieBird_arraySize=1; Nbirds = 7;
+            foods_arraySize=10;
+            boss_arraySize = 1, bossType = 100;
+            //flockieBird_arraySize=1; Nbirds = 7;
             break;
         case (6)://Boss
             color=0xFF005C8F;
@@ -71,9 +72,7 @@ Level::Level(int levelNum)
             color=0xFF005780;
             foods_arraySize=30;
             flockieBird_arraySize=3; Nbirds = 15;
-            sharkHunter_arraySize=3;//3;//Акула
-            //snakeHunter_arraySize=4;                snakeHunter_numSegments=8;                snakeHunter_numSegmEvolved=4;
-
+            sharkHunter_arraySize=3;
             changeLevelFood_arraySize=3;//Переход только на уровень выше
             //М.б. это ночной уровень, где всё чёрное, а вокруг гг свечение, м.б. жёлтое
             break;
@@ -101,7 +100,7 @@ Level::Level(int levelNum)
             break;
     }
 
-    int maxFoodArraySize = std::min(foods_arraySize + (snakeHunter_arraySize) * snakeHunter_numSegments + sharkHunter_arraySize * 5 /*+ boss_arraySize*12*/, 30);//30
+    int maxFoodArraySize = foods_arraySize + snakeHunter_arraySize * snakeHunter_numSegments + sharkHunter_arraySize * 5 + boss_arraySize*12;//30
     for (int i=0; i<maxFoodArraySize; i++){
         food_array.push_back(Food());
         if (i>=foods_arraySize){
@@ -110,7 +109,7 @@ Level::Level(int levelNum)
     }
 
     for (int i=0; i<snakeHunter_arraySize; i++){
-        if (snakeHunter_numSegments==0 || snakeHunter_numSegmEvolved==0) qDebug()<<"is it OK than snakeHunter_numSegments/evolved = 0?";
+        if (snakeHunter_numSegments==0 || snakeHunter_numSegmEvolved==0) qDebug()<<"Level::Level"<<"is it OK than snakeHunter_numSegments/evolved = 0?";
         snakeHunter_array.push_back(SnakeHunter(snakeHunter_numSegments, snakeHunter_numSegmEvolved));
     }
 
@@ -122,38 +121,11 @@ Level::Level(int levelNum)
         if (Nbirds <= 0) qDebug()<<"Level::Level"<<"Nbirds"<<Nbirds;
         flockieBird_array.push_back(FlockieBird(Nbirds));
     }
-/*
-    maxFoodArraySize = Math.min(foods_arraySize + (snakeHunter_arraySize) * snakeHunter_numSegments + sharkHunter_arraySize * 5 + boss_arraySize*12, 30);//30
 
-
-    foods_array = new Food[maxFoodArraySize];
-    for (int j=0;j<maxFoodArraySize;j++){
-        foods_array[j] = new Food();
-        if (j>=foods_arraySize){
-            foods_array[j].setEaten();
-        }
+    for (int i=0; i<boss_arraySize; i++){
+        if (bossType<0) qDebug()<<"Level::Level"<<"bossType < 0";
+        boss_array.push_back(Boss(bossType));
     }
-
-    snakeHunter_array = new SnakeHunter[snakeHunter_arraySize];
-    for (int j=0;j<snakeHunter_arraySize;j++){
-        snakeHunter_array[j] = new SnakeHunter(snakeHunter_numSegments,snakeHunter_numSegmEvolved);
-    }
-
-    sharkHunter_array = new SharkHunter[sharkHunter_arraySize];
-    for (int j=0;j<sharkHunter_arraySize;j++){
-        sharkHunter_array[j] = new SharkHunter();
-    }
-
-    Random random = new Random();
-    flockieBird_array = new FlockieBird[flockieBird_arraySize];
-    for (int j=0;j<flockieBird_arraySize;j++){
-        flockieBird_array[j] = new FlockieBird(10,random.nextInt(3));
-    }
-
-    boss_array = new Boss[boss_arraySize];
-    for (int j=0;j<boss_arraySize;j++){
-        boss_array[j] = new Boss(bossType);
-    }*/
 }
 
 std::vector<float> Level::getColor(){
@@ -176,14 +148,22 @@ int Level::updateFoodMapPosition(float dt, Protagonist& protagonist, float camer
     for (auto& t : flockieBird_array)
         t.updateMapPosition(dt);//Обновление местоположения стайки клеток
 
+    for (auto& t : boss_array)
+        t.updateMapPosition(dt, protagonist);//Обновление местоположения босса
+    //И попытка злой еды съесть протагониста. Возможно, стоит перенесли это в findNearFood !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     int changeLevel = protagonist.updateEat(changeLevelFood_array, food_array, snakeHunter_array,
-                                            sharkHunter_array, flockieBird_array);//Кушает гг
+                                            sharkHunter_array, flockieBird_array, boss_array);//Кушает гг
 
     for (auto& t : snakeHunter_array)
         t.findNearFood(food_array);//Кушают змейки
 
     for (auto& t : sharkHunter_array)
         t.findNearFood(food_array, protagonist);//Кушают акулы
+
+    for (auto& t : boss_array)
+        t.findNearFood(food_array, protagonist);//Кушают боссы
+
 
     return changeLevel;
 }
@@ -203,4 +183,7 @@ void Level::draw(Widget& widget){
 
     for (auto& t : flockieBird_array)
         t.draw(widget);//Обновление местоположения стайки клеток
+
+    for (auto& t : boss_array)
+        t.draw(widget);//Обновление местоположения боссов
 }

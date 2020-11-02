@@ -603,3 +603,15 @@ void Food::updateMapPositionAngryBoss(float dt, Protagonist& protagonist){
         }
     }
 }
+
+void Food::setInvisibleAngryBossfood(float timer,float segCurrentX, float segCurrentY, float currentSpeed_, float orientation_){
+    invisibleTimer=-timer;
+    currentX=segCurrentX;
+    currentY=segCurrentY;
+    isInvisible=true;
+    this->goToRandomLocation();
+    currentSpeed=currentSpeed_*2;
+    orientation=orientation_;
+
+    isEaten_=false;
+}
