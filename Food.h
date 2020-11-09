@@ -16,6 +16,7 @@ public:
     void updateMapPositionAngryBoss(float dt, Protagonist& protagonist);
     void draw(Widget& widget);
     void drawAngryBossFood(Widget& widget);
+
     bool isEaten();
     float getCurrentX();
     float getCurrentY();
@@ -49,6 +50,7 @@ private:
 
     void goToRandomLocation();
     void setRadius();
+    void updateCanvasSizeAndSnake(float dt);
 };
 
 #endif // FOOD_H

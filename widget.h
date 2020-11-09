@@ -2,20 +2,23 @@
 #define WIDGET_H
 
 #include <QGLWidget>
-#include <vector>
 #include <QOpenGLShaderProgram>
 #include <QGLFunctions>
+
 #include "VertexLoader.h"
 #include "particle.h"//Временно, пока не уберётся в уровень
 #include "Camera.h"
 #include "Protagonist.h"
-#include "Food.h"
 #include "Level.h"
+
+#include "Food.h"
 #include "SnakeHunter.h"
 #include "ChangeLevelFood.h"
 #include "SharkHunter.h"
 #include "FlockieBird.h"
 #include "Boss.h"
+
+#include <vector>
 
 #include <mutex>
 
@@ -116,7 +119,7 @@ private:
     Particle particle;
     Protagonist protagonist;
     QVector3D rotating_about = {0,0,1};//Вектор, относительно которого происходит вращение
-    std::vector<Food> food, test_food;
+    //DEFFOOD//std::vector<Food> food, test_food;
 
     std::vector<Level> levelArray;
     int shouldIChangeLevel=0;

@@ -1,7 +1,7 @@
 #include "Segment.h"
 #include "random.hpp"
 #include <QDebug>
-#include "widget.h"/////////////////?Отрисовка
+#include "widget.h"//Отрисовка
 
 Segment::Segment(float headCurrentX, float headCurrentY, float headOrientation, int type_)
 {

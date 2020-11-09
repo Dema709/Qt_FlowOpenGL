@@ -1,6 +1,5 @@
 #include "widget.h"
 
-
 #include <QDebug>
 #include <QtGui>
 #include <QtWidgets>
@@ -23,8 +22,8 @@ Widget::Widget(QWidget *parent)
     //unless mouse tracking has been enabled with QWidget::setMouseTracking().
     setMouseTracking(true);//Отслеживание мыши вне зависимости от нажатия
 
-    int foodCount = 0*900;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
-    int testFoodCount = 0*9; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
+    //DEFFOOD//int foodCount = 0*900;food.reserve(foodCount);for (int i=0; i<foodCount; i++){food.push_back(Food());}
+    //DEFFOOD//int testFoodCount = 0*9; test_food.reserve(testFoodCount); for (int i=0; i<testFoodCount; i++){test_food.push_back(Food(i));}
 
     for (int i=0; i<levelNum; i++){
         levelArray.push_back(Level(i));
@@ -248,12 +247,9 @@ void Widget::paintGL(){
     protagonist.draw(*this);
     particle.draw(*this);
     levelArray[currentLevel].draw(*this);
-    /*for (auto & f : food){
-        f.draw(*this);
-    }
-    for (auto & f : test_food){
-        f.draw(*this);
-    }*/
+
+    //DEFFOOD//for (auto & f : food){        f.draw(*this);    }
+    //DEFFOOD//for (auto & f : test_food){        f.draw(*this);    }
 };
 void Widget::resizeGL(int width, int height){
     //qDebug()<<"resizeGL with (width ="<<width<<"; height ="<<height<<")";
@@ -326,9 +322,8 @@ void Widget::slotUpdatePosition()
             changeBackgroundColorTime = changeBackgroundColorTime + dt;
         }
 
-        //for (auto & f : food){f.updateMapPosition(dt);}
-        //protagonist.updateEat(food);
-        //for (auto & f : test_food){f.updateMapPositionTest(dt);}
+        //DEFFOOD//for (auto & f : food){f.updateMapPosition(dt);}
+        //DEFFOOD//for (auto & f : test_food){f.updateMapPositionTest(dt);}
     }
 
     updateGL();
